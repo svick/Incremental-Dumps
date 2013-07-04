@@ -4,6 +4,7 @@
 #include "XML/xmlfile.h"
 #include "TestDumpWriter.h"
 #include "XmlPageProcessor.h"
+#include "Dump.h"
 
 using std::string;
 using std::cin;
@@ -31,7 +32,7 @@ void mediawikiHandler(XML::Element &elem, void *userData)
 int main(int argc, const char* argv[])
 {
     //StandardInputStream stream;
-    XML::FileInputStream stream = XML::FileInputStream("C:\\Users\\Svick\\Downloads\\tenwiki-20130622-pages-meta-history.xml");
+    /*XML::FileInputStream stream = XML::FileInputStream("C:\\Users\\Svick\\Downloads\\tenwiki-20130622-pages-meta-history.xml");
 
     XML::Input input(stream);
 
@@ -42,5 +43,7 @@ int main(int argc, const char* argv[])
 
     TestDumpWriter writer;
 
-    input.Process(handlers, &writer);
+    input.Process(handlers, &writer);*/
+
+    WritableDump dump("test.id");
 }

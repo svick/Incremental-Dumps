@@ -78,7 +78,11 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Dump.cpp" />
+    <ClCompile Include="DumpObject.cpp" />
+    <ClCompile Include="FileHeader.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Offset.cpp" />
     <ClCompile Include="TestDumpWriter.cpp" />
     <ClCompile Include="XmlPageProcessor.cpp" />
     <ClCompile Include="XmlRevisionProcessor.cpp" />
@@ -90,7 +94,11 @@
     <ClCompile Include="XML\xmloutput.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Dump.h" />
+    <ClInclude Include="DumpObject.h" />
     <ClInclude Include="DumpWriter.h" />
+    <ClInclude Include="FileHeader.h" />
+    <ClInclude Include="Offset.h" />
     <ClInclude Include="Page.h" />
     <ClInclude Include="Revision.h" />
     <ClInclude Include="TestDumpWriter.h" />
