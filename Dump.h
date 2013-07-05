@@ -5,9 +5,13 @@
 #include <string>
 #include <iostream>
 #include "FileHeader.h"
+#include "SpaceManager.h"
+#include "Index.h"
 
+using std::int32_t;
 using std::int64_t;
 using std::unique_ptr;
+using std::shared_ptr;
 using std::string;
 using std::iostream;
 
@@ -15,21 +19,34 @@ class DumpException : std::exception
 {
 };
 
+class WritableDump;
+
 class ReadableDump
 {
 protected:
-    unique_ptr<iostream> stream;
+    weak_ptr<WritableDump> self;
+
     ReadableDump(unique_ptr<iostream> stream);
 public:
+    // TODO: others should not be able to steal this stream
+    unique_ptr<iostream> stream;
+    unique_ptr<Index<int32_t, Offset>> pageIdIndex;
+
     ReadableDump(string fileName);
+
+    weak_ptr<WritableDump> GetSelf() const;
 };
 
 class WritableDump : public ReadableDump
 {
 private:
-    FileHeader fileHeader;
-
     static unique_ptr<iostream> openStream(string fileName);
-public:
+
     WritableDump(string fileName);
+    void init(weak_ptr<WritableDump> self);
+public:
+    static shared_ptr<WritableDump> Create(string fileName);
+
+    FileHeader fileHeader;
+    SpaceManager spaceManager;
 };

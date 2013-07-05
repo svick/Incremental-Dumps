@@ -80,9 +80,20 @@
   <ItemGroup>
     <ClCompile Include="Dump.cpp" />
     <ClCompile Include="DumpObject.cpp" />
+    <ClCompile Include="DumpTraits.cpp" />
     <ClCompile Include="FileHeader.cpp" />
+    <ClInclude Include="Index.h" />
+    <ClInclude Include="IndexLeafNode.hpp">
+      <FileType>CppCode</FileType>
+    </ClInclude>
+    <ClInclude Include="IndexNode.hpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
+      <FileType>CppCode</FileType>
+    </ClInclude>
+    <ClInclude Include="Index.hpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Offset.cpp" />
+    <ClCompile Include="SpaceManager.cpp" />
     <ClCompile Include="TestDumpWriter.cpp" />
     <ClCompile Include="XmlPageProcessor.cpp" />
     <ClCompile Include="XmlRevisionProcessor.cpp" />
@@ -96,11 +107,15 @@
   <ItemGroup>
     <ClInclude Include="Dump.h" />
     <ClInclude Include="DumpObject.h" />
+    <ClInclude Include="DumpTraits.h" />
     <ClInclude Include="DumpWriter.h" />
     <ClInclude Include="FileHeader.h" />
+    <ClInclude Include="IndexLeafNode.h" />
+    <ClInclude Include="IndexNode.h" />
     <ClInclude Include="Offset.h" />
     <ClInclude Include="Page.h" />
     <ClInclude Include="Revision.h" />
+    <ClInclude Include="SpaceManager.h" />
     <ClInclude Include="TestDumpWriter.h" />
     <ClInclude Include="XmlPageProcessor.h" />
     <ClInclude Include="XmlRevisionProcessor.h" />

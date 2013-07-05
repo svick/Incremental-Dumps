@@ -1,12 +1,11 @@
-#include <string>
 #include <iostream>
 #include "XML/xmlinput.h"
 #include "XML/xmlfile.h"
 #include "TestDumpWriter.h"
 #include "XmlPageProcessor.h"
 #include "Dump.h"
+#include "IndexLeafNode.h"
 
-using std::string;
 using std::cin;
 
 class StandardInputStream : public XML::InputStream
@@ -45,5 +44,7 @@ int main(int argc, const char* argv[])
 
     input.Process(handlers, &writer);*/
 
-    WritableDump dump("test.id");
+    shared_ptr<WritableDump> dump = WritableDump::Create("tmp/test.id");
+
+    dump->pageIdIndex->Add(1, 2);
 }

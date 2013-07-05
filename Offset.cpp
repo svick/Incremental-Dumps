@@ -8,7 +8,7 @@ Offset::Offset(int64_t value)
         throw DumpException();
 }
 
-void Offset::Write(unique_ptr<iostream> const &stream) const
+void Offset::Write(ostream &stream) const
 {
     char bytes[6];
 
@@ -19,17 +19,14 @@ void Offset::Write(unique_ptr<iostream> const &stream) const
     bytes[4] = (value >> 32) & 0xFF;
     bytes[5] = (value >> 40) & 0xFF;
 
-    stream->write(bytes, 6);
+    stream.write(bytes, 6);
 }
 
-Offset Offset::Read(unique_ptr<iostream> const &stream)
+Offset Offset::Read(istream &stream)
 {
     char bytes[6];
 
-    stream->read(bytes, 6);
-
-    if (stream->fail())
-        throw new DumpException();
+    stream.read(bytes, 6);
 
     int64_t offset = 0;
     offset |= (int64_t)bytes[0];
@@ -40,4 +37,9 @@ Offset Offset::Read(unique_ptr<iostream> const &stream)
     offset |= (int64_t)bytes[5] << 40;
 
     return Offset(offset);
+}
+
+int64_t Offset::DumpSize()
+{
+    return 6;
 }

@@ -4,14 +4,25 @@
 #include <memory>
 #include <iostream>
 
+class WritableDump;
+
 using std::int64_t;
 using std::unique_ptr;
-using std::iostream;
+using std::weak_ptr;
+using std::ostream;
 
 class DumpObject
 {
 protected:
-    virtual void WriteInternal(unique_ptr<iostream> const &stream) = 0;
+    weak_ptr<WritableDump> dump;
+    int64_t savedOffset;
+    int64_t savedLength;
+
+    DumpObject(weak_ptr<WritableDump> dump);
+    virtual void Write(ostream &stream) = 0;
+
 public:
-    void Write(unique_ptr<iostream> const &stream, int64_t offset);
+    virtual void Write();
+    virtual int64_t NewLength() = 0;
+    int64_t SavedOffset();
 };

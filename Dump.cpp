@@ -1,11 +1,11 @@
-#include <cstdint>
 #include <memory>
 #include <string>
 #include <fstream>
 #include "Dump.h"
 
-using std::unique_ptr;
 using std::move;
+using std::unique_ptr;
+using std::make_shared;
 using std::string;
 using std::fstream;
 using std::ios;
@@ -17,6 +17,11 @@ ReadableDump::ReadableDump(unique_ptr<iostream> stream)
 ReadableDump::ReadableDump(string fileName)
     : stream(unique_ptr<fstream>(new fstream(fileName, ios::in | ios::binary)))
 {}
+
+weak_ptr<WritableDump> ReadableDump::GetSelf() const
+{
+    return self;
+}
 
 unique_ptr<iostream> WritableDump::openStream(string fileName)
 {
@@ -35,15 +40,32 @@ unique_ptr<iostream> WritableDump::openStream(string fileName)
 
 WritableDump::WritableDump(string fileName)
     : ReadableDump(openStream(fileName))
+{}
+
+void WritableDump::init(weak_ptr<WritableDump> self)
 {
+    this->self = self;
+
     if (stream->peek() == EOF)
     {
         stream->clear();
-        fileHeader = FileHeader();
-        fileHeader.Write(stream, 0);
+        fileHeader = FileHeader(self);
+        fileHeader.Write();
     }
     else
     {
-        fileHeader = FileHeader::Read(stream);
+        fileHeader = FileHeader::Read(*this);
     }
+
+    spaceManager = SpaceManager(self);
+
+    pageIdIndex = unique_ptr<Index<int32_t, Offset>>(
+        new Index<int32_t, Offset>(self, shared_ptr<Offset>(self.lock(), &fileHeader.PageIdIndexRoot)));
+}
+
+shared_ptr<WritableDump> WritableDump::Create(string fileName)
+{
+    shared_ptr<WritableDump> dump(new WritableDump(fileName));
+    dump->init(dump);
+    return dump;
 }
