@@ -46,5 +46,8 @@ int main(int argc, const char* argv[])
 
     shared_ptr<WritableDump> dump = WritableDump::Create("tmp/test.id");
 
+    auto offset = dump->spaceManager->GetSpace(102);
+    dump->spaceManager->Delete(offset, 102);
+
     dump->pageIdIndex->Add(1, 2);
 }

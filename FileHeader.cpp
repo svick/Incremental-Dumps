@@ -41,7 +41,7 @@ FileHeader FileHeader::Read(ReadableDump const &dump)
     return FileHeader(fileEnd, pageIdIndexRoot, freeSpaceIndexRoot, dump.GetSelf());
 }
 
-int64_t FileHeader::NewLength()
+int32_t FileHeader::NewLength()
 {
     return 6 + 3 * 6;
 }

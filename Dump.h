@@ -48,5 +48,5 @@ public:
     static shared_ptr<WritableDump> Create(string fileName);
 
     FileHeader fileHeader;
-    SpaceManager spaceManager;
+    unique_ptr<SpaceManager> spaceManager;
 };

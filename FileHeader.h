@@ -21,7 +21,7 @@ public:
     static FileHeader Read(ReadableDump const &dump);
 
     virtual void Write();
-    virtual int64_t NewLength();
+    virtual int32_t NewLength();
 
     Offset FileEnd;
     Offset PageIdIndexRoot;

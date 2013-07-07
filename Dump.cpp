@@ -57,7 +57,7 @@ void WritableDump::init(weak_ptr<WritableDump> self)
         fileHeader = FileHeader::Read(*this);
     }
 
-    spaceManager = SpaceManager(self);
+    spaceManager = unique_ptr<SpaceManager>(new SpaceManager(self));
 
     pageIdIndex = unique_ptr<Index<int32_t, Offset>>(
         new Index<int32_t, Offset>(self, shared_ptr<Offset>(self.lock(), &fileHeader.PageIdIndexRoot)));

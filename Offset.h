@@ -1,11 +1,9 @@
 #pragma once
 
 #include <cstdint>
-#include <memory>
 #include <iostream>
 
 using std::int64_t;
-using std::unique_ptr;
 using std::istream;
 using std::ostream;
 
@@ -17,5 +15,7 @@ public:
     Offset(int64_t value);
     void Write(ostream &stream) const;
     static Offset Read(istream &stream);
-    static int64_t DumpSize();
+    static int32_t DumpSize();
 };
+
+bool operator <(const Offset &first, const Offset &second);

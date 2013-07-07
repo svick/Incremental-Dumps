@@ -8,13 +8,21 @@ DumpObject::DumpObject(weak_ptr<WritableDump> dump)
 void DumpObject::Write()
 {
     auto dumpRef = dump.lock();
-    auto &spaceManager = dumpRef->spaceManager;
 
-    if (savedOffset != 0)
-        spaceManager.Delete(savedOffset);
+    int32_t newLength = NewLength();
+    int64_t newOffset;
 
-    int64_t newLength = NewLength();
-    int64_t newOffset = spaceManager.GetSpace(newLength);
+    if (newLength == savedLength)
+        newOffset = savedOffset;
+    else
+    {
+        auto &spaceManager = dumpRef->spaceManager;
+
+        if (savedOffset != 0)
+            spaceManager->Delete(savedOffset, savedLength);
+
+        newOffset = spaceManager->GetSpace(newLength);
+    }
 
     ostream& stream = *(dumpRef->stream);
     stream.seekp(newOffset);

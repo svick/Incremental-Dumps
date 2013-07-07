@@ -29,17 +29,22 @@ Offset Offset::Read(istream &stream)
     stream.read(bytes, 6);
 
     int64_t offset = 0;
-    offset |= (int64_t)bytes[0];
-    offset |= (int64_t)bytes[1] << 8;
-    offset |= (int64_t)bytes[2] << 16;
-    offset |= (int64_t)bytes[3] << 24;
-    offset |= (int64_t)bytes[4] << 32;
-    offset |= (int64_t)bytes[5] << 40;
+    offset |= (int64_t)(uint8_t)bytes[0];
+    offset |= (int64_t)(uint8_t)bytes[1] << 8;
+    offset |= (int64_t)(uint8_t)bytes[2] << 16;
+    offset |= (int64_t)(uint8_t)bytes[3] << 24;
+    offset |= (int64_t)(uint8_t)bytes[4] << 32;
+    offset |= (int64_t)(uint8_t)bytes[5] << 40;
 
     return Offset(offset);
 }
 
-int64_t Offset::DumpSize()
+int32_t Offset::DumpSize()
 {
     return 6;
+}
+
+bool operator <(const Offset &first, const Offset &second)
+{
+    return first.value < second.value;
 }

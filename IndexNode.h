@@ -1,6 +1,19 @@
 #pragma once
 
+#include <utility>
 #include "DumpObject.h"
+
+using std::pair;
+using std::shared_ptr;
+
+template<typename TKey, typename TValue>
+class IndexNodeIterator
+{
+public:
+    virtual const pair<TKey, TValue> operator *() const = 0;
+    virtual IndexNodeIterator& operator ++() = 0;
+    virtual bool equals(const IndexNodeIterator *other) const = 0;
+};
 
 template<typename TKey, typename TValue>
 class IndexNode : public DumpObject
@@ -23,9 +36,10 @@ public:
 
     virtual TValue operator[](TKey key) = 0;
     virtual void Add(TKey key, TValue value) = 0;
-    // TODO:
-    //virtual void Remove(TKey key);
-    //virtual void Remove(TKey key, TValue value); // required for memory index
+    virtual void Remove(TKey key) = 0;
+
+    virtual shared_ptr<IndexNodeIterator<TKey, TValue>> begin() const = 0;
+    virtual shared_ptr<IndexNodeIterator<TKey, TValue>> end() const = 0;
 };
 
 #include "IndexNode.hpp"
