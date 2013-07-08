@@ -1,19 +1,11 @@
 #pragma once
 
-#include <utility>
-#include "DumpObject.h"
+#include "../DumpObjects/DumpObject.h"
 
-using std::pair;
 using std::shared_ptr;
 
 template<typename TKey, typename TValue>
-class IndexNodeIterator
-{
-public:
-    virtual const pair<TKey, TValue> operator *() const = 0;
-    virtual IndexNodeIterator& operator ++() = 0;
-    virtual bool equals(const IndexNodeIterator *other) const = 0;
-};
+class IndexNodeIterator;
 
 template<typename TKey, typename TValue>
 class IndexNode : public DumpObject
@@ -42,4 +34,4 @@ public:
     virtual shared_ptr<IndexNodeIterator<TKey, TValue>> end() const = 0;
 };
 
-#include "IndexNode.hpp"
+#include "IndexNode.tpp"

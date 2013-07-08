@@ -4,9 +4,9 @@
 #include <memory>
 #include <string>
 #include <iostream>
-#include "FileHeader.h"
+#include "DumpObjects/FileHeader.h"
+#include "Indexes/Index.h"
 #include "SpaceManager.h"
-#include "Index.h"
 
 using std::int32_t;
 using std::int64_t;
@@ -14,10 +14,6 @@ using std::unique_ptr;
 using std::shared_ptr;
 using std::string;
 using std::iostream;
-
-class DumpException : std::exception
-{
-};
 
 class WritableDump;
 

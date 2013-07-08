@@ -4,7 +4,6 @@
 #include "TestDumpWriter.h"
 #include "XmlPageProcessor.h"
 #include "Dump.h"
-#include "IndexLeafNode.h"
 
 using std::cin;
 

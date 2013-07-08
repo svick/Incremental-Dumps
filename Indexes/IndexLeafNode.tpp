@@ -1,37 +1,10 @@
 #include <utility>
 #include <vector>
-#include "DumpTraits.h"
+#include "../DumpObjects/DumpTraits.h"
+#include "Iterators/IndexLeafIterator.h"
 
 using std::pair;
 using std::vector;
-
-template<typename TKey, typename TValue>
-IndexLeafIterator<TKey, TValue>::IndexLeafIterator(MapIterator mapIterator)
-    : mapIterator(mapIterator)
-{}
-
-template<typename TKey, typename TValue>
-const pair<TKey, TValue> IndexLeafIterator<TKey, TValue>::operator *() const
-{
-    return *mapIterator;
-}
-
-template<typename TKey, typename TValue>
-IndexLeafIterator<TKey, TValue>& IndexLeafIterator<TKey, TValue>::operator ++()
-{
-    ++mapIterator;
-    return *this;
-}
-
-template<typename TKey, typename TValue>
-bool IndexLeafIterator<TKey, TValue>::equals(const IndexNodeIterator<TKey, TValue> *other) const
-{
-    auto otherCasted = dynamic_cast<const IndexLeafIterator<TKey, TValue>*>(other);
-    if (otherCasted == nullptr)
-        return false;
-
-    return mapIterator == otherCasted->mapIterator;
-}
 
 template<typename TKey, typename TValue>
 TValue IndexLeafNode<TKey, TValue>::operator[](TKey key)

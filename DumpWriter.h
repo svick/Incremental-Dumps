@@ -2,8 +2,8 @@
 
 #include <memory>
 
-#include "Page.h"
-#include "Revision.h"
+#include "DumpObjects/Page.h"
+#include "DumpObjects/Revision.h"
 
 using std::shared_ptr;
 

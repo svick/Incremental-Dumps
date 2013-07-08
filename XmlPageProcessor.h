@@ -2,7 +2,7 @@
 
 #include <memory>
 #include "XML/xmlinput.h"
-#include "Page.h"
+#include "DumpObjects/Page.h"
 #include "DumpWriter.h"
 
 using std::shared_ptr;

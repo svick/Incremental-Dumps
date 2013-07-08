@@ -1,5 +1,6 @@
 #include "FileHeader.h"
-#include "Dump.h"
+#include "../Dump.h"
+#include "../DumpException.h"
 
 FileHeader::FileHeader(Offset fileEnd, Offset pageIdIndexRoot, Offset freeSpaceIndexRoot, weak_ptr<WritableDump> dump)
     : DumpObject(dump), FileEnd(fileEnd), PageIdIndexRoot(pageIdIndexRoot), FreeSpaceIndexRoot(freeSpaceIndexRoot)

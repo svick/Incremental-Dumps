@@ -1,7 +1,7 @@
 #pragma once
 
 #include "XML/xmlinput.h"
-#include "Revision.h"
+#include "DumpObjects/Revision.h"
 
 class XmlRevisionProcessor
 {

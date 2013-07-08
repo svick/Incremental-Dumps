@@ -1,5 +1,6 @@
 #include "IndexNode.h"
 #include "IndexLeafNode.h"
+#include "../DumpException.h"
 
 template<typename TKey, typename TValue>
 IndexNode<TKey, TValue>::IndexNode(weak_ptr<WritableDump> dump)

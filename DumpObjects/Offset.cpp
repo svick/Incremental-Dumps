@@ -1,5 +1,5 @@
 #include "Offset.h"
-#include "Dump.h"
+#include "../DumpException.h"
 
 Offset::Offset(int64_t value)
     : value(value)

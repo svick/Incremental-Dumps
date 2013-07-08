@@ -3,7 +3,7 @@
 #include <cstdint>
 #include <memory>
 #include <map>
-#include "Index.h"
+#include "Indexes/Index.h"
 
 using std::int32_t;
 using std::int64_t;

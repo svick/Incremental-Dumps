@@ -79,20 +79,22 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Dump.cpp" />
-    <ClCompile Include="DumpObject.cpp" />
-    <ClCompile Include="DumpTraits.cpp" />
-    <ClCompile Include="FileHeader.cpp" />
-    <ClInclude Include="Index.h" />
-    <ClInclude Include="IndexLeafNode.hpp">
+    <ClCompile Include="DumpException.cpp" />
+    <ClCompile Include="DumpObjects\DumpObject.cpp" />
+    <ClCompile Include="DumpObjects\DumpTraits.cpp" />
+    <ClCompile Include="DumpObjects\FileHeader.cpp" />
+    <ClInclude Include="DumpException.h" />
+    <ClInclude Include="Indexes\Index.h" />
+    <ClInclude Include="Indexes\IndexLeafNode.tpp">
       <FileType>CppCode</FileType>
     </ClInclude>
-    <ClInclude Include="IndexNode.hpp">
+    <ClInclude Include="Indexes\IndexNode.tpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
       <FileType>CppCode</FileType>
     </ClInclude>
-    <ClInclude Include="Index.hpp" />
+    <ClInclude Include="Indexes\Index.tpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="Offset.cpp" />
+    <ClCompile Include="DumpObjects\Offset.cpp" />
     <ClCompile Include="SpaceManager.cpp" />
     <ClCompile Include="TestDumpWriter.cpp" />
     <ClCompile Include="XmlPageProcessor.cpp" />
@@ -106,15 +108,21 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Dump.h" />
-    <ClInclude Include="DumpObject.h" />
-    <ClInclude Include="DumpTraits.h" />
+    <ClInclude Include="DumpObjects\DumpObject.h" />
+    <ClInclude Include="DumpObjects\DumpTraits.h" />
     <ClInclude Include="DumpWriter.h" />
-    <ClInclude Include="FileHeader.h" />
-    <ClInclude Include="IndexLeafNode.h" />
-    <ClInclude Include="IndexNode.h" />
-    <ClInclude Include="Offset.h" />
-    <ClInclude Include="Page.h" />
-    <ClInclude Include="Revision.h" />
+    <ClInclude Include="DumpObjects\FileHeader.h" />
+    <ClInclude Include="Indexes\IndexLeafNode.h" />
+    <ClInclude Include="Indexes\IndexNode.h" />
+    <ClInclude Include="DumpObjects\Offset.h" />
+    <ClInclude Include="DumpObjects\Page.h" />
+    <ClInclude Include="DumpObjects\Revision.h" />
+    <ClInclude Include="Indexes\Iterators\IndexIterator.h" />
+    <ClInclude Include="Indexes\Iterators\IndexIterator.tpp" />
+    <ClInclude Include="Indexes\Iterators\IndexLeafIterator.h" />
+    <ClInclude Include="Indexes\Iterators\IndexLeafIterator.tpp" />
+    <ClInclude Include="Indexes\Iterators\IndexNodeIterator.h" />
+    <ClInclude Include="Indexes\Iterators\IndexNodeIterator.tpp" />
     <ClInclude Include="SpaceManager.h" />
     <ClInclude Include="TestDumpWriter.h" />
     <ClInclude Include="XmlPageProcessor.h" />
