@@ -7,9 +7,12 @@ using std::pair;
 using std::vector;
 
 template<typename TKey, typename TValue>
-TValue IndexLeafNode<TKey, TValue>::operator[](TKey key)
+TValue IndexLeafNode<TKey, TValue>::Get(TKey key)
 {
-    return map.find(key)->second;
+    auto found = map.find(key);
+    if (found == map.end())
+        return TValue();
+    return found->second;
 }
 
 template<typename TKey, typename TValue>
@@ -26,12 +29,25 @@ void IndexLeafNode<TKey, TValue>::Add(TKey key, TValue value)
 }
 
 template<typename TKey, typename TValue>
+void IndexLeafNode<TKey, TValue>::AddOrUpdate(TKey key, TValue value)
+{
+    auto pos = map.find(key);
+    if (pos == map.end())
+    {
+        Add(key, value);
+    }
+    else
+    {
+        pos->second = value; // will this work?
+    }
+}
+
+template<typename TKey, typename TValue>
 void IndexLeafNode<TKey, TValue>::Remove(const TKey key)
 {
     map.erase(key);
     Write();
 }
-
 
 template<typename TKey, typename TValue>
 IndexLeafNode<TKey, TValue>::IndexLeafNode(weak_ptr<WritableDump> dump)
@@ -44,7 +60,7 @@ unique_ptr<IndexNode<TKey, TValue>> IndexLeafNode<TKey, TValue>::Read(weak_ptr<W
 {
     auto node = new IndexLeafNode<TKey, TValue>(dump);
 
-    char count = DumpTraits<char>::Read(stream);
+    uint8_t count = DumpTraits<uint8_t>::Read(stream);
 
     vector<TKey> keys;
 
@@ -62,26 +78,26 @@ unique_ptr<IndexNode<TKey, TValue>> IndexLeafNode<TKey, TValue>::Read(weak_ptr<W
 }
 
 template<typename TKey, typename TValue>
-void IndexLeafNode<TKey, TValue>::Write(ostream &stream)
+void IndexLeafNode<TKey, TValue>::WriteInternal()
 {
-    DumpTraits<char>::Write(stream, (char)NodeKind::LeafNode);
-	DumpTraits<char>::Write(stream, map.size());
+    WriteValue((uint8_t)DumpObjectKind::IndexLeafNode);
+    WriteValue((uint8_t)map.size());
 
 	for (auto pair : map)
     {
-		DumpTraits<TKey>::Write(stream, pair.first);
+		WriteValue(pair.first);
     }
 
 	for (auto pair : map)
     {
-		DumpTraits<TValue>::Write(stream, pair.second);
+		WriteValue(pair.second);
     }
 }
 
 template<typename TKey, typename TValue>
-int32_t IndexLeafNode<TKey, TValue>::NewLength()
+uint32_t IndexLeafNode<TKey, TValue>::NewLength() const
 {
-    return 2 * DumpTraits<char>::DumpSize()
+    return 2 * DumpTraits<uint8_t>::DumpSize()
         + Size * (DumpTraits<TKey>::DumpSize() + DumpTraits<TValue>::DumpSize());
 }
 

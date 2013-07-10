@@ -6,24 +6,27 @@ FileHeader::FileHeader(Offset fileEnd, Offset pageIdIndexRoot, Offset freeSpaceI
     : DumpObject(dump), FileEnd(fileEnd), PageIdIndexRoot(pageIdIndexRoot), FreeSpaceIndexRoot(freeSpaceIndexRoot)
 {}
 
-void FileHeader::Write(ostream &stream)
+void FileHeader::WriteInternal()
 {
-    stream.write("WMID", 4);
-    stream.write(&FileFormatVersion, 1);
-    stream.write(&FileDataVersion, 1);
+    stream->write("WMID", 4);
+    DumpTraits<uint8_t>::Write(*stream, FileFormatVersion);
+    DumpTraits<uint8_t>::Write(*stream, FileDataVersion);
 
-    FileEnd.Write(stream);
-    PageIdIndexRoot.Write(stream);
-    FreeSpaceIndexRoot.Write(stream);
+    FileEnd.Write(*stream);
+    PageIdIndexRoot.Write(*stream);
+    FreeSpaceIndexRoot.Write(*stream);
 }
 
 void FileHeader::Write()
 {
     auto dumpRef = dump.lock();
-    ostream &stream = *(dumpRef->stream);
+    stream = dumpRef->stream.get();
 
-    stream.seekp(0);
-    Write(stream);
+    stream->seekp(0);
+
+    WriteInternal();
+
+    stream = nullptr;
 }
 
 FileHeader FileHeader::Read(ReadableDump const &dump)
@@ -42,9 +45,9 @@ FileHeader FileHeader::Read(ReadableDump const &dump)
     return FileHeader(fileEnd, pageIdIndexRoot, freeSpaceIndexRoot, dump.GetSelf());
 }
 
-int32_t FileHeader::NewLength()
+uint32_t FileHeader::NewLength() const
 {
-    return 6 + 3 * 6;
+    return 4 + 2 * DumpTraits<uint8_t>::DumpSize() + 3 * DumpTraits<Offset>::DumpSize();
 }
 
 FileHeader::FileHeader(weak_ptr<WritableDump> dump)

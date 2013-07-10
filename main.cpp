@@ -1,7 +1,7 @@
 #include <iostream>
 #include "XML/xmlinput.h"
 #include "XML/xmlfile.h"
-#include "TestDumpWriter.h"
+#include "DumpWriters/StubCurrentWriter.h"
 #include "XmlPageProcessor.h"
 #include "Dump.h"
 
@@ -30,7 +30,7 @@ void mediawikiHandler(XML::Element &elem, void *userData)
 int main(int argc, const char* argv[])
 {
     //StandardInputStream stream;
-    /*XML::FileInputStream stream = XML::FileInputStream("C:\\Users\\Svick\\Downloads\\tenwiki-20130622-pages-meta-history.xml");
+    XML::FileInputStream stream = XML::FileInputStream("C:\\Users\\Svick\\Downloads\\tenwiki-20130622-pages-meta-history.xml");
 
     XML::Input input(stream);
 
@@ -39,14 +39,16 @@ int main(int argc, const char* argv[])
         XML::Handler::END
     };
 
-    TestDumpWriter writer;
-
-    input.Process(handlers, &writer);*/
-
     shared_ptr<WritableDump> dump = WritableDump::Create("tmp/test.id");
+
+    StubCurrentWriter writer(dump);
+
+    input.Process(handlers, &writer);
+
+    /*shared_ptr<WritableDump> dump = WritableDump::Create("tmp/test.id");
 
     auto offset = dump->spaceManager->GetSpace(102);
     dump->spaceManager->Delete(offset, 102);
 
-    dump->pageIdIndex->Add(1, 2);
+    dump->pageIdIndex->Add(1, 2);*/
 }

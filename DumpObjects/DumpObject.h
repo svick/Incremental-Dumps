@@ -3,26 +3,47 @@
 #include <cstdint>
 #include <memory>
 #include <iostream>
+#include "Offset.h"
 
 class WritableDump;
 
-using std::int64_t;
+using std::uint64_t;
 using std::unique_ptr;
 using std::weak_ptr;
 using std::ostream;
 
 class DumpObject
 {
+private:
+    ostream *stream;
 protected:
     weak_ptr<WritableDump> dump;
-    int64_t savedOffset;
-    int32_t savedLength;
+    uint64_t savedOffset;
+    uint32_t savedLength;
 
     DumpObject(weak_ptr<WritableDump> dump);
-    virtual void Write(ostream &stream) = 0;
+    virtual void WriteInternal() = 0;
+    virtual void UpdateIndex(Offset offset);
 
+    template<typename T>
+    void WriteValue(const T value);
+
+    template<typename T>
+    uint32_t ValueSize(const T value) const;
 public:
     virtual void Write();
-    virtual int32_t NewLength() = 0;
-    int64_t SavedOffset();
+    virtual uint32_t NewLength() const = 0;
+    uint64_t SavedOffset() const;
 };
+
+template<typename T>
+void DumpObject::WriteValue(const T value)
+{
+    DumpTraits<T>::Write(*stream, value);
+}
+
+template<typename T>
+uint32_t DumpObject::ValueSize(const T value) const
+{
+    return DumpTraits<T>::DumpSize(value);
+}

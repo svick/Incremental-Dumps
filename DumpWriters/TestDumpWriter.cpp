@@ -16,12 +16,16 @@ string TestDumpWriter::ReplaceString(string subject, const string& search, const
     return subject;
 }
 
-void TestDumpWriter::WritePage(const shared_ptr<const Page> page)
+void TestDumpWriter::StartPage(const shared_ptr<const Page> page)
 {
     cout << page->Title << "\n";
 }
 
-void TestDumpWriter::WriteRevision(const shared_ptr<const Revision> revision)
+void TestDumpWriter::AddRevision(const shared_ptr<const Revision> revision)
 {
     cout << " " << ReplaceString(revision->Text, "\n", "\\n").substr(0, 78) << "\n";
+}
+
+void TestDumpWriter::EndPage()
+{
 }

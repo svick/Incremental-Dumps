@@ -26,7 +26,7 @@ protected:
 public:
     // TODO: others should not be able to steal this stream
     unique_ptr<iostream> stream;
-    unique_ptr<Index<int32_t, Offset>> pageIdIndex;
+    unique_ptr<Index<uint32_t, Offset>> pageIdIndex;
 
     ReadableDump(string fileName);
 

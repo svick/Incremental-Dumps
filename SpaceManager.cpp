@@ -5,7 +5,7 @@ using std::shared_ptr;
 
 SpaceManager::SpaceManager(weak_ptr<WritableDump> dump)
     : dump(dump),
-      spaceIndex(dump, shared_ptr<Offset>(dump.lock(), &dump.lock()->fileHeader.FreeSpaceIndexRoot)),
+      spaceIndex(dump, shared_ptr<Offset>(dump.lock(), &dump.lock()->fileHeader.FreeSpaceIndexRoot), true),
       spaceByLength()
 {
     for (auto value : spaceIndex)
@@ -14,7 +14,7 @@ SpaceManager::SpaceManager(weak_ptr<WritableDump> dump)
     }
 }
 
-int64_t SpaceManager::GetSpace(int32_t length)
+uint64_t SpaceManager::GetSpace(uint32_t length)
 {
     auto foundSpace = spaceByLength.lower_bound(length);
     if (foundSpace != spaceByLength.end())
@@ -46,7 +46,7 @@ int64_t SpaceManager::GetSpace(int32_t length)
     }
 }
 
-void SpaceManager::Delete(int64_t offset, int32_t length)
+void SpaceManager::Delete(uint64_t offset, uint32_t length)
 {
     // TODO: free space at the end just decrements fileEnd
     // TODO: join consecutive free blocks

@@ -9,8 +9,8 @@ void DumpObject::Write()
 {
     auto dumpRef = dump.lock();
 
-    int32_t newLength = NewLength();
-    int64_t newOffset;
+    uint32_t newLength = NewLength();
+    uint64_t newOffset;
 
     if (newLength == savedLength)
         newOffset = savedOffset;
@@ -24,16 +24,23 @@ void DumpObject::Write()
         newOffset = spaceManager->GetSpace(newLength);
     }
 
-    ostream& stream = *(dumpRef->stream);
-    stream.seekp(newOffset);
+    stream = dumpRef->stream.get();
+    stream->seekp(newOffset);
 
-    Write(stream);
+    WriteInternal();
+
+    stream = nullptr;
 
     savedOffset = newOffset;
     savedLength = newLength;
+
+    UpdateIndex(newOffset);
 }
 
-int64_t DumpObject::SavedOffset()
+void DumpObject::UpdateIndex(Offset offset)
+{}
+
+uint64_t DumpObject::SavedOffset() const
 {
     return savedOffset;
 }

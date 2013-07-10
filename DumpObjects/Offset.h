@@ -3,19 +3,19 @@
 #include <cstdint>
 #include <iostream>
 
-using std::int64_t;
+using std::uint64_t;
 using std::istream;
 using std::ostream;
 
 class Offset
 {
 public:
-    int64_t value;
+    uint64_t value;
 
-    Offset(int64_t value);
+    Offset(uint64_t value = 0);
     void Write(ostream &stream) const;
     static Offset Read(istream &stream);
-    static int32_t DumpSize();
+    static uint32_t DumpSize();
 };
 
 bool operator <(const Offset &first, const Offset &second);

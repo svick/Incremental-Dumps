@@ -5,8 +5,8 @@
 #include <map>
 #include "Indexes/Index.h"
 
-using std::int32_t;
-using std::int64_t;
+using std::uint32_t;
+using std::uint64_t;
 using std::weak_ptr;
 using std::multimap;
 
@@ -16,10 +16,10 @@ class SpaceManager
 {
 private:
     weak_ptr<WritableDump> dump;
-    Index<Offset, int32_t> spaceIndex;
-    multimap<int32_t, Offset> spaceByLength;
+    Index<Offset, uint32_t> spaceIndex;
+    multimap<uint32_t, Offset> spaceByLength;
 public:
     SpaceManager(weak_ptr<WritableDump> dump);
-    int64_t GetSpace(int32_t length);
-    void Delete(int64_t offset, int32_t length);
+    uint64_t GetSpace(uint32_t length);
+    void Delete(uint64_t offset, uint32_t length);
 };

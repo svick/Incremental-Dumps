@@ -16,13 +16,12 @@ private:
     unique_ptr<IndexNode<TKey, TValue>> rootNode;
     weak_ptr<WritableDump> dump;
     weak_ptr<Offset> fileHeaderOffset;
-
-    void Save();
 public:
-    Index(weak_ptr<WritableDump> dump, weak_ptr<Offset> fileHeaderOffset);
+    Index(weak_ptr<WritableDump> dump, weak_ptr<Offset> fileHeaderOffset, bool delaySave = false);
 
-    TValue operator[](TKey key);
+    TValue Get(TKey key);
     void Add(TKey key, TValue value);
+    void AddOrUpdate(TKey key, TValue value);
     void Remove(TKey key);
 
     IndexIterator<TKey, TValue> begin() const;

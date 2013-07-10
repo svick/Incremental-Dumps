@@ -1,6 +1,7 @@
 #include "IndexNode.h"
 #include "IndexLeafNode.h"
 #include "../DumpException.h"
+#include "../DumpObjects/DumpObjectKind.h"
 
 template<typename TKey, typename TValue>
 IndexNode<TKey, TValue>::IndexNode(weak_ptr<WritableDump> dump)
@@ -8,7 +9,7 @@ IndexNode<TKey, TValue>::IndexNode(weak_ptr<WritableDump> dump)
 {}
 
 template<typename TKey, typename TValue>
-unique_ptr<IndexNode<TKey, TValue>> IndexNode<TKey, TValue>::Read(weak_ptr<WritableDump> dump, int64_t offset)
+unique_ptr<IndexNode<TKey, TValue>> IndexNode<TKey, TValue>::Read(weak_ptr<WritableDump> dump, uint64_t offset)
 {
     auto dumpRef = dump.lock();
     auto &stream = *(dumpRef->stream);
@@ -16,7 +17,7 @@ unique_ptr<IndexNode<TKey, TValue>> IndexNode<TKey, TValue>::Read(weak_ptr<Writa
 
     char byte;
     stream.read(&byte, 1);
-    if (byte == (char)NodeKind::LeafNode)
+    if (byte == (char)DumpObjectKind::IndexLeafNode)
     {
         auto result = IndexLeafNode<TKey, TValue>::Read(dump, stream);
         result->savedOffset = offset;

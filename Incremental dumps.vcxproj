@@ -67,7 +67,7 @@
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
     </ClCompile>
     <Link>
@@ -84,6 +84,8 @@
     <ClCompile Include="DumpObjects\DumpTraits.cpp" />
     <ClCompile Include="DumpObjects\FileHeader.cpp" />
     <ClInclude Include="DumpException.h" />
+    <ClInclude Include="DumpObjects\DumpObjectKind.h" />
+    <ClInclude Include="DumpObjects\DumpPage.h" />
     <ClInclude Include="Indexes\Index.h" />
     <ClInclude Include="Indexes\IndexLeafNode.tpp">
       <FileType>CppCode</FileType>
@@ -93,10 +95,12 @@
       <FileType>CppCode</FileType>
     </ClInclude>
     <ClInclude Include="Indexes\Index.tpp" />
+    <ClCompile Include="DumpObjects\DumpPage.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="DumpObjects\Offset.cpp" />
     <ClCompile Include="SpaceManager.cpp" />
-    <ClCompile Include="TestDumpWriter.cpp" />
+    <ClCompile Include="DumpWriters\TestDumpWriter.cpp" />
+    <ClCompile Include="DumpWriters\StubCurrentWriter.cpp" />
     <ClCompile Include="XmlPageProcessor.cpp" />
     <ClCompile Include="XmlRevisionProcessor.cpp" />
     <ClCompile Include="XmlUtils.cpp" />
@@ -110,13 +114,13 @@
     <ClInclude Include="Dump.h" />
     <ClInclude Include="DumpObjects\DumpObject.h" />
     <ClInclude Include="DumpObjects\DumpTraits.h" />
-    <ClInclude Include="DumpWriter.h" />
+    <ClInclude Include="DumpWriters\DumpWriter.h" />
     <ClInclude Include="DumpObjects\FileHeader.h" />
     <ClInclude Include="Indexes\IndexLeafNode.h" />
     <ClInclude Include="Indexes\IndexNode.h" />
     <ClInclude Include="DumpObjects\Offset.h" />
-    <ClInclude Include="DumpObjects\Page.h" />
-    <ClInclude Include="DumpObjects\Revision.h" />
+    <ClInclude Include="Objects\Page.h" />
+    <ClInclude Include="Objects\Revision.h" />
     <ClInclude Include="Indexes\Iterators\IndexIterator.h" />
     <ClInclude Include="Indexes\Iterators\IndexIterator.tpp" />
     <ClInclude Include="Indexes\Iterators\IndexLeafIterator.h" />
@@ -124,7 +128,8 @@
     <ClInclude Include="Indexes\Iterators\IndexNodeIterator.h" />
     <ClInclude Include="Indexes\Iterators\IndexNodeIterator.tpp" />
     <ClInclude Include="SpaceManager.h" />
-    <ClInclude Include="TestDumpWriter.h" />
+    <ClInclude Include="DumpWriters\TestDumpWriter.h" />
+    <ClInclude Include="DumpWriters\StubCurrentWriter.h" />
     <ClInclude Include="XmlPageProcessor.h" />
     <ClInclude Include="XmlRevisionProcessor.h" />
     <ClInclude Include="XmlUtils.h" />
