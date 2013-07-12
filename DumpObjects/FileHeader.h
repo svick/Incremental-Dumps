@@ -27,6 +27,7 @@ public:
 
     Offset FileEnd;
     Offset PageIdIndexRoot;
+    Offset RevisionIdIndexRoot;
     Offset FreeSpaceIndexRoot;
 
     FileHeader(weak_ptr<WritableDump> dump = weak_ptr<WritableDump>());

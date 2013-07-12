@@ -10,8 +10,10 @@ template<typename TKey, typename TValue>
 TValue IndexLeafNode<TKey, TValue>::Get(TKey key)
 {
     auto found = map.find(key);
+
     if (found == map.end())
         return TValue();
+
     return found->second;
 }
 
@@ -25,7 +27,6 @@ void IndexLeafNode<TKey, TValue>::Add(TKey key, TValue value)
     }
 
     map.insert(pair<TKey, TValue>(key, value));
-    Write();
 }
 
 template<typename TKey, typename TValue>
@@ -46,7 +47,6 @@ template<typename TKey, typename TValue>
 void IndexLeafNode<TKey, TValue>::Remove(const TKey key)
 {
     map.erase(key);
-    Write();
 }
 
 template<typename TKey, typename TValue>
@@ -60,7 +60,9 @@ unique_ptr<IndexNode<TKey, TValue>> IndexLeafNode<TKey, TValue>::Read(weak_ptr<W
 {
     auto node = new IndexLeafNode<TKey, TValue>(dump);
 
-    uint8_t count = DumpTraits<uint8_t>::Read(stream);
+    // DumpObjectKind is assumed to be already read by IndexNode::Read
+
+    uint16_t count = DumpTraits<uint16_t>::Read(stream);
 
     vector<TKey> keys;
 
@@ -81,7 +83,7 @@ template<typename TKey, typename TValue>
 void IndexLeafNode<TKey, TValue>::WriteInternal()
 {
     WriteValue((uint8_t)DumpObjectKind::IndexLeafNode);
-    WriteValue((uint8_t)map.size());
+    WriteValue((uint16_t)map.size());
 
 	for (auto pair : map)
     {
@@ -97,7 +99,8 @@ void IndexLeafNode<TKey, TValue>::WriteInternal()
 template<typename TKey, typename TValue>
 uint32_t IndexLeafNode<TKey, TValue>::NewLength() const
 {
-    return 2 * DumpTraits<uint8_t>::DumpSize()
+    return DumpTraits<uint8_t>::DumpSize((uint8_t)DumpObjectKind::IndexLeafNode)
+        + DumpTraits<uint16_t>::DumpSize(map.size())
         + Size * (DumpTraits<TKey>::DumpSize() + DumpTraits<TValue>::DumpSize());
 }
 

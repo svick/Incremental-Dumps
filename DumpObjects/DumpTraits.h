@@ -1,16 +1,20 @@
 #pragma once
 
 #include <cstdint>
+#include <limits>
 #include <memory>
 #include <string>
 #include <iostream>
+#include <vector>
 #include "../DumpException.h"
 
 using std::uint32_t;
+using std::numeric_limits;
 using std::unique_ptr;
 using std::string;
 using std::istream;
 using std::ostream;
+using std::vector;
 
 template<typename T>
 class DumpTraits
@@ -47,6 +51,7 @@ public:
 
         stream.read(bytes, 4);
 
+        // TODO: use loop and make generic
         uint32_t result = 0;
         result |= (uint32_t)(uint8_t)bytes[0];
         result |= (uint32_t)(uint8_t)bytes[1] << 8;
@@ -149,7 +154,19 @@ public:
         auto length = value.length();
 
         if (length > 255)
-            throw DumpException();
+        {
+            // invalid UTF-8 at the end of a string is represented as U+FFFD
+            // this can get string over 255 bytes, so that character needs to be removed
+
+            string replacementChar = "\xEF\xBF\xBD"; // UTF-8 encoded U+FFFD REPLACEMENT CHARACTER
+            if (value.substr(value.length() - 3) == replacementChar)
+            {
+                string fixedValue = value.substr(0, value.length() - 3);
+                Write(stream, fixedValue);
+            }
+            else
+                throw DumpException();
+        }
 
         DumpTraits<uint8_t>::Write(stream, length);
 
@@ -159,5 +176,51 @@ public:
     static uint32_t DumpSize(const string value)
     {
         return DumpTraits<uint8_t>::DumpSize(value.length()) + value.length();
+    }
+};
+
+template<typename T>
+class DumpTraits<vector<T>>
+{
+public:
+    static vector<T> Read(istream &stream)
+    {
+        uint16_t count = DumpTraits<uint16_t>::Read(stream);
+
+        vector<T> result;
+
+        for (int i = 0; i < count; i++)
+        {
+            result.push_back(DumpTraits<T>::Read(stream));
+        }
+
+        return result;
+    }
+
+    static void Write(ostream &stream, const vector<T> value)
+    {
+        auto length = value.size();
+
+        if (length > numeric_limits<uint16_t>::max())
+            throw DumpException();
+
+        DumpTraits<uint16_t>::Write(stream, length);
+
+        for (T item : value)
+        {
+            DumpTraits<T>::Write(stream, item);
+        }
+    }
+
+    static uint32_t DumpSize(const vector<T> value)
+    {
+        uint32_t size = DumpTraits<uint16_t>::DumpSize(value.size());
+
+        for (T item : value)
+        {
+            size += DumpTraits<T>::DumpSize(item);
+        }
+
+        return size;
     }
 };

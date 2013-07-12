@@ -34,6 +34,7 @@ Page DumpPage::Read(shared_ptr<WritableDump> dump, Offset offset)
     page.Namespace = DumpTraits<uint16_t>::Read(stream);
     page.Title = DumpTraits<string>::Read(stream);
     page.RedirectTarget = DumpTraits<string>::Read(stream);
+    page.RevisionIds = DumpTraits<vector<uint32_t>>::Read(stream);
 
     return page;
 }
@@ -45,18 +46,24 @@ void DumpPage::WriteInternal()
     WriteValue(page.Namespace);
     WriteValue(page.Title);
     WriteValue(page.RedirectTarget);
+    WriteValue(page.RevisionIds);
 }
 
-void DumpPage::UpdateIndex(Offset offset)
+void DumpPage::UpdateIndex(Offset offset, bool overwrite)
 {
     auto dumpRef = dump.lock();
-    dumpRef->pageIdIndex->AddOrUpdate(page.PageId, offset);
+
+    if (overwrite)
+        dumpRef->pageIdIndex->AddOrUpdate(page.PageId, offset);
+    else
+        dumpRef->pageIdIndex->Add(page.PageId, offset);
 }
 
 uint32_t DumpPage::NewLength() const
 {
     return ValueSize((uint8_t)DumpObjectKind::Page) + ValueSize(page.PageId)
-        + ValueSize(page.Namespace) + ValueSize(page.Title) + ValueSize(page.RedirectTarget);
+        + ValueSize(page.Namespace) + ValueSize(page.Title) + ValueSize(page.RedirectTarget)
+        + ValueSize(page.RevisionIds);
 }
 
 DumpPage::DumpPage(weak_ptr<WritableDump> dump, uint32_t pageId)

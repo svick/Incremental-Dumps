@@ -27,6 +27,7 @@ public:
     // TODO: others should not be able to steal this stream
     unique_ptr<iostream> stream;
     unique_ptr<Index<uint32_t, Offset>> pageIdIndex;
+    unique_ptr<Index<uint32_t, Offset>> revisionIdIndex;
 
     ReadableDump(string fileName);
 
@@ -45,4 +46,7 @@ public:
 
     FileHeader fileHeader;
     unique_ptr<SpaceManager> spaceManager;
+
+    // it's necessary to call this after writing is finished
+    void WriteIndexes();
 };

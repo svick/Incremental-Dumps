@@ -12,12 +12,12 @@ private:
     void Load(uint32_t pageId);
     static Page Read(shared_ptr<WritableDump> dump, Offset offset);
 protected:
-    virtual void WriteInternal();
-    virtual void UpdateIndex(Offset offset);
+    virtual void WriteInternal() override;
+    virtual void UpdateIndex(Offset offset, bool overwrite) override;
 public:
     Page page;
 
     DumpPage(weak_ptr<WritableDump> dump, uint32_t pageId);
 
-    virtual uint32_t NewLength() const;
+    virtual uint32_t NewLength() const override;
 };

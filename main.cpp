@@ -45,10 +45,5 @@ int main(int argc, const char* argv[])
 
     input.Process(handlers, &writer);
 
-    /*shared_ptr<WritableDump> dump = WritableDump::Create("tmp/test.id");
-
-    auto offset = dump->spaceManager->GetSpace(102);
-    dump->spaceManager->Delete(offset, 102);
-
-    dump->pageIdIndex->Add(1, 2);*/
+    dump->WriteIndexes();
 }

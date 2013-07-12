@@ -1,21 +1,24 @@
 #include "XmlRevisionProcessor.h"
 #include "XmlPageProcessor.h"
+#include "XmlContributorProcessor.h"
 #include "XmlUtils.h"
-
-int XmlRevisionProcessor::revisionIndex = 0;
-
-void XmlRevisionProcessor::textHandler(XML::Element &elem, void *userData)
-{
-    ((Revision*)userData)->Text = readElementData(elem);
-}
+#include "Objects/Timestamp.h"
 
 void XmlRevisionProcessor::Handler(XML::Element &elem, void *userData)
 {
-    if (revisionIndex++ >= 5)
-        return;
-
     XML::Handler handlers[] = {
-        XML::Handler("text", textHandler),
+        XML::Handler("id", [](XML::Element &elem, void *userData) { ((Revision*)userData)->RevisionId = stoi(readElementData(elem)); }),
+        XML::Handler("parentid", [](XML::Element &elem, void *userData) { ((Revision*)userData)->ParentId = stoi(readElementData(elem)); }),
+
+        XML::Handler("timestamp", [](XML::Element &elem, void *userData) { ((Revision*)userData)->Timestamp = Timestamp(readElementData(elem)).ToInteger(); }),
+
+        XML::Handler("contributor", XmlContributorProcessor::Handler),
+
+        XML::Handler("minor", [](XML::Element &elem, void *userData) { ((Revision*)userData)->Flags |= RevisionFlags::Minor; }),
+
+        XML::Handler("comment", [](XML::Element &elem, void *userData) { ((Revision*)userData)->Comment = readElementData(elem); }),
+        XML::Handler("text", [](XML::Element &elem, void *userData) { ((Revision*)userData)->Text = readElementData(elem); }),
+
         XML::Handler::END
     };
 

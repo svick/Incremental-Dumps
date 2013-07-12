@@ -61,6 +61,8 @@ void WritableDump::init(weak_ptr<WritableDump> self)
 
     pageIdIndex = unique_ptr<Index<uint32_t, Offset>>(
         new Index<uint32_t, Offset>(self, shared_ptr<Offset>(self.lock(), &fileHeader.PageIdIndexRoot)));
+    revisionIdIndex = unique_ptr<Index<uint32_t, Offset>>(
+        new Index<uint32_t, Offset>(self, shared_ptr<Offset>(self.lock(), &fileHeader.RevisionIdIndexRoot)));
 }
 
 shared_ptr<WritableDump> WritableDump::Create(string fileName)
@@ -68,4 +70,12 @@ shared_ptr<WritableDump> WritableDump::Create(string fileName)
     shared_ptr<WritableDump> dump(new WritableDump(fileName));
     dump->init(dump);
     return dump;
+}
+
+void WritableDump::WriteIndexes()
+{
+    spaceManager->spaceIndex.Write();
+
+    pageIdIndex->Write();
+    revisionIdIndex->Write();
 }

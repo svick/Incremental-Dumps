@@ -44,6 +44,8 @@ void Index<TKey, TValue>::Add(TKey key, TValue value)
 
     if (fileHeaderZero)
     {
+        rootNode->Write();
+
         fileHeaderOffset.lock()->value = rootNode->SavedOffset();
         dump.lock()->fileHeader.Write();
 
@@ -58,6 +60,8 @@ void Index<TKey, TValue>::AddOrUpdate(TKey key, TValue value)
 
     if (fileHeaderZero)
     {
+        rootNode->Write();
+
         fileHeaderOffset.lock()->value = rootNode->SavedOffset();
         dump.lock()->fileHeader.Write();
 
@@ -81,4 +85,10 @@ template<typename TKey, typename TValue>
 IndexIterator<TKey, TValue> Index<TKey, TValue>::end() const
 {
     return IndexIterator<TKey, TValue>(rootNode->end());
+}
+
+template<typename TKey, typename TValue>
+void Index<TKey, TValue>::Write()
+{
+    rootNode->Write();
 }

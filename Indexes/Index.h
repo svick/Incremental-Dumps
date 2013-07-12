@@ -26,6 +26,8 @@ public:
 
     IndexIterator<TKey, TValue> begin() const;
     IndexIterator<TKey, TValue> end() const;
+
+    void Write();
 };
 
 #include "Index.tpp"

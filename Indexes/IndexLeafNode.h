@@ -9,7 +9,7 @@ template<typename TKey, typename TValue>
 class IndexLeafNode : public IndexNode<TKey, TValue>
 {
 private:
-    static const int Size = 255;
+    static const int Size = 0xFFFF;
 
     map<TKey, TValue> map;
 protected:

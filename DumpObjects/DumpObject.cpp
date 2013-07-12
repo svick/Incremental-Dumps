@@ -31,13 +31,15 @@ void DumpObject::Write()
 
     stream = nullptr;
 
+    bool overwriteIndex = savedOffset != 0;
+
     savedOffset = newOffset;
     savedLength = newLength;
 
-    UpdateIndex(newOffset);
+    UpdateIndex(newOffset, overwriteIndex);
 }
 
-void DumpObject::UpdateIndex(Offset offset)
+void DumpObject::UpdateIndex(Offset offset, bool overwrite)
 {}
 
 uint64_t DumpObject::SavedOffset() const

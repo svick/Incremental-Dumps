@@ -16,10 +16,6 @@ private:
 
     XmlPageProcessor(const shared_ptr<Page> page, DumpWriter* dumpWriter);
 
-    static void titleHandler(XML::Element &elem, void *userData);
-    static void nsHandler(XML::Element &elem, void *userData);
-    static void idHandler(XML::Element &elem, void *userData);
-    static void redirectHandler(XML::Element &elem, void *userData);
     void writePage();
     void completePage();
 public:
