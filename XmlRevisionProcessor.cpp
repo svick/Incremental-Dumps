@@ -10,7 +10,7 @@ void XmlRevisionProcessor::Handler(XML::Element &elem, void *userData)
         XML::Handler("id", [](XML::Element &elem, void *userData) { ((Revision*)userData)->RevisionId = stoi(readElementData(elem)); }),
         XML::Handler("parentid", [](XML::Element &elem, void *userData) { ((Revision*)userData)->ParentId = stoi(readElementData(elem)); }),
 
-        XML::Handler("timestamp", [](XML::Element &elem, void *userData) { ((Revision*)userData)->Timestamp = Timestamp(readElementData(elem)).ToInteger(); }),
+        XML::Handler("timestamp", [](XML::Element &elem, void *userData) { ((Revision*)userData)->DateTime = Timestamp(readElementData(elem)).ToInteger(); }),
 
         XML::Handler("contributor", XmlContributorProcessor::Handler),
 

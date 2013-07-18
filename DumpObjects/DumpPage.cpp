@@ -1,5 +1,6 @@
 #include "DumpPage.h"
 #include "DumpObjectKind.h"
+#include "../Indexes/Index.h"
 
 void DumpPage::Load(uint32_t pageId)
 {

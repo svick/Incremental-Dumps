@@ -1,6 +1,7 @@
 #include "DumpRevision.h"
 #include "DumpObjectKind.h"
 #include "DumpUser.h"
+#include "../Indexes/Index.h"
 
 void DumpRevision::Load(uint32_t revisionId)
 {
@@ -34,7 +35,7 @@ Revision DumpRevision::Read(shared_ptr<WritableDump> dump, Offset offset)
     revision.RevisionId = DumpTraits<uint32_t>::Read(stream);
     revision.Flags = (RevisionFlags)DumpTraits<uint8_t>::Read(stream);
     revision.ParentId = DumpTraits<uint32_t>::Read(stream);
-    revision.Timestamp = DumpTraits<uint32_t>::Read(stream);
+    revision.DateTime = DumpTraits<uint32_t>::Read(stream);
     revision.Contributor = DumpUser::Read(revision.Flags, stream)->GetUser();
     revision.Comment = DumpTraits<string>::Read(stream);
     revision.Text = DumpTraits<string>::Read(stream);
@@ -50,7 +51,7 @@ void DumpRevision::WriteInternal()
     WriteValue(revision.RevisionId);
     WriteValue((uint8_t)revision.Flags);
     WriteValue(revision.ParentId);
-    WriteValue(revision.Timestamp.ToInteger());
+    WriteValue(revision.DateTime.ToInteger());
     user->Write(stream);
     WriteValue(revision.Comment);
     if (withText)
@@ -77,7 +78,7 @@ uint32_t DumpRevision::NewLength() const
         + ValueSize(revision.RevisionId)
         + ValueSize((uint8_t)revision.Flags)
         + ValueSize(revision.ParentId)
-        + ValueSize(revision.Timestamp.ToInteger())
+        + ValueSize(revision.DateTime.ToInteger())
         + user->NewLength()
         + ValueSize(revision.Comment)
         + ValueSize(withText ? revision.Text : string());

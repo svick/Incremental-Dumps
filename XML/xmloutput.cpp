@@ -26,6 +26,7 @@
 #include "xmloutput.h"
 #include <stdio.h>
 #include <assert.h>
+#include <string.h>
 
 XML_BEGIN_NAMESPACE
 

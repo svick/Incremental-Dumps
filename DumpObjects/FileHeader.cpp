@@ -1,3 +1,4 @@
+#include <cstring>
 #include "FileHeader.h"
 #include "../Dump.h"
 #include "../DumpException.h"

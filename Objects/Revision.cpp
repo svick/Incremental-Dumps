@@ -17,5 +17,5 @@ bool HasFlag(RevisionFlags value, RevisionFlags flag)
 }
 
 Revision::Revision()
-    : Flags(), RevisionId(), ParentId(), Timestamp(), Contributor(), Comment(), Text()
+    : Flags(), RevisionId(), ParentId(), DateTime(), Contributor(), Comment(), Text()
 {}

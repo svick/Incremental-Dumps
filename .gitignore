@@ -5,3 +5,7 @@
 *.vcxproj.user
 /Debug/
 /Release/
+/CMakeCache.txt
+/CMakeFiles/
+/Makefile
+*.cmake

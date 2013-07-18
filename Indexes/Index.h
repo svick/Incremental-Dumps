@@ -1,7 +1,7 @@
 #pragma once
 
 #include <utility>
-#include "DumpObjects/Offset.h"
+#include "../DumpObjects/Offset.h"
 #include "Iterators/IndexIterator.h"
 #include "IndexNode.h"
 

@@ -1,5 +1,6 @@
 #include "DumpObject.h"
 #include "../Dump.h"
+#include "../SpaceManager.h"
 
 DumpObject::DumpObject(weak_ptr<WritableDump> dump)
     : dump(dump), savedOffset(0), savedLength(0)

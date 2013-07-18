@@ -13,7 +13,7 @@ using std::input_iterator_tag;
 template<typename TKey, typename TValue>
 class IndexIterator : public iterator<input_iterator_tag, const pair<TKey, TValue>, int32_t>
 {
-    template<typename TKey, typename TValue>
+    template<typename TIndexKey, typename TIndexValue>
     friend class Index;
 private:
     shared_ptr<IndexNodeIterator<TKey, TValue>> nodeIterator;

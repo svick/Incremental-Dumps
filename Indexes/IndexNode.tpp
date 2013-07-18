@@ -1,6 +1,7 @@
 #include "IndexNode.h"
 #include "IndexLeafNode.h"
 #include "../DumpException.h"
+#include "../Dump.h"
 #include "../DumpObjects/DumpObjectKind.h"
 
 template<typename TKey, typename TValue>

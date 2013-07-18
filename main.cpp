@@ -5,6 +5,7 @@
 #include "XmlPageProcessor.h"
 #include "Dump.h"
 #include "DumpObjects/DumpRevision.h"
+#include "Indexes/Index.h"
 
 using std::cin;
 using std::cout;
@@ -79,7 +80,7 @@ void readDump(string dumpFileName)
         {
             auto revision = DumpRevision(dump, revisionId, false).revision;
 
-            cout << " " << revision.RevisionId << " (<- " << revision.ParentId << ") " << revision.Timestamp.ToString() << " " << revision.Contributor->UserName << "\n";
+            cout << " " << revision.RevisionId << " (<- " << revision.ParentId << ") " << revision.DateTime.ToString() << " " << revision.Contributor->UserName << "\n";
             cout << "  " << revision.Comment << "\n";
 
             if (++j >= 5)

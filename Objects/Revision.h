@@ -30,7 +30,7 @@ public:
     RevisionFlags Flags;
     uint32_t RevisionId;
     uint32_t ParentId;
-    Timestamp Timestamp;
+    Timestamp DateTime;
     shared_ptr<User> Contributor;
     string Comment;
     string Text;

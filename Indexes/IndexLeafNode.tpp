@@ -1,6 +1,7 @@
 #include <utility>
 #include <vector>
 #include "../DumpObjects/DumpTraits.h"
+#include "../DumpObjects/DumpObjectKind.h"
 #include "Iterators/IndexLeafIterator.h"
 
 using std::pair;
@@ -9,9 +10,9 @@ using std::vector;
 template<typename TKey, typename TValue>
 TValue IndexLeafNode<TKey, TValue>::Get(TKey key)
 {
-    auto found = map.find(key);
+    auto found = indexMap.find(key);
 
-    if (found == map.end())
+    if (found == indexMap.end())
         return TValue();
 
     return found->second;
@@ -20,20 +21,20 @@ TValue IndexLeafNode<TKey, TValue>::Get(TKey key)
 template<typename TKey, typename TValue>
 void IndexLeafNode<TKey, TValue>::Add(TKey key, TValue value)
 {
-    if (map.size() >= Size)
+    if (indexMap.size() >= Size)
     {
         // TODO
         throw new DumpException();
     }
 
-    map.insert(pair<TKey, TValue>(key, value));
+    indexMap.insert(pair<TKey, TValue>(key, value));
 }
 
 template<typename TKey, typename TValue>
 void IndexLeafNode<TKey, TValue>::AddOrUpdate(TKey key, TValue value)
 {
-    auto pos = map.find(key);
-    if (pos == map.end())
+    auto pos = indexMap.find(key);
+    if (pos == indexMap.end())
     {
         Add(key, value);
     }
@@ -46,12 +47,12 @@ void IndexLeafNode<TKey, TValue>::AddOrUpdate(TKey key, TValue value)
 template<typename TKey, typename TValue>
 void IndexLeafNode<TKey, TValue>::Remove(const TKey key)
 {
-    map.erase(key);
+    indexMap.erase(key);
 }
 
 template<typename TKey, typename TValue>
 IndexLeafNode<TKey, TValue>::IndexLeafNode(weak_ptr<WritableDump> dump)
-    : IndexNode(dump)
+    : IndexNode<TKey, TValue>(dump)
 {
 }
 
@@ -73,7 +74,7 @@ unique_ptr<IndexNode<TKey, TValue>> IndexLeafNode<TKey, TValue>::Read(weak_ptr<W
 
     for (int i = 0; i < count; i++)
     {
-        node->map.insert(pair<TKey, TValue>(keys[i], DumpTraits<TValue>::Read(stream)));
+        node->indexMap.insert(pair<TKey, TValue>(keys[i], DumpTraits<TValue>::Read(stream)));
     }
 
     return unique_ptr<IndexNode<TKey, TValue>>(node);
@@ -83,14 +84,14 @@ template<typename TKey, typename TValue>
 void IndexLeafNode<TKey, TValue>::WriteInternal()
 {
     WriteValue((uint8_t)DumpObjectKind::IndexLeafNode);
-    WriteValue((uint16_t)map.size());
+    WriteValue((uint16_t)indexMap.size());
 
-	for (auto pair : map)
+	for (auto pair : indexMap)
     {
 		WriteValue(pair.first);
     }
 
-	for (auto pair : map)
+	for (auto pair : indexMap)
     {
 		WriteValue(pair.second);
     }
@@ -100,18 +101,18 @@ template<typename TKey, typename TValue>
 uint32_t IndexLeafNode<TKey, TValue>::NewLength() const
 {
     return DumpTraits<uint8_t>::DumpSize((uint8_t)DumpObjectKind::IndexLeafNode)
-        + DumpTraits<uint16_t>::DumpSize(map.size())
+        + DumpTraits<uint16_t>::DumpSize(indexMap.size())
         + Size * (DumpTraits<TKey>::DumpSize() + DumpTraits<TValue>::DumpSize());
 }
 
 template<typename TKey, typename TValue>
 shared_ptr<IndexNodeIterator<TKey, TValue>> IndexLeafNode<TKey, TValue>::begin() const
 {
-    return shared_ptr<IndexNodeIterator<TKey, TValue>>(new IndexLeafIterator<TKey, TValue>(map.begin()));
+    return shared_ptr<IndexNodeIterator<TKey, TValue>>(new IndexLeafIterator<TKey, TValue>(indexMap.begin()));
 }
 
 template<typename TKey, typename TValue>
 shared_ptr<IndexNodeIterator<TKey, TValue>> IndexLeafNode<TKey, TValue>::end() const
 {
-    return shared_ptr<IndexNodeIterator<TKey, TValue>>(new IndexLeafIterator<TKey, TValue>(map.end()));
+    return shared_ptr<IndexNodeIterator<TKey, TValue>>(new IndexLeafIterator<TKey, TValue>(indexMap.end()));
 }

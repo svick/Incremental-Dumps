@@ -5,8 +5,6 @@
 #include <string>
 #include <iostream>
 #include "DumpObjects/FileHeader.h"
-#include "Indexes/Index.h"
-#include "SpaceManager.h"
 
 using std::int32_t;
 using std::int64_t;
@@ -16,6 +14,11 @@ using std::string;
 using std::iostream;
 
 class WritableDump;
+
+template<typename TKey, typename TValue>
+class Index;
+
+class SpaceManager;
 
 class ReadableDump
 {

@@ -11,16 +11,16 @@ class IndexLeafIterator : public IndexNodeIterator<TKey, TValue>
 {
     typedef typename map<TKey, TValue>::const_iterator MapIterator;
 
-    template<typename TKey, typename TValue>
+    template<typename TIndexKey, typename TIndexValue>
     friend class IndexLeafNode;
 private:
     MapIterator mapIterator;
 
     IndexLeafIterator(MapIterator mapIterator);
 public:
-    virtual const pair<TKey, TValue> operator *() const;
-    virtual IndexLeafIterator& operator ++();
-    virtual bool equals(const IndexNodeIterator *other) const;
+    virtual const pair<TKey, TValue> operator *() const override;
+    virtual IndexLeafIterator& operator ++() override;
+    virtual bool equals(const IndexNodeIterator<TKey, TValue> *other) const override;
 };
 
 #include "IndexLeafIterator.tpp"

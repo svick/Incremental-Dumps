@@ -2,6 +2,7 @@
 #include <string>
 #include <fstream>
 #include "Dump.h"
+#include "SpaceManager.h"
 
 using std::move;
 using std::unique_ptr;

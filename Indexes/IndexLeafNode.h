@@ -11,15 +11,17 @@ class IndexLeafNode : public IndexNode<TKey, TValue>
 private:
     static const int Size = 0xFFFF;
 
-    map<TKey, TValue> map;
+    map<TKey, TValue> indexMap;
 protected:
     virtual void WriteInternal();
 public:
-    static unique_ptr<IndexNode> Read(weak_ptr<WritableDump> dump, istream &stream);
+    static unique_ptr<IndexNode<TKey, TValue>> Read(weak_ptr<WritableDump> dump, istream &stream);
 
     IndexLeafNode(weak_ptr<WritableDump> dump);
 
     using DumpObject::Write;
+    using DumpObjectBase::WriteValue;
+
     virtual uint32_t NewLength() const;
 
     virtual TValue Get(TKey key);
