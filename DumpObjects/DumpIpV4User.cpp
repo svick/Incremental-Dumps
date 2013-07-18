@@ -25,8 +25,3 @@ uint32_t DumpIpV4User::NewLength() const
 {
     return ValueSize(user->Address);
 }
-
-RevisionFlags DumpIpV4User::UserKind() const
-{
-    return RevisionFlags::IpV4User;
-}

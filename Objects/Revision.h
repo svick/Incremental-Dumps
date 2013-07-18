@@ -14,8 +14,8 @@ enum class RevisionFlags : uint8_t
 
     Minor     = 0x01,
 
-    NamedUser = 0x11,
-    IpV4User  = 0x12
+    NamedUser = 0x10,
+    IpV4User  = 0x20
 };
 
 RevisionFlags operator |(RevisionFlags first, RevisionFlags second);

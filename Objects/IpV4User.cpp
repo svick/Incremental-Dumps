@@ -2,6 +2,7 @@
 #include <sstream>
 #include "../StringHelpers.h"
 #include "../DumpException.h"
+#include "Revision.h"
 
 using std::stoi;
 using std::ostringstream;
@@ -59,3 +60,8 @@ IpV4User::IpV4User(string stringAddress, uint32_t parsedAddress)
 IpV4User::IpV4User(uint32_t parsedAddress)
     : User(0, AddressToString(parsedAddress)), Address(parsedAddress)
 {}
+
+RevisionFlags IpV4User::UserKind() const
+{
+    return RevisionFlags::IpV4User;
+}

@@ -15,5 +15,4 @@ public:
 
     virtual shared_ptr<User> GetUser() const override;
     virtual uint32_t NewLength() const override;
-    virtual RevisionFlags UserKind() const override;
 };

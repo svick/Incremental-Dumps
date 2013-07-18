@@ -18,6 +18,7 @@ public:
     Page page;
 
     DumpPage(weak_ptr<WritableDump> dump, uint32_t pageId);
+    DumpPage(weak_ptr<WritableDump> dump, Offset offset);
 
     virtual uint32_t NewLength() const override;
 };

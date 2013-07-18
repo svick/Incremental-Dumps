@@ -13,4 +13,6 @@ public:
     IpV4User(uint32_t parsedAddress);
 
     uint32_t Address;
+
+    virtual RevisionFlags UserKind() const override;
 };

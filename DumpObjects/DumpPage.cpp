@@ -71,3 +71,13 @@ DumpPage::DumpPage(weak_ptr<WritableDump> dump, uint32_t pageId)
 {
     Load(pageId);
 }
+
+DumpPage::DumpPage(weak_ptr<WritableDump> dump, Offset offset)
+    : DumpObject(dump), page()
+{
+    auto dumpRef = dump.lock();
+
+    page = Read(dumpRef, offset);
+    savedOffset = offset.value;
+    savedLength = NewLength();
+}

@@ -28,4 +28,5 @@ void XmlContributorProcessor::Handler(XML::Element &elem, void *userData)
         user = new User(processor.id, processor.userName);
 
     revision->Contributor = shared_ptr<User>(user);
+    revision->Flags |= user->UserKind();
 }

@@ -2,8 +2,8 @@
 #include "../Dump.h"
 #include "../DumpException.h"
 
-FileHeader::FileHeader(Offset fileEnd, Offset pageIdIndexRoot, Offset freeSpaceIndexRoot, weak_ptr<WritableDump> dump)
-    : DumpObject(dump), FileEnd(fileEnd), PageIdIndexRoot(pageIdIndexRoot), FreeSpaceIndexRoot(freeSpaceIndexRoot)
+FileHeader::FileHeader(Offset fileEnd, Offset pageIdIndexRoot, Offset revisionIdIndexRoot, Offset freeSpaceIndexRoot, weak_ptr<WritableDump> dump)
+    : DumpObject(dump), FileEnd(fileEnd), PageIdIndexRoot(pageIdIndexRoot), RevisionIdIndexRoot(revisionIdIndexRoot), FreeSpaceIndexRoot(freeSpaceIndexRoot)
 {}
 
 void FileHeader::WriteInternal()
@@ -14,6 +14,7 @@ void FileHeader::WriteInternal()
 
     FileEnd.Write(*stream);
     PageIdIndexRoot.Write(*stream);
+    RevisionIdIndexRoot.Write(*stream);
     FreeSpaceIndexRoot.Write(*stream);
 }
 
@@ -40,16 +41,22 @@ FileHeader FileHeader::Read(ReadableDump const &dump)
 
     Offset fileEnd = Offset::Read(stream);
     Offset pageIdIndexRoot = Offset::Read(stream);
+    Offset revisionIdIndexRoot = Offset::Read(stream);
     Offset freeSpaceIndexRoot = Offset::Read(stream);
 
-    return FileHeader(fileEnd, pageIdIndexRoot, freeSpaceIndexRoot, dump.GetSelf());
+    return FileHeader(fileEnd, pageIdIndexRoot, revisionIdIndexRoot, freeSpaceIndexRoot, dump.GetSelf());
+}
+
+uint32_t FileHeader::Length()
+{
+    return 4 + 2 * DumpTraits<uint8_t>::DumpSize() + 4 * DumpTraits<Offset>::DumpSize();
 }
 
 uint32_t FileHeader::NewLength() const
 {
-    return 4 + 2 * DumpTraits<uint8_t>::DumpSize() + 3 * DumpTraits<Offset>::DumpSize();
+    return Length();
 }
 
 FileHeader::FileHeader(weak_ptr<WritableDump> dump)
-    : DumpObject(dump), FileEnd(6 + 3 * 6), PageIdIndexRoot(0), FreeSpaceIndexRoot(0)
+    : DumpObject(dump), FileEnd(Length()), PageIdIndexRoot(0), FreeSpaceIndexRoot(0)
 {}

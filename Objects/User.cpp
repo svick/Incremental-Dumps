@@ -1,5 +1,6 @@
 #include "User.h"
 #include "IpV4User.h"
+#include "Revision.h"
 
 unique_ptr<User> User::Create(uint32_t userId, string userName)
 {
@@ -16,6 +17,11 @@ unique_ptr<User> User::Create(uint32_t userId, string userName)
 User::User(uint32_t userId, string userName)
     : UserId(userId), UserName(userName)
 {}
+
+RevisionFlags User::UserKind() const
+{
+    return RevisionFlags::NamedUser;
+}
 
 User::~User()
 {}

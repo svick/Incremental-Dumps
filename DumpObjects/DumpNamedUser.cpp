@@ -27,8 +27,3 @@ uint32_t DumpNamedUser::NewLength() const
 {
     return ValueSize(user->UserId) + ValueSize(user->UserName);
 }
-
-RevisionFlags DumpNamedUser::UserKind() const
-{
-    return RevisionFlags::NamedUser;
-}

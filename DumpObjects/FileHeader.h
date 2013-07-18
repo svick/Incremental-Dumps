@@ -11,9 +11,11 @@ using std::istream;
 class FileHeader : public DumpObject
 {
 private:
+    static uint32_t Length();
+
     ostream* stream;
 
-    FileHeader(Offset fileEnd, Offset pageIdIndexRoot, Offset freeSpaceIndexRoot, weak_ptr<WritableDump> dump = weak_ptr<WritableDump>());
+    FileHeader(Offset fileEnd, Offset pageIdIndexRoot, Offset revisionIdIndexRoot, Offset freeSpaceIndexRoot, weak_ptr<WritableDump> dump = weak_ptr<WritableDump>());
 protected:
     void WriteInternal();
 public:
