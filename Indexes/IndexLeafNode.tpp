@@ -98,7 +98,7 @@ void IndexLeafNode<TKey, TValue>::WriteInternal()
 }
 
 template<typename TKey, typename TValue>
-uint32_t IndexLeafNode<TKey, TValue>::NewLength() const
+uint32_t IndexLeafNode<TKey, TValue>::NewLength()
 {
     return DumpTraits<uint8_t>::DumpSize((uint8_t)DumpObjectKind::IndexLeafNode)
         + DumpTraits<uint16_t>::DumpSize(indexMap.size())

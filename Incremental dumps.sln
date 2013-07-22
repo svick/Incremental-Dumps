@@ -3,6 +3,8 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2012
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Incremental dumps", "Incremental dumps.vcxproj", "{23A8AB1D-BD90-49CF-BA2A-12828DD954C0}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "LzmaCon", "LZMA\CPP\7zip\Bundles\LzmaCon\LzmaCon.vcxproj", "{5F0FC7A8-1C0C-403A-BCAE-1CC0ED546A44}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -13,6 +15,10 @@ Global
 		{23A8AB1D-BD90-49CF-BA2A-12828DD954C0}.Debug|Win32.Build.0 = Debug|Win32
 		{23A8AB1D-BD90-49CF-BA2A-12828DD954C0}.Release|Win32.ActiveCfg = Release|Win32
 		{23A8AB1D-BD90-49CF-BA2A-12828DD954C0}.Release|Win32.Build.0 = Release|Win32
+		{5F0FC7A8-1C0C-403A-BCAE-1CC0ED546A44}.Debug|Win32.ActiveCfg = Debug|Win32
+		{5F0FC7A8-1C0C-403A-BCAE-1CC0ED546A44}.Debug|Win32.Build.0 = Debug|Win32
+		{5F0FC7A8-1C0C-403A-BCAE-1CC0ED546A44}.Release|Win32.ActiveCfg = Release|Win32
+		{5F0FC7A8-1C0C-403A-BCAE-1CC0ED546A44}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

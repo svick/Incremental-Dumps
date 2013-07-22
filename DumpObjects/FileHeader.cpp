@@ -53,7 +53,7 @@ uint32_t FileHeader::Length()
     return 4 + 2 * DumpTraits<uint8_t>::DumpSize() + 4 * DumpTraits<Offset>::DumpSize();
 }
 
-uint32_t FileHeader::NewLength() const
+uint32_t FileHeader::NewLength()
 {
     return Length();
 }

@@ -20,5 +20,5 @@ public:
 
     void Write(ostream *stream);
     virtual shared_ptr<User> GetUser() const = 0;
-    virtual uint32_t NewLength() const override = 0;
+    virtual uint32_t NewLength() override = 0;
 };

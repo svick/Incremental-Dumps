@@ -45,6 +45,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
+    <TargetName>idumps</TargetName>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -84,7 +85,6 @@
     <ClCompile Include="DumpObjects\DumpIpV4User.cpp" />
     <ClCompile Include="DumpObjects\DumpNamedUser.cpp" />
     <ClCompile Include="DumpObjects\DumpObject.cpp" />
-    <ClCompile Include="DumpObjects\DumpTraits.cpp" />
     <ClCompile Include="DumpObjects\FileHeader.cpp" />
     <ClInclude Include="DumpException.h" />
     <ClInclude Include="DumpObjects\DumpIpV4User.h" />
@@ -93,6 +93,8 @@
     <ClInclude Include="DumpObjects\DumpPage.h" />
     <ClInclude Include="DumpObjects\DumpRevision.h" />
     <ClInclude Include="DumpObjects\DumpUser.h" />
+    <ClInclude Include="DumpWriters\PagesHistoryWriter.h" />
+    <ClInclude Include="DumpWriters\StubHistoryWriter.h" />
     <ClInclude Include="Indexes\Index.h" />
     <ClInclude Include="Indexes\IndexLeafNode.tpp">
       <FileType>CppCode</FileType>
@@ -105,11 +107,14 @@
     <ClCompile Include="DumpObjects\DumpPage.cpp" />
     <ClCompile Include="DumpObjects\DumpRevision.cpp" />
     <ClCompile Include="DumpObjects\DumpUser.cpp" />
+    <ClCompile Include="DumpWriters\PagesHistoryWriter.cpp" />
+    <ClCompile Include="DumpWriters\StubHistoryWriter.cpp" />
     <ClCompile Include="Objects\IpV4User.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="DumpObjects\Offset.cpp" />
     <ClCompile Include="Objects\Page.cpp" />
     <ClCompile Include="Objects\Revision.cpp" />
+    <ClCompile Include="SevenZip.cpp" />
     <ClCompile Include="SpaceManager.cpp" />
     <ClCompile Include="DumpWriters\TestDumpWriter.cpp" />
     <ClCompile Include="DumpWriters\StubCurrentWriter.cpp" />
@@ -144,6 +149,7 @@
     <ClInclude Include="Indexes\Iterators\IndexLeafIterator.tpp" />
     <ClInclude Include="Indexes\Iterators\IndexNodeIterator.h" />
     <ClInclude Include="Indexes\Iterators\IndexNodeIterator.tpp" />
+    <ClInclude Include="SevenZip.h" />
     <ClInclude Include="SpaceManager.h" />
     <ClInclude Include="DumpWriters\TestDumpWriter.h" />
     <ClInclude Include="DumpWriters\StubCurrentWriter.h" />
@@ -160,6 +166,11 @@
     <ClInclude Include="XML\xmlinputp.h" />
     <ClInclude Include="XML\xmloutput.h" />
     <ClInclude Include="XML\xmlstream.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="LZMA\CPP\7zip\Bundles\LzmaCon\LzmaCon.vcxproj">
+      <Project>{5f0fc7a8-1c0c-403a-bcae-1cc0ed546a44}</Project>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

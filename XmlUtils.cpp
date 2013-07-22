@@ -60,6 +60,9 @@ string unescape(string original)
 
 string readElementData(XML::Element &elem)
 {
+    if (elem.IsEmpty())
+        return string();
+
     ostringstream stream;
 
     const size_t BUFFER_SIZE = 256;

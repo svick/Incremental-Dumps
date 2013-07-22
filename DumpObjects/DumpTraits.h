@@ -16,6 +16,8 @@ using std::istream;
 using std::ostream;
 using std::vector;
 
+// TODO: add non-template wrapper with template methods, so that type inference can work?
+
 template<typename T>
 class DumpTraits
 {
@@ -138,15 +140,28 @@ public:
 template<>
 class DumpTraits<string>
 {
+private:
+    static string ReadCore(istream &stream, uint32_t count)
+    {
+        auto bytes = unique_ptr<char[]>(new char[count]);
+        stream.read(bytes.get(), count);
+
+        return string(bytes.get(), count);
+    }
+
 public:
     static string Read(istream &stream)
     {
         uint8_t count = DumpTraits<uint8_t>::Read(stream);
 
-        auto bytes = unique_ptr<char[]>(new char[count]);
-        stream.read(bytes.get(), count);
+        return ReadCore(stream, count);
+    }
 
-        return string(bytes.get(), count);
+    static string ReadLong(istream &stream)
+    {
+        uint32_t count = DumpTraits<uint32_t>::Read(stream);
+
+        return ReadCore(stream, count);
     }
 
     static void Write(ostream &stream, const string value)
@@ -173,9 +188,28 @@ public:
         stream.write(value.data(), length);
     }
 
+    static void WriteLong(ostream &stream, const string value)
+    {
+        auto length = value.length();
+
+        if (length > 0xFFFFFFFF)
+        {
+            throw DumpException();
+        }
+
+        DumpTraits<uint32_t>::Write(stream, length);
+
+        stream.write(value.data(), length);
+    }
+
     static uint32_t DumpSize(const string value)
     {
         return DumpTraits<uint8_t>::DumpSize(value.length()) + value.length();
+    }
+
+    static uint32_t DumpSizeLong(const string value)
+    {
+        return DumpTraits<uint32_t>::DumpSize(value.length()) + value.length();
     }
 };
 

@@ -3,6 +3,7 @@
 #include <fstream>
 #include "Dump.h"
 #include "SpaceManager.h"
+#include "DumpObjects/DumpRevision.h"
 
 using std::move;
 using std::unique_ptr;
@@ -79,4 +80,14 @@ void WritableDump::WriteIndexes()
 
     pageIdIndex->Write();
     revisionIdIndex->Write();
+}
+
+void WritableDump::DeleteRevision(uint32_t revisionId)
+{
+    Offset offset = revisionIdIndex->Get(revisionId);
+    DumpRevision revision(self, true);
+    uint32_t length = revision.NewLength();
+
+    revisionIdIndex->Remove(revisionId);
+    spaceManager->Delete(offset.value, length);
 }

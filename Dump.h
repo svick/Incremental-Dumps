@@ -52,4 +52,6 @@ public:
 
     // it's necessary to call this after writing is finished
     void WriteIndexes();
+
+    void DeleteRevision(uint32_t revisionId);
 };

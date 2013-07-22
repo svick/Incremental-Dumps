@@ -21,7 +21,7 @@ shared_ptr<User> DumpIpV4User::GetUser() const
     return user;
 }
 
-uint32_t DumpIpV4User::NewLength() const
+uint32_t DumpIpV4User::NewLength()
 {
     return ValueSize(user->Address);
 }

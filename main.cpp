@@ -1,7 +1,7 @@
 #include <iostream>
 #include "XML/xmlinput.h"
 #include "XML/xmlfile.h"
-#include "DumpWriters/StubCurrentWriter.h"
+#include "DumpWriters/PagesHistoryWriter.h"
 #include "XmlPageProcessor.h"
 #include "Dump.h"
 #include "DumpObjects/DumpRevision.h"
@@ -50,7 +50,7 @@ void createDump(string inputFileName, string outputFileName)
 
     shared_ptr<WritableDump> dump = WritableDump::Create(outputFileName);
 
-    StubCurrentWriter writer(dump);
+    PagesHistoryWriter writer(dump);
 
     input.Process(handlers, &writer);
 
@@ -82,6 +82,11 @@ void readDump(string dumpFileName)
 
             cout << " " << revision.RevisionId << " (<- " << revision.ParentId << ") " << revision.DateTime.ToString() << " " << revision.Contributor->UserName << "\n";
             cout << "  " << revision.Comment << "\n";
+
+            if (revision.Text.length() > 0)
+            {
+                cout << "  " << revision.Text.substr(0, 77) << "\n";
+            }
 
             if (++j >= 5)
                 break;

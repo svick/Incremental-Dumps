@@ -24,8 +24,8 @@ public:
 
     static FileHeader Read(ReadableDump const &dump);
 
-    virtual void Write();
-    virtual uint32_t NewLength() const;
+    virtual void Write() override;
+    virtual uint32_t NewLength() override;
 
     Offset FileEnd;
     Offset PageIdIndexRoot;

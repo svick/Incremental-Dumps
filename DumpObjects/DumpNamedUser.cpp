@@ -23,7 +23,7 @@ shared_ptr<User> DumpNamedUser::GetUser() const
     return user;
 }
 
-uint32_t DumpNamedUser::NewLength() const
+uint32_t DumpNamedUser::NewLength()
 {
     return ValueSize(user->UserId) + ValueSize(user->UserName);
 }

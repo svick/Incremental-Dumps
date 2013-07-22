@@ -60,7 +60,7 @@ void DumpPage::UpdateIndex(Offset offset, bool overwrite)
         dumpRef->pageIdIndex->Add(page.PageId, offset);
 }
 
-uint32_t DumpPage::NewLength() const
+uint32_t DumpPage::NewLength()
 {
     return ValueSize((uint8_t)DumpObjectKind::Page) + ValueSize(page.PageId)
         + ValueSize(page.Namespace) + ValueSize(page.Title) + ValueSize(page.RedirectTarget)

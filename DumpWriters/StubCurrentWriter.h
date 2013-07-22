@@ -8,7 +8,7 @@ class StubCurrentWriter : public DumpWriter
 private:
     shared_ptr<WritableDump> dump;
     unique_ptr<DumpPage> page;
-    vector<shared_ptr<const Revision>> revisions;
+    shared_ptr<const Revision> revision;
 public:
     StubCurrentWriter(shared_ptr<WritableDump> dump);
 

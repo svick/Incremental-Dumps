@@ -3,9 +3,12 @@
 *.suo
 *.vcxproj.filters
 *.vcxproj.user
-/Debug/
-/Release/
+/ipch/
+Debug/
+Release/
 /CMakeCache.txt
 /CMakeFiles/
 /Makefile
 *.cmake
+*.o
+*.a

@@ -26,7 +26,7 @@ protected:
     template<typename T>
     uint32_t ValueSize(const T value) const;
 public:
-    virtual uint32_t NewLength() const = 0;
+    virtual uint32_t NewLength() = 0;
 };
 
 class DumpObject : public DumpObjectBase
@@ -41,7 +41,7 @@ protected:
     virtual void UpdateIndex(Offset offset, bool overwrite);
 public:
     virtual void Write();
-    virtual uint32_t NewLength() const = 0;
+    virtual uint32_t NewLength() = 0;
     uint64_t SavedOffset() const;
 };
 

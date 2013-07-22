@@ -15,5 +15,5 @@ public:
     DumpIpV4User(shared_ptr<IpV4User> user);
 
     virtual shared_ptr<User> GetUser() const override;
-    virtual uint32_t NewLength() const override;
+    virtual uint32_t NewLength() override;
 };

@@ -1,6 +1,7 @@
 #include "DumpRevision.h"
 #include "DumpObjectKind.h"
 #include "DumpUser.h"
+#include "../SevenZip.h"
 #include "../Indexes/Index.h"
 
 void DumpRevision::Load(uint32_t revisionId)
@@ -38,14 +39,22 @@ Revision DumpRevision::Read(shared_ptr<WritableDump> dump, Offset offset)
     revision.DateTime = DumpTraits<uint32_t>::Read(stream);
     revision.Contributor = DumpUser::Read(revision.Flags, stream)->GetUser();
     revision.Comment = DumpTraits<string>::Read(stream);
-    revision.Text = DumpTraits<string>::Read(stream);
+    string compressedText = DumpTraits<string>::ReadLong(stream);
+    revision.Text = SevenZip::Decompress(compressedText);
 
     return revision;
+}
+
+void DumpRevision::EnsureCompressed()
+{
+    if (withText && !revision.Text.empty() && compressedText.empty())
+        compressedText = SevenZip::Compress(revision.Text);
 }
 
 void DumpRevision::WriteInternal()
 {
     auto user = DumpUser::Create(revision.Contributor);
+    EnsureCompressed();
 
     WriteValue((uint8_t)DumpObjectKind::Revision);
     WriteValue(revision.RevisionId);
@@ -54,10 +63,7 @@ void DumpRevision::WriteInternal()
     WriteValue(revision.DateTime.ToInteger());
     user->Write(stream);
     WriteValue(revision.Comment);
-    if (withText)
-        WriteValue(revision.Text);
-    else
-        WriteValue(string());
+    DumpTraits<string>::WriteLong(*stream, withText ? compressedText : string());
 }
 
 void DumpRevision::UpdateIndex(Offset offset, bool overwrite)
@@ -70,9 +76,10 @@ void DumpRevision::UpdateIndex(Offset offset, bool overwrite)
         dumpRef->revisionIdIndex->Add(revision.RevisionId, offset);
 }
 
-uint32_t DumpRevision::NewLength() const
+uint32_t DumpRevision::NewLength()
 {
     auto user = DumpUser::Create(revision.Contributor);
+    EnsureCompressed();
 
     return ValueSize((uint8_t)DumpObjectKind::Revision)
         + ValueSize(revision.RevisionId)
@@ -81,7 +88,7 @@ uint32_t DumpRevision::NewLength() const
         + ValueSize(revision.DateTime.ToInteger())
         + user->NewLength()
         + ValueSize(revision.Comment)
-        + ValueSize(withText ? revision.Text : string());
+        + DumpTraits<string>::DumpSizeLong(withText ? compressedText : string());
 }
 
 DumpRevision::DumpRevision(weak_ptr<WritableDump> dump, uint32_t revisionId, bool withText)
