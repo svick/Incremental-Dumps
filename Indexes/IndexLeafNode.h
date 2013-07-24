@@ -8,9 +8,8 @@ using std::map;
 template<typename TKey, typename TValue>
 class IndexLeafNode : public IndexNode<TKey, TValue>
 {
+    using typename IndexNode<TKey, TValue>::SplitResult;
 private:
-    static const int Size = 0xFFFF;
-
     map<TKey, TValue> indexMap;
 protected:
     virtual void WriteInternal() override;
@@ -29,8 +28,11 @@ public:
     virtual void AddOrUpdate(TKey key, TValue value) override;
     virtual void Remove(TKey key) override;
 
-    virtual shared_ptr<IndexNodeIterator<TKey, TValue>> begin() const override;
-    virtual shared_ptr<IndexNodeIterator<TKey, TValue>> end() const override;
+    virtual std::uint32_t RealLength() override;
+    virtual SplitResult Split() override;
+
+    virtual shared_ptr<IndexNodeIterator<TKey, TValue>> begin() override;
+    virtual shared_ptr<IndexNodeIterator<TKey, TValue>> end() override;
 };
 
 #include "IndexLeafNode.tpp"

@@ -12,10 +12,12 @@ template<typename TKey, typename TValue>
 class Index
 {
 private:
-    bool fileHeaderZero;
+    bool rootNodeUnsaved;
     unique_ptr<IndexNode<TKey, TValue>> rootNode;
     weak_ptr<WritableDump> dump;
     weak_ptr<Offset> fileHeaderOffset;
+
+    void AfterAdd();
 public:
     Index(weak_ptr<WritableDump> dump, weak_ptr<Offset> fileHeaderOffset, bool delaySave = false);
 

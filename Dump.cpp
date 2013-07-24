@@ -2,6 +2,7 @@
 #include <string>
 #include <fstream>
 #include "Dump.h"
+#include "Indexes/Index.h"
 #include "SpaceManager.h"
 #include "DumpObjects/DumpRevision.h"
 

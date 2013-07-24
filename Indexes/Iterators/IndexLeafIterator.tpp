@@ -1,6 +1,5 @@
 #include <vector>
 #include "IndexLeafIterator.h"
-#include "../../DumpObjects/DumpTraits.h"
 
 using std::vector;
 

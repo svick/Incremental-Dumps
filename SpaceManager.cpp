@@ -1,3 +1,4 @@
+#include "Indexes/Index.h"
 #include "SpaceManager.h"
 #include "Dump.h"
 

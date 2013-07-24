@@ -219,11 +219,11 @@ class DumpTraits<vector<T>>
 public:
     static vector<T> Read(istream &stream)
     {
-        uint16_t count = DumpTraits<uint16_t>::Read(stream);
+        uint32_t count = DumpTraits<uint32_t>::Read(stream);
 
         vector<T> result;
 
-        for (int i = 0; i < count; i++)
+        for (uint32_t i = 0; i < count; i++)
         {
             result.push_back(DumpTraits<T>::Read(stream));
         }
@@ -235,10 +235,10 @@ public:
     {
         auto length = value.size();
 
-        if (length > numeric_limits<uint16_t>::max())
+        if (length >= numeric_limits<uint32_t>::max())
             throw DumpException();
 
-        DumpTraits<uint16_t>::Write(stream, length);
+        DumpTraits<uint32_t>::Write(stream, length);
 
         for (T item : value)
         {
@@ -248,7 +248,7 @@ public:
 
     static uint32_t DumpSize(const vector<T> value)
     {
-        uint32_t size = DumpTraits<uint16_t>::DumpSize(value.size());
+        uint32_t size = DumpTraits<uint32_t>::DumpSize(value.size());
 
         for (T item : value)
         {

@@ -41,6 +41,7 @@ set(SOURCES_files_ClCompile
 )
 # File list: C/C++ Header
 set(SOURCES_files_ClInclude
+  CollectionHelpers.h
   DumpException.h
   DumpObjects/DumpIpV4User.h
   DumpObjects/DumpNamedUser.h
@@ -49,6 +50,7 @@ set(SOURCES_files_ClInclude
   DumpObjects/DumpRevision.h
   DumpObjects/DumpUser.h
   Indexes/Index.h
+  Indexes/IndexInnerNode.tpp
   Indexes/IndexLeafNode.tpp
   Indexes/IndexNode.tpp
   Indexes/Index.tpp
@@ -57,6 +59,7 @@ set(SOURCES_files_ClInclude
   DumpObjects/DumpTraits.h
   DumpWriters/DumpWriter.h
   DumpObjects/FileHeader.h
+  Indexes/IndexInnerNode.h
   Indexes/IndexLeafNode.h
   Indexes/IndexNode.h
   DumpObjects/Offset.h
@@ -65,10 +68,11 @@ set(SOURCES_files_ClInclude
   Objects/Revision.h
   Indexes/Iterators/IndexIterator.h
   Indexes/Iterators/IndexIterator.tpp
+  Indexes/Iterators/IndexInnerIterator.h
+  Indexes/Iterators/IndexInnerIterator.tpp
   Indexes/Iterators/IndexLeafIterator.h
   Indexes/Iterators/IndexLeafIterator.tpp
   Indexes/Iterators/IndexNodeIterator.h
-  Indexes/Iterators/IndexNodeIterator.tpp
   SevenZip.h
   SpaceManager.h
   DumpWriters/TestDumpWriter.h

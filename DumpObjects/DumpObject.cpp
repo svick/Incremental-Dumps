@@ -1,5 +1,6 @@
 #include "DumpObject.h"
 #include "../Dump.h"
+#include "../Indexes/Index.h"
 #include "../SpaceManager.h"
 
 DumpObject::DumpObject(weak_ptr<WritableDump> dump)

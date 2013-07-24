@@ -1,3 +1,4 @@
+// warning, because of a cyclic dependency, "Indexes/Index.h" has to be always included before this header
 #pragma once
 
 #include <cstdint>

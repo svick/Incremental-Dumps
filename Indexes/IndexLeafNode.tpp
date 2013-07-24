@@ -21,9 +21,8 @@ TValue IndexLeafNode<TKey, TValue>::Get(TKey key)
 template<typename TKey, typename TValue>
 void IndexLeafNode<TKey, TValue>::Add(TKey key, TValue value)
 {
-    if (indexMap.size() >= Size)
+    if (indexMap.size() >= std::numeric_limits<uint16_t>::max())
     {
-        // TODO
         throw new DumpException();
     }
 
@@ -100,19 +99,53 @@ void IndexLeafNode<TKey, TValue>::WriteInternal()
 template<typename TKey, typename TValue>
 uint32_t IndexLeafNode<TKey, TValue>::NewLength()
 {
-    return DumpTraits<uint8_t>::DumpSize((uint8_t)DumpObjectKind::IndexLeafNode)
-        + DumpTraits<uint16_t>::DumpSize(indexMap.size())
-        + Size * (DumpTraits<TKey>::DumpSize() + DumpTraits<TValue>::DumpSize());
+    return this->Size;
 }
 
 template<typename TKey, typename TValue>
-shared_ptr<IndexNodeIterator<TKey, TValue>> IndexLeafNode<TKey, TValue>::begin() const
+std::uint32_t IndexLeafNode<TKey, TValue>:: RealLength()
+{
+    return DumpTraits<uint8_t>::DumpSize((uint8_t)DumpObjectKind::IndexLeafNode)
+        + DumpTraits<uint16_t>::DumpSize(indexMap.size())
+        + indexMap.size() * (DumpTraits<TKey>::DumpSize() + DumpTraits<TValue>::DumpSize());
+}
+
+template<typename TKey, typename TValue>
+typename IndexNode<TKey, TValue>::SplitResult IndexLeafNode<TKey, TValue>::Split()
+{
+    auto left = new IndexLeafNode<TKey, TValue>(this->dump);
+    auto right = new IndexLeafNode<TKey, TValue>(this->dump);
+
+    auto it = indexMap.begin();
+    for (unsigned i = 0; i < (indexMap.size() - 1) / 2; i++)
+    {
+        left->indexMap.insert(*it);
+        it++;
+    }
+
+    auto middleKey = it->first;
+    left->indexMap.insert(*it);
+    it++;
+
+    for (; it != indexMap.end(); it++)
+    {
+        right->indexMap.insert(*it);
+    }
+
+    return SplitResult(
+        std::unique_ptr<IndexNode<TKey, TValue>>(left),
+        std::unique_ptr<IndexNode<TKey, TValue>>(right),
+        middleKey);
+}
+
+template<typename TKey, typename TValue>
+shared_ptr<IndexNodeIterator<TKey, TValue>> IndexLeafNode<TKey, TValue>::begin()
 {
     return shared_ptr<IndexNodeIterator<TKey, TValue>>(new IndexLeafIterator<TKey, TValue>(indexMap.begin()));
 }
 
 template<typename TKey, typename TValue>
-shared_ptr<IndexNodeIterator<TKey, TValue>> IndexLeafNode<TKey, TValue>::end() const
+shared_ptr<IndexNodeIterator<TKey, TValue>> IndexLeafNode<TKey, TValue>::end()
 {
     return shared_ptr<IndexNodeIterator<TKey, TValue>>(new IndexLeafIterator<TKey, TValue>(indexMap.end()));
 }

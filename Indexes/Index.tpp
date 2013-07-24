@@ -1,4 +1,5 @@
 #include "Index.h"
+#include "../SpaceManager.h"
 
 #include <memory>
 
@@ -10,7 +11,7 @@ Index<TKey, TValue>::Index(weak_ptr<WritableDump> dump, weak_ptr<Offset> fileHea
 {
     auto offset = fileHeaderOffset.lock();
 
-    fileHeaderZero = false;
+    rootNodeUnsaved = false;
 
     if (offset->value == 0)
     {
@@ -18,7 +19,7 @@ Index<TKey, TValue>::Index(weak_ptr<WritableDump> dump, weak_ptr<Offset> fileHea
 
         if (delaySave)
         {
-            fileHeaderZero = true;
+            rootNodeUnsaved = true;
         }
         else
         {
@@ -38,19 +39,38 @@ TValue Index<TKey, TValue>::Get(TKey key)
 }
 
 template<typename TKey, typename TValue>
-void Index<TKey, TValue>::Add(TKey key, TValue value)
+void Index<TKey, TValue>::AfterAdd()
 {
-    rootNode->Add(key, value);
+    if (rootNode->IsOversized())
+    {
+        dump.lock()->spaceManager->Delete(rootNode->SavedOffset(), rootNode->NewLength());
 
-    if (fileHeaderZero)
+        auto splitted = rootNode->Split();
+        splitted.LeftNode->Write();
+        splitted.RightNode->Write();
+        rootNode = std::unique_ptr<IndexNode<TKey, TValue>>(
+            new IndexInnerNode<TKey, TValue>(dump, std::move(splitted)));
+
+        rootNodeUnsaved = true;
+    }
+
+    if (rootNodeUnsaved)
     {
         rootNode->Write();
 
         fileHeaderOffset.lock()->value = rootNode->SavedOffset();
         dump.lock()->fileHeader.Write();
 
-        fileHeaderZero = false;
+        rootNodeUnsaved = false;
     }
+}
+
+template<typename TKey, typename TValue>
+void Index<TKey, TValue>::Add(TKey key, TValue value)
+{
+    rootNode->Add(key, value);
+
+    AfterAdd();
 }
 
 template<typename TKey, typename TValue>
@@ -58,15 +78,7 @@ void Index<TKey, TValue>::AddOrUpdate(TKey key, TValue value)
 {
     rootNode->AddOrUpdate(key, value);
 
-    if (fileHeaderZero)
-    {
-        rootNode->Write();
-
-        fileHeaderOffset.lock()->value = rootNode->SavedOffset();
-        dump.lock()->fileHeader.Write();
-
-        fileHeaderZero = false;
-    }
+    AfterAdd();
 }
 
 template<typename TKey, typename TValue>

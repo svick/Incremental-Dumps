@@ -86,6 +86,7 @@
     <ClCompile Include="DumpObjects\DumpNamedUser.cpp" />
     <ClCompile Include="DumpObjects\DumpObject.cpp" />
     <ClCompile Include="DumpObjects\FileHeader.cpp" />
+    <ClInclude Include="CollectionHelpers.h" />
     <ClInclude Include="DumpException.h" />
     <ClInclude Include="DumpObjects\DumpIpV4User.h" />
     <ClInclude Include="DumpObjects\DumpNamedUser.h" />
@@ -96,6 +97,7 @@
     <ClInclude Include="DumpWriters\PagesHistoryWriter.h" />
     <ClInclude Include="DumpWriters\StubHistoryWriter.h" />
     <ClInclude Include="Indexes\Index.h" />
+    <ClInclude Include="Indexes\IndexInnerNode.h" />
     <ClInclude Include="Indexes\IndexLeafNode.tpp">
       <FileType>CppCode</FileType>
     </ClInclude>
@@ -140,6 +142,7 @@
     <ClInclude Include="Indexes\IndexLeafNode.h" />
     <ClInclude Include="Indexes\IndexNode.h" />
     <ClInclude Include="DumpObjects\Offset.h" />
+    <ClInclude Include="Indexes\Iterators\IndexInnerIterator.h" />
     <ClInclude Include="Objects\IpV4User.h" />
     <ClInclude Include="Objects\Page.h" />
     <ClInclude Include="Objects\Revision.h" />
@@ -148,7 +151,6 @@
     <ClInclude Include="Indexes\Iterators\IndexLeafIterator.h" />
     <ClInclude Include="Indexes\Iterators\IndexLeafIterator.tpp" />
     <ClInclude Include="Indexes\Iterators\IndexNodeIterator.h" />
-    <ClInclude Include="Indexes\Iterators\IndexNodeIterator.tpp" />
     <ClInclude Include="SevenZip.h" />
     <ClInclude Include="SpaceManager.h" />
     <ClInclude Include="DumpWriters\TestDumpWriter.h" />
@@ -171,6 +173,16 @@
     <ProjectReference Include="LZMA\CPP\7zip\Bundles\LzmaCon\LzmaCon.vcxproj">
       <Project>{5f0fc7a8-1c0c-403a-bcae-1cc0ed546a44}</Project>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Indexes\IndexInnerNode.tpp">
+      <FileType>Document</FileType>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Indexes\Iterators\IndexInnerIterator.tpp">
+      <FileType>Document</FileType>
+    </ClInclude>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
