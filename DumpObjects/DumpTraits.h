@@ -5,6 +5,7 @@
 #include <memory>
 #include <string>
 #include <iostream>
+#include <array>
 #include <vector>
 #include "../DumpException.h"
 
@@ -231,7 +232,7 @@ public:
         return result;
     }
 
-    static void Write(ostream &stream, const vector<T> value)
+    static void Write(ostream &stream, const vector<T> &value)
     {
         auto length = value.size();
 
@@ -246,9 +247,46 @@ public:
         }
     }
 
-    static uint32_t DumpSize(const vector<T> value)
+    static uint32_t DumpSize(const vector<T> &value)
     {
         uint32_t size = DumpTraits<uint32_t>::DumpSize(value.size());
+
+        for (T item : value)
+        {
+            size += DumpTraits<T>::DumpSize(item);
+        }
+
+        return size;
+    }
+};
+
+template<typename T, size_t N>
+class DumpTraits<std::array<T, N>>
+{
+public:
+    static std::array<T, N> Read(istream &stream)
+    {
+        std::array<T, N> result;
+
+        for (int i = 0; i < N; i++)
+        {
+            result[i] = DumpTraits<T>::Read(stream);
+        }
+
+        return result;
+    }
+
+    static void Write(ostream &stream, const std::array<T, N> &value)
+    {
+        for (T item : value)
+        {
+            DumpTraits<T>::Write(stream, item);
+        }
+    }
+
+    static uint32_t DumpSize(const std::array<T, N> &value)
+    {
+        uint32_t size = 0;
 
         for (T item : value)
         {

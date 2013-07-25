@@ -1,7 +1,8 @@
 #include "XmlContributorProcessor.h"
 #include "XmlUtils.h"
 #include "Objects/Revision.h"
-#include "Objects/IpV4User.h"
+#include "Objects/User.h"
+#include "Objects/NamedUser.h"
 
 void XmlContributorProcessor::Handler(XML::Element &elem, void *userData)
 {
@@ -20,12 +21,12 @@ void XmlContributorProcessor::Handler(XML::Element &elem, void *userData)
 
     auto revision = (Revision*)userData;
 
-    User* user;
+    std::shared_ptr<User> user;
 
     if (processor.ip != string())
-        user = new IpV4User(processor.ip);
+        user = User::CreateFromIp(processor.ip);
     else
-        user = new User(processor.id, processor.userName);
+        user = std::make_shared<NamedUser>(processor.id, processor.userName);
 
     revision->Contributor = shared_ptr<User>(user);
     revision->Flags |= user->UserKind();

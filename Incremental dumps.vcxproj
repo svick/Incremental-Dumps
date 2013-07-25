@@ -83,12 +83,14 @@
     <ClCompile Include="Dump.cpp" />
     <ClCompile Include="DumpException.cpp" />
     <ClCompile Include="DumpObjects\DumpIpV4User.cpp" />
+    <ClCompile Include="DumpObjects\DumpIpV6User.cpp" />
     <ClCompile Include="DumpObjects\DumpNamedUser.cpp" />
     <ClCompile Include="DumpObjects\DumpObject.cpp" />
     <ClCompile Include="DumpObjects\FileHeader.cpp" />
     <ClInclude Include="CollectionHelpers.h" />
     <ClInclude Include="DumpException.h" />
     <ClInclude Include="DumpObjects\DumpIpV4User.h" />
+    <ClInclude Include="DumpObjects\DumpIpV6User.h" />
     <ClInclude Include="DumpObjects\DumpNamedUser.h" />
     <ClInclude Include="DumpObjects\DumpObjectKind.h" />
     <ClInclude Include="DumpObjects\DumpPage.h" />
@@ -114,6 +116,8 @@
     <ClCompile Include="Objects\IpV4User.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="DumpObjects\Offset.cpp" />
+    <ClCompile Include="Objects\IpV6User.cpp" />
+    <ClCompile Include="Objects\NamedUser.cpp" />
     <ClCompile Include="Objects\Page.cpp" />
     <ClCompile Include="Objects\Revision.cpp" />
     <ClCompile Include="SevenZip.cpp" />
@@ -144,6 +148,8 @@
     <ClInclude Include="DumpObjects\Offset.h" />
     <ClInclude Include="Indexes\Iterators\IndexInnerIterator.h" />
     <ClInclude Include="Objects\IpV4User.h" />
+    <ClInclude Include="Objects\IpV6User.h" />
+    <ClInclude Include="Objects\NamedUser.h" />
     <ClInclude Include="Objects\Page.h" />
     <ClInclude Include="Objects\Revision.h" />
     <ClInclude Include="Indexes\Iterators\IndexIterator.h" />

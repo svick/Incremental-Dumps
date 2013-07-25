@@ -7,9 +7,11 @@
 using std::stoi;
 using std::ostringstream;
 
-uint32_t IpV4User::ParseAddress(string address)
+uint32_t IpV4User::TryParseAddress(string address, bool &success)
 {
-    vector<string> stringParts = split(address, '.');
+    success = false;
+
+    std::vector<std::string> stringParts = split(address, '.');
     if (stringParts.size() != 4)
         return 0;
 
@@ -17,12 +19,25 @@ uint32_t IpV4User::ParseAddress(string address)
 
     for (int i = 0; i < 4; i++)
     {
-        int intPart = stoi(stringParts[i]);
-        if (intPart > 255 || intPart < 0)
+        bool success;
+        long intPart = tryParseLong(stringParts[i], success);
+        if (!success || intPart > 255 || intPart < 0)
             return 0;
         
         result |= (uint32_t)(uint8_t)intPart << (8 * i);
     }
+
+    success = true;
+    return result;
+}
+
+uint32_t IpV4User::ParseAddress(string address)
+{
+    bool success;
+    uint32_t result = TryParseAddress(address, success);
+
+    if (!success)
+        throw DumpException();
 
     return result;
 }
@@ -45,17 +60,11 @@ string IpV4User::AddressToString(uint32_t address)
 
 IpV4User::IpV4User(string stringAddress)
     : User(0, stringAddress), Address(ParseAddress(stringAddress))
-{
-    if (Address == 0)
-        throw new DumpException();
-}
+{}
 
 IpV4User::IpV4User(string stringAddress, uint32_t parsedAddress)
     :  User(0, stringAddress), Address(parsedAddress)
-{
-    if (Address == 0)
-        throw new DumpException();
-}
+{}
 
 IpV4User::IpV4User(uint32_t parsedAddress)
     : User(0, AddressToString(parsedAddress)), Address(parsedAddress)

@@ -9,6 +9,7 @@ set(SOURCES_files_ClCompile
   Dump.cpp
   DumpException.cpp
   DumpObjects/DumpIpV4User.cpp
+  DumpObjects/DumpIpV6User.cpp
   DumpObjects/DumpNamedUser.cpp
   DumpObjects/DumpObject.cpp
   DumpObjects/FileHeader.cpp
@@ -16,6 +17,8 @@ set(SOURCES_files_ClCompile
   DumpObjects/DumpRevision.cpp
   DumpObjects/DumpUser.cpp
   Objects/IpV4User.cpp
+  Objects/IpV6User.cpp
+  Objects/NamedUser.cpp
   main.cpp
   DumpObjects/Offset.cpp
   Objects/Page.cpp
@@ -44,6 +47,7 @@ set(SOURCES_files_ClInclude
   CollectionHelpers.h
   DumpException.h
   DumpObjects/DumpIpV4User.h
+  DumpObjects/DumpIpV6User.h
   DumpObjects/DumpNamedUser.h
   DumpObjects/DumpObjectKind.h
   DumpObjects/DumpPage.h
@@ -64,6 +68,8 @@ set(SOURCES_files_ClInclude
   Indexes/IndexNode.h
   DumpObjects/Offset.h
   Objects/IpV4User.h
+  Objects/IpV6User.h
+  Objects/NamedUser.h
   Objects/Page.h
   Objects/Revision.h
   Indexes/Iterators/IndexIterator.h

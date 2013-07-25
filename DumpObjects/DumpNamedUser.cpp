@@ -1,4 +1,5 @@
 #include "DumpNamedUser.h"
+#include "../Objects/NamedUser.h"
 
 void DumpNamedUser::WriteInternal()
 {
@@ -8,13 +9,13 @@ void DumpNamedUser::WriteInternal()
 
 unique_ptr<DumpUser> DumpNamedUser::Read(istream &stream)
 {
-    int userId = DumpTraits<uint32_t>::Read(stream);
+    uint32_t userId = DumpTraits<uint32_t>::Read(stream);
     string userName = DumpTraits<string>::Read(stream);
 
-    return unique_ptr<DumpUser>(new DumpNamedUser(shared_ptr<User>(new User(userId, userName))));
+    return unique_ptr<DumpUser>(new DumpNamedUser(std::make_shared<NamedUser>(userId, userName)));
 }
 
-DumpNamedUser::DumpNamedUser(shared_ptr<User> user)
+DumpNamedUser::DumpNamedUser(shared_ptr<NamedUser> user)
     : user(user)
 {}
 
