@@ -1,19 +1,24 @@
-#include "DumpUser.h"
 #include "DumpIpV4User.h"
+#include "DumpIpV6User.h"
 #include "DumpNamedUser.h"
 
 using std::dynamic_pointer_cast;
 
 unique_ptr<DumpUser> DumpUser::Create(shared_ptr<User> user)
 {
-    DumpUser *result;
     auto ipV4User = dynamic_pointer_cast<IpV4User>(user);
     if (ipV4User != nullptr)
-        result = new DumpIpV4User(ipV4User);
-    else
-        result = new DumpNamedUser(user);
+        return unique_ptr<DumpUser>(new DumpIpV4User(ipV4User));
+    
+    auto ipV6User = dynamic_pointer_cast<IpV6User>(user);
+    if (ipV6User != nullptr)
+        return unique_ptr<DumpUser>(new DumpIpV6User(ipV6User));
 
-    return unique_ptr<DumpUser>(result);
+    auto namedUser = dynamic_pointer_cast<NamedUser>(user);
+    if (namedUser != nullptr)
+        return unique_ptr<DumpUser>(new DumpNamedUser(namedUser));
+
+    throw DumpException();
 }
 
 unique_ptr<DumpUser> DumpUser::Read(RevisionFlags flags, istream &stream)

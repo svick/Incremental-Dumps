@@ -10,17 +10,18 @@ using std::string;
 
 enum class RevisionFlags : uint8_t;
 
-// TODO: create class NamedUser?
 class User
 {
+protected:
+    User(uint32_t userId, string userName);
 public:
     static unique_ptr<User> Create(uint32_t userId, string userName);
-
-    User(uint32_t userId, string userName);
+    // creates IPv4 or IPv6 anonymous users
+    static unique_ptr<User> CreateFromIp(string ipAddress);
 
     uint32_t UserId;
     string UserName;
 
-    virtual RevisionFlags UserKind() const;
-    virtual ~User();
+    virtual RevisionFlags UserKind() const = 0;
+    virtual ~User() {}
 };

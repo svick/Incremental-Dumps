@@ -1,18 +1,18 @@
 #pragma once
 
 #include "DumpUser.h"
-#include "../Objects/NamedUser.h"
+#include "../Objects/IpV6User.h"
 
-class DumpNamedUser : public DumpUser
+class DumpIpV6User : public DumpUser
 {
 protected:
     virtual void WriteInternal();
 public:
     static unique_ptr<DumpUser> Read(istream &stream);
 
-    shared_ptr<NamedUser> user;
+    shared_ptr<IpV6User> user;
 
-    DumpNamedUser(shared_ptr<NamedUser> user);
+    DumpIpV6User(shared_ptr<IpV6User> user);
 
     virtual shared_ptr<User> GetUser() const override;
     virtual uint32_t NewLength() override;

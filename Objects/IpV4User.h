@@ -5,6 +5,7 @@
 class IpV4User : public User
 {
 public:
+    static uint32_t TryParseAddress(string address, bool &success);
     static uint32_t ParseAddress(string address);
     static string AddressToString(uint32_t address);
 

@@ -3,7 +3,7 @@
 #include <string>
 #include <vector>
 
-using std::string;
-using std::vector;
+std::vector<std::string> split(const std::string &s, char delim);
 
-vector<string> split(const string &s, char delim);
+// makes sure the whole string is converted to an int
+long tryParseLong(const std::string &s, bool &success, int radix = 10);
