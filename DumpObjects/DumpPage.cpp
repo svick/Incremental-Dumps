@@ -32,7 +32,7 @@ Page DumpPage::Read(shared_ptr<WritableDump> dump, Offset offset)
         throw new DumpException();
 
     page.PageId = DumpTraits<uint32_t>::Read(stream);
-    page.Namespace = DumpTraits<uint16_t>::Read(stream);
+    page.Namespace = DumpTraits<int16_t>::Read(stream);
     page.Title = DumpTraits<string>::Read(stream);
     page.RedirectTarget = DumpTraits<string>::Read(stream);
     page.RevisionIds = DumpTraits<vector<uint32_t>>::Read(stream);
@@ -45,6 +45,7 @@ void DumpPage::WriteInternal()
     WriteValue((uint8_t)DumpObjectKind::Page);
     WriteValue(page.PageId);
     WriteValue(page.Namespace);
+    // TODO: remove namespace from title for saving
     WriteValue(page.Title);
     WriteValue(page.RedirectTarget);
     WriteValue(page.RevisionIds);

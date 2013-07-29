@@ -24,6 +24,9 @@ protected:
     void WriteValue(const T value);
 
     template<typename T>
+    static void ReadValue(std::istream &stream, T &value);
+
+    template<typename T>
     uint32_t ValueSize(const T value) const;
 public:
     virtual uint32_t NewLength() = 0;
@@ -49,6 +52,12 @@ template<typename T>
 void DumpObjectBase::WriteValue(const T value)
 {
     DumpTraits<T>::Write(*stream, value);
+}
+
+template<typename T>
+void DumpObjectBase::ReadValue(std::istream &stream, T &value)
+{
+    value = DumpTraits<T>::Read(stream);
 }
 
 template<typename T>

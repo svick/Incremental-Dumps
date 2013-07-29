@@ -2,14 +2,8 @@
 #include "../DumpObjects/DumpRevision.h"
 
 StubHistoryWriter::StubHistoryWriter(shared_ptr<WritableDump> dump)
-    : dump(dump)
+    : DumpWriter(dump)
 {}
-
-void StubHistoryWriter::StartPage(const shared_ptr<const Page> page)
-{
-    this->page = unique_ptr<DumpPage>(new DumpPage(dump, page->PageId));
-    this->page->page = *page;
-}
 
 void StubHistoryWriter::AddRevision(const shared_ptr<const Revision> revision)
 {

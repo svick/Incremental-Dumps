@@ -12,6 +12,7 @@ set(SOURCES_files_ClCompile
   DumpObjects/DumpIpV6User.cpp
   DumpObjects/DumpNamedUser.cpp
   DumpObjects/DumpObject.cpp
+  DumpObjects/DumpSiteInfo.cpp
   DumpObjects/FileHeader.cpp
   DumpObjects/DumpPage.cpp
   DumpObjects/DumpRevision.cpp
@@ -25,17 +26,21 @@ set(SOURCES_files_ClCompile
   Objects/Revision.cpp
   SevenZip.cpp
   SpaceManager.cpp
-  DumpWriters/TestDumpWriter.cpp
+  DumpWriters/DumpWriter.cpp
   DumpWriters/StubCurrentWriter.cpp
   DumpWriters/StubHistoryWriter.cpp
   DumpWriters/PagesHistoryWriter.cpp
   Objects/User.cpp
   StringHelpers.cpp
   Objects/Timestamp.cpp
-  XmlContributorProcessor.cpp
-  XmlPageProcessor.cpp
-  XmlRevisionProcessor.cpp
+  XmlInput/XmlContributorProcessor.cpp
+  XmlInput/XmlMediawikiProcessor.cpp
+  XmlInput/XmlNamespacesProcessor.cpp
+  XmlInput/XmlPageProcessor.cpp
+  XmlInput/XmlRevisionProcessor.cpp
+  XmlInput/XmlSiteInfoProcessor.cpp
   XmlUtils.cpp
+  XmlWriter.cpp
   XML/xmlfile.cpp
   XML/xmlfile_c.c
   XML/xmlinput.cpp
@@ -52,6 +57,7 @@ set(SOURCES_files_ClInclude
   DumpObjects/DumpObjectKind.h
   DumpObjects/DumpPage.h
   DumpObjects/DumpRevision.h
+  DumpObjects/DumpSiteInfo.h
   DumpObjects/DumpUser.h
   Indexes/Index.h
   Indexes/IndexInnerNode.tpp
@@ -72,6 +78,7 @@ set(SOURCES_files_ClInclude
   Objects/NamedUser.h
   Objects/Page.h
   Objects/Revision.h
+  Objects/SiteInfo.h
   Indexes/Iterators/IndexIterator.h
   Indexes/Iterators/IndexIterator.tpp
   Indexes/Iterators/IndexInnerIterator.h
@@ -81,17 +88,21 @@ set(SOURCES_files_ClInclude
   Indexes/Iterators/IndexNodeIterator.h
   SevenZip.h
   SpaceManager.h
-  DumpWriters/TestDumpWriter.h
   DumpWriters/StubCurrentWriter.h
   DumpWriters/StubHistoryWriter.h
   DumpWriters/PagesHistoryWriter.h
   Objects/User.h
   StringHelpers.h
   Objects/Timestamp.h
-  XmlContributorProcessor.h
-  XmlPageProcessor.h
-  XmlRevisionProcessor.h
+  XmlInput/StandardInputStream.h
+  XmlInput/XmlContributorProcessor.h
+  XmlInput/XmlMediawikiProcessor.h
+  XmlInput/XmlNamespacesProcessor.h
+  XmlInput/XmlPageProcessor.h
+  XmlInput/XmlRevisionProcessor.h
+  XmlInput/XmlSiteInfoProcessor.h
   XmlUtils.h
+  XmlWriter.h
   XML/xmlconfig.h
   XML/xmlfile.h
   XML/xmlinput.h

@@ -217,13 +217,13 @@ typename IndexNode<TKey, TValue>::SplitResult IndexInnerNode<TKey, TValue>::Spli
 }
 
 template<typename TKey, typename TValue>
-shared_ptr<IndexNodeIterator<TKey, TValue>> IndexInnerNode<TKey, TValue>::begin()
+std::unique_ptr<IndexNodeIterator<TKey, TValue>> IndexInnerNode<TKey, TValue>::begin()
 {
-    return shared_ptr<IndexNodeIterator<TKey, TValue>>(new IndexInnerIterator<TKey, TValue>(this, true));
+    return std::unique_ptr<IndexNodeIterator<TKey, TValue>>(new IndexInnerIterator<TKey, TValue>(this, true));
 }
 
 template<typename TKey, typename TValue>
-shared_ptr<IndexNodeIterator<TKey, TValue>> IndexInnerNode<TKey, TValue>::end()
+std::unique_ptr<IndexNodeIterator<TKey, TValue>> IndexInnerNode<TKey, TValue>::end()
 {
-    return shared_ptr<IndexNodeIterator<TKey, TValue>>(new IndexInnerIterator<TKey, TValue>(this, false));
+    return std::unique_ptr<IndexNodeIterator<TKey, TValue>>(new IndexInnerIterator<TKey, TValue>(this, false));
 }

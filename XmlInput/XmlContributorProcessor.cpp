@@ -1,11 +1,19 @@
 #include "XmlContributorProcessor.h"
-#include "XmlUtils.h"
-#include "Objects/Revision.h"
-#include "Objects/User.h"
-#include "Objects/NamedUser.h"
+#include "../XmlUtils.h"
+#include "../Objects/Revision.h"
+#include "../Objects/User.h"
+#include "../Objects/NamedUser.h"
 
 void XmlContributorProcessor::Handler(XML::Element &elem, void *userData)
 {
+    auto revision = (Revision*)userData;
+
+    if (elem.GetAttribute("deleted") != nullptr)
+    {
+        revision->Flags |= RevisionFlags::ContributorDeleted;
+        return;
+    }
+
     XML::Handler handlers[] = {
         XML::Handler("ip", [](XML::Element &elem, void *userData) { ((XmlContributorProcessor*)userData)->ip = readElementData(elem); }),
 
@@ -14,12 +22,10 @@ void XmlContributorProcessor::Handler(XML::Element &elem, void *userData)
 
         XML::Handler::END
     };
-
+    
     XmlContributorProcessor processor;
 
     elem.Process(handlers, &processor);
-
-    auto revision = (Revision*)userData;
 
     std::shared_ptr<User> user;
 

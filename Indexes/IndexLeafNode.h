@@ -20,6 +20,7 @@ public:
 
     using DumpObject::Write;
     using DumpObjectBase::WriteValue;
+    using DumpObjectBase::ValueSize;
 
     virtual uint32_t NewLength() override;
 
@@ -31,8 +32,8 @@ public:
     virtual std::uint32_t RealLength() override;
     virtual SplitResult Split() override;
 
-    virtual shared_ptr<IndexNodeIterator<TKey, TValue>> begin() override;
-    virtual shared_ptr<IndexNodeIterator<TKey, TValue>> end() override;
+    virtual unique_ptr<IndexNodeIterator<TKey, TValue>> begin() override;
+    virtual unique_ptr<IndexNodeIterator<TKey, TValue>> end() override;
 };
 
 #include "IndexLeafNode.tpp"

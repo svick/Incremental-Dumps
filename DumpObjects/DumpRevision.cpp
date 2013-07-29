@@ -37,10 +37,29 @@ Revision DumpRevision::Read(shared_ptr<WritableDump> dump, Offset offset)
     revision.Flags = (RevisionFlags)DumpTraits<uint8_t>::Read(stream);
     revision.ParentId = DumpTraits<uint32_t>::Read(stream);
     revision.DateTime = DumpTraits<uint32_t>::Read(stream);
-    revision.Contributor = DumpUser::Read(revision.Flags, stream)->GetUser();
-    revision.Comment = DumpTraits<string>::Read(stream);
-    string compressedText = DumpTraits<string>::ReadLong(stream);
-    revision.Text = SevenZip::Decompress(compressedText);
+    if (!HasFlag(revision.Flags, RevisionFlags::ContributorDeleted))
+        revision.Contributor = DumpUser::Read(revision.Flags, stream)->GetUser();
+    if (!HasFlag(revision.Flags, RevisionFlags::CommentDeleted))
+        revision.Comment = DumpTraits<string>::Read(stream);
+    revision.Sha1 = DumpTraits<std::string>::Read(stream);
+
+    if (HasFlag(revision.Flags, RevisionFlags::WikitextModelFormat))
+    {
+        revision.Model = WritableDump::WikitextModel;
+        revision.Format = WritableDump::WikitextFormat;
+    }
+    else
+    {
+        auto modelFormat = dump->GetModelFormat(DumpTraits<std::uint8_t>::Read(stream));
+        revision.Model = modelFormat.first;
+        revision.Format = modelFormat.second;
+    }
+
+    if (!HasFlag(revision.Flags, RevisionFlags::TextDeleted))
+    {
+        string compressedText = DumpTraits<string>::ReadLong(stream);
+        revision.Text = SevenZip::Decompress(compressedText);
+    }
 
     return revision;
 }
@@ -53,17 +72,29 @@ void DumpRevision::EnsureCompressed()
 
 void DumpRevision::WriteInternal()
 {
-    auto user = DumpUser::Create(revision.Contributor);
     EnsureCompressed();
+
+    std::uint8_t modelFormatId = dump.lock()->GetIdForModelFormat(revision.Model, revision.Format);
+    if (modelFormatId == 0)
+        revision.Flags |= RevisionFlags::WikitextModelFormat;
 
     WriteValue((uint8_t)DumpObjectKind::Revision);
     WriteValue(revision.RevisionId);
     WriteValue((uint8_t)revision.Flags);
     WriteValue(revision.ParentId);
     WriteValue(revision.DateTime.ToInteger());
-    user->Write(stream);
+    if (!HasFlag(revision.Flags, RevisionFlags::ContributorDeleted))
+        DumpUser::Create(revision.Contributor)->Write(stream);
+    if (!HasFlag(revision.Flags, RevisionFlags::CommentDeleted))
     WriteValue(revision.Comment);
-    DumpTraits<string>::WriteLong(*stream, withText ? compressedText : string());
+    // TODO: convert from base36 for saving
+    WriteValue(revision.Sha1);
+
+    if (modelFormatId != 0)
+        WriteValue(modelFormatId);
+    
+    if (!HasFlag(revision.Flags, RevisionFlags::TextDeleted))
+        DumpTraits<string>::WriteLong(*stream, withText ? compressedText : string());
 }
 
 void DumpRevision::UpdateIndex(Offset offset, bool overwrite)
@@ -78,17 +109,30 @@ void DumpRevision::UpdateIndex(Offset offset, bool overwrite)
 
 uint32_t DumpRevision::NewLength()
 {
-    auto user = DumpUser::Create(revision.Contributor);
     EnsureCompressed();
 
-    return ValueSize((uint8_t)DumpObjectKind::Revision)
-        + ValueSize(revision.RevisionId)
-        + ValueSize((uint8_t)revision.Flags)
-        + ValueSize(revision.ParentId)
-        + ValueSize(revision.DateTime.ToInteger())
-        + user->NewLength()
-        + ValueSize(revision.Comment)
-        + DumpTraits<string>::DumpSizeLong(withText ? compressedText : string());
+    std::uint8_t modelFormatId = dump.lock()->GetIdForModelFormat(revision.Model, revision.Format);
+    if (modelFormatId == 0)
+        revision.Flags |= RevisionFlags::WikitextModelFormat;
+
+    uint32_t result = 0;
+
+    result += ValueSize((uint8_t)DumpObjectKind::Revision);
+    result += ValueSize(revision.RevisionId);
+    result += ValueSize((uint8_t)revision.Flags);
+    result += ValueSize(revision.ParentId);
+    result += ValueSize(revision.DateTime.ToInteger());
+    if (!HasFlag(revision.Flags, RevisionFlags::ContributorDeleted))
+        result += DumpUser::Create(revision.Contributor)->NewLength();
+    if (!HasFlag(revision.Flags, RevisionFlags::CommentDeleted))
+        result += ValueSize(revision.Comment);
+    result += ValueSize(revision.Sha1);
+    if (modelFormatId != 0)
+        result += ValueSize(modelFormatId);
+    if (!HasFlag(revision.Flags, RevisionFlags::TextDeleted))
+        result += DumpTraits<string>::DumpSizeLong(withText ? compressedText : string());
+
+    return result;
 }
 
 DumpRevision::DumpRevision(weak_ptr<WritableDump> dump, uint32_t revisionId, bool withText)

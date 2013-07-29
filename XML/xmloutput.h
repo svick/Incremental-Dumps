@@ -78,6 +78,11 @@ public:
 		@param mode		if terse, do not write a newline after
 	*/
 	void EndAttrs(Mode mode = indent);
+    /**
+		End and close an element tag after writing attributes
+		@param mode		if terse, do not write a newline after
+	*/
+	void EndElementAttrs(Mode mode = indent);
 
 	/// write the std::string attribute
 	void WriteAttr(const char *name, const std::string &value);
@@ -108,6 +113,8 @@ public:
 	void WriteElement(const char *name, double value);
 	/// write out a "terse" element with the specified data
 	void WriteElement(const char *name, bool value);
+	/// write out a "terse" element with no data
+	void WriteElement(const char *name);
 
 	Output &operator<<(const std::string &str);
 	Output &operator<<(const char *str);

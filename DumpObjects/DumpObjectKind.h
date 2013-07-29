@@ -10,5 +10,7 @@ enum class DumpObjectKind : uint8_t
     IndexInnerNode = 0x02,
 
     Page           = 0x11,
-    Revision       = 0x12
+    Revision       = 0x12,
+
+    SiteInfo       = 0x21
 };

@@ -54,8 +54,8 @@ public:
     virtual std::uint32_t RealLength() = 0;
     virtual SplitResult Split() = 0;
 
-    virtual shared_ptr<IndexNodeIterator<TKey, TValue>> begin() = 0;
-    virtual shared_ptr<IndexNodeIterator<TKey, TValue>> end() = 0;
+    virtual unique_ptr<IndexNodeIterator<TKey, TValue>> begin() = 0;
+    virtual unique_ptr<IndexNodeIterator<TKey, TValue>> end() = 0;
 };
 
 #include "IndexNode.tpp"

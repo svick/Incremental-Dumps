@@ -66,6 +66,10 @@ void WritableDump::init(weak_ptr<WritableDump> self)
         new Index<uint32_t, Offset>(self, shared_ptr<Offset>(self.lock(), &fileHeader.PageIdIndexRoot)));
     revisionIdIndex = unique_ptr<Index<uint32_t, Offset>>(
         new Index<uint32_t, Offset>(self, shared_ptr<Offset>(self.lock(), &fileHeader.RevisionIdIndexRoot)));
+    modelFormatIndex = unique_ptr<Index<uint8_t, std::pair<std::string, std::string>>>(
+        new Index<uint8_t, std::pair<std::string, std::string>>(self, shared_ptr<Offset>(self.lock(), &fileHeader.ModelFormatIndexRoot)));
+
+    siteInfo = unique_ptr<DumpSiteInfo>(new DumpSiteInfo(self));
 }
 
 shared_ptr<WritableDump> WritableDump::Create(string fileName)
@@ -81,6 +85,7 @@ void WritableDump::WriteIndexes()
 
     pageIdIndex->Write();
     revisionIdIndex->Write();
+    modelFormatIndex->Write();
 }
 
 void WritableDump::DeleteRevision(uint32_t revisionId)
@@ -91,4 +96,42 @@ void WritableDump::DeleteRevision(uint32_t revisionId)
 
     revisionIdIndex->Remove(revisionId);
     spaceManager->Delete(offset.value, length);
+}
+
+const std::string WritableDump::WikitextModel = "wikitext";
+const std::string WritableDump::WikitextFormat = "text/x-wiki";
+
+std::uint8_t WritableDump::GetIdForModelFormat(std::string model, std::string format)
+{
+    if (model == WikitextModel && format == WikitextFormat)
+        return 0;
+
+    auto searchedPair = make_pair(model, format);
+    
+    auto found = std::find_if(
+        modelFormatIndex->begin(),
+        modelFormatIndex->end(),
+        [&](std::pair<std::uint8_t, std::pair<std::string, std::string>> foundItem){ return foundItem.second == searchedPair; });
+
+    if (found != modelFormatIndex->end())
+        return found->first;
+
+    // pair's default ordering will work fine here
+    auto maxPairRef = std::max_element(modelFormatIndex->begin(), modelFormatIndex->end());
+    uint8_t newId;
+    if (maxPairRef == modelFormatIndex->end())
+        newId = 1;
+    else
+        newId = maxPairRef->first + 1;
+
+    modelFormatIndex->Add(newId, searchedPair);
+    return newId;
+}
+
+std::pair<std::string, std::string> WritableDump::GetModelFormat(std::uint8_t id)
+{
+    if (id == 0)
+        return std::make_pair(WikitextModel, WikitextFormat);
+
+    return modelFormatIndex->Get(id);
 }

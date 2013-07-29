@@ -6,7 +6,6 @@
 #include "IndexNodeIterator.h"
 
 using std::pair;
-using std::shared_ptr;
 using std::iterator;
 using std::input_iterator_tag;
 
@@ -16,10 +15,14 @@ class IndexIterator : public iterator<input_iterator_tag, const pair<TKey, TValu
     template<typename TIndexKey, typename TIndexValue>
     friend class Index;
 private:
-    shared_ptr<IndexNodeIterator<TKey, TValue>> nodeIterator;
-    IndexIterator(shared_ptr<IndexNodeIterator<TKey, TValue>> nodeIterator);
+    std::unique_ptr<IndexNodeIterator<TKey, TValue>> nodeIterator;
+    IndexIterator(std::unique_ptr<IndexNodeIterator<TKey, TValue>> nodeIterator);
 public:
+    IndexIterator(const IndexIterator &other);
+    IndexIterator& operator =(const IndexIterator &other);
+
     const pair<TKey, TValue> operator *() const;
+    const std::unique_ptr<pair<TKey, TValue>> operator->() const;
     IndexIterator<TKey, TValue>& operator ++();
     bool operator ==(const IndexIterator<TKey, TValue> other);
     bool operator !=(const IndexIterator<TKey, TValue> other);

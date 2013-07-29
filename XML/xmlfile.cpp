@@ -61,7 +61,7 @@ int FileInputStream::read(XML_Char *buf, size_t bufLen)
 //
 FileOutputStream::FileOutputStream(const char *path)
 {
-	mFile = fopen(path, "w");
+	mFile = fopen(path, "wb");
 	if (!mFile)
 		throw FileException(errno);
 }

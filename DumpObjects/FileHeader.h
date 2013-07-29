@@ -13,9 +13,9 @@ class FileHeader : public DumpObject
 private:
     static uint32_t Length();
 
-    ostream* stream;
-
-    FileHeader(Offset fileEnd, Offset pageIdIndexRoot, Offset revisionIdIndexRoot, Offset freeSpaceIndexRoot, weak_ptr<WritableDump> dump = weak_ptr<WritableDump>());
+    FileHeader(
+        Offset fileEnd, Offset pageIdIndexRoot, Offset revisionIdIndexRoot, Offset modelFormatIndexRoot,
+        Offset freeSpaceIndexRoot, Offset siteInfo, weak_ptr<WritableDump> dump = weak_ptr<WritableDump>());
 protected:
     void WriteInternal();
 public:
@@ -30,7 +30,9 @@ public:
     Offset FileEnd;
     Offset PageIdIndexRoot;
     Offset RevisionIdIndexRoot;
+    Offset ModelFormatIndexRoot;
     Offset FreeSpaceIndexRoot;
+    Offset SiteInfo;
 
     FileHeader(weak_ptr<WritableDump> dump = weak_ptr<WritableDump>());
 };

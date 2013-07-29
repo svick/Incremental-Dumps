@@ -115,7 +115,7 @@ void Output::EndDocument()
 void Output::Indent()
 {
 	for (int i = 0; i < mLevel; i++)
-		(*this) << "\t";
+		(*this) << "  ";
 }
 
 void Output::BeginElement(const char *name, Mode mode)
@@ -152,6 +152,20 @@ void Output::EndAttrs(Mode mode)
 		(*this) << "\n";
 }
 
+void Output::EndElementAttrs(Mode mode)
+{
+	assert(mAttributes);
+	mAttributes = false;
+
+	assert(mLevel > 0);
+	--mLevel;
+    mElements.pop_back();
+
+	(*this) << " />";
+	if (mode != terse)
+		(*this) << "\n";
+}
+
 void Output::EndElement(Mode mode)
 {
 	assert(mElements.size() > 0);
@@ -170,6 +184,12 @@ void Output::EndElement(Mode mode)
 
 void Output::WriteElement(const char *name, const std::string &value)
 {
+    if (value == std::string())
+    {
+        WriteElement(name);
+        return;
+    }
+
 	assert(name);
 	BeginElement(name, terse);
 	(*this) << value;
@@ -215,6 +235,13 @@ void Output::WriteElement(const char *name, bool value)
 	BeginElement(name, terse);
 	(*this) << value;
 	EndElement(terse);
+}
+
+void Output::WriteElement(const char *name)
+{
+	assert(name);
+    BeginElementAttrs(name);
+    EndElementAttrs();
 }
 
 void Output::WriteAttr(const char *name, const std::string &value)

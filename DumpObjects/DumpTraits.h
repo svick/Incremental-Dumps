@@ -7,6 +7,7 @@
 #include <iostream>
 #include <array>
 #include <vector>
+#include <map>
 #include "../DumpException.h"
 
 using std::uint32_t;
@@ -19,7 +20,7 @@ using std::vector;
 
 // TODO: add non-template wrapper with template methods, so that type inference can work?
 
-template<typename T>
+template<typename T, typename = void>
 class DumpTraits
 {
 public:
@@ -44,100 +45,146 @@ public:
     }
 };
 
-template<>
-class DumpTraits<uint32_t>
+template<
+    typename T,
+    uint32_t Size = sizeof(T),
+    typename = typename std::enable_if<std::is_integral<T>::value>::type>
+class DumpTraitsNumeric
 {
 public:
-    static uint32_t Read(istream &stream)
+    static T Read(istream &stream)
     {
-        char bytes[4];
+        char bytes[Size];
 
-        stream.read(bytes, 4);
+        stream.read(bytes, Size);
 
-        // TODO: use loop and make generic
-        uint32_t result = 0;
-        result |= (uint32_t)(uint8_t)bytes[0];
-        result |= (uint32_t)(uint8_t)bytes[1] << 8;
-        result |= (uint32_t)(uint8_t)bytes[2] << 16;
-        result |= (uint32_t)(uint8_t)bytes[3] << 24;
+        T result = 0;
+        for (int i = 0; i < Size; i++)
+        {
+            result |= (T)(std::uint8_t)bytes[i] << (8 * i);
+        }
 
         return result;
     }
 
-    static void Write(ostream &stream, const uint32_t value)
+    static void Write(ostream &stream, const T value)
     {
-        char bytes[4];
+        char bytes[Size];
 
-        bytes[0] = value & 0xFF;
-        bytes[1] = (value >> 8) & 0xFF;
-        bytes[2] = (value >> 16) & 0xFF;
-        bytes[3] = (value >> 24) & 0xFF;
+        for (int i = 0; i < Size; i++)
+        {
+            bytes[i] = (value >> (8 * i)) & 0xFF;
+        }
 
-        stream.write(bytes, 4);
+        stream.write(bytes, Size);
     }
 
-    static uint32_t DumpSize(const uint32_t value = 0)
+    static uint32_t DumpSize(const T value = 0)
     {
-        return 4;
+        return Size;
+    }
+};
+
+template<typename T>
+class DumpTraits<T, typename std::enable_if<std::is_integral<T>::value>::type>
+    : public DumpTraitsNumeric<T>
+{};
+
+template<typename Source>
+class DumpConverter
+{};
+
+template<
+    typename T,
+    typename TargetTraits = DumpTraits<typename DumpConverter<T>::Target>>
+class DumpTraitsConverted
+{
+public:
+    static T Read(istream &stream)
+    {
+        auto target = TargetTraits::Read(stream);
+        return DumpConverter<T>::ConvertBack(target);
+    }
+
+    static void Write(ostream &stream, const T value)
+    {
+        auto target = DumpConverter<T>::Convert(value);
+        TargetTraits::Write(stream, target);
+    }
+
+    static uint32_t DumpSize(const T value = 0)
+    {
+        auto target = DumpConverter<T>::Convert(value);
+        return TargetTraits::DumpSize(target);
     }
 };
 
 template<>
-class DumpTraits<uint16_t>
+class DumpConverter<int16_t>
 {
 public:
-    static uint16_t Read(istream &stream)
+    typedef uint16_t Target;
+
+    static uint16_t Convert(const int16_t source)
     {
-        char bytes[2];
-
-        stream.read(bytes, 2);
-
-        uint16_t result = 0;
-        result |= (uint16_t)(uint8_t)bytes[0];
-        result |= (uint16_t)(uint8_t)bytes[1] << 8;
-
-        return result;
+        return source;
     }
 
-    static void Write(ostream &stream, const uint16_t value)
+    static int16_t ConvertBack(const uint16_t target)
     {
-        char bytes[2];
-
-        bytes[0] = value & 0xFF;
-        bytes[1] = (value >> 8) & 0xFF;
-
-        stream.write(bytes, 2);
-    }
-
-    static uint32_t DumpSize(const uint16_t value = 0)
-    {
-        return 2;
+        return target;
     }
 };
 
 template<>
-class DumpTraits<uint8_t>
+class DumpTraits<int16_t> : public DumpTraitsConverted<int16_t>
+{};
+
+template<>
+class DumpConverter<Offset>
 {
 public:
-    static uint8_t Read(istream &stream)
+    typedef uint64_t Target;
+
+    static uint64_t Convert(const Offset source)
     {
-        char byte;
-        stream.read(&byte, 1);
-        return byte;
+        return source.value;
     }
 
-    static void Write(ostream &stream, const uint8_t value)
+    static Offset ConvertBack(const uint64_t target)
     {
-        stream.put(value);
-    }
-
-    static uint32_t DumpSize(const uint8_t value = 0)
-    {
-        return 1;
+        return target;
     }
 };
 
-// for now, handle only strings of length up to 255
+template<>
+class DumpTraits<Offset> : public DumpTraitsConverted<Offset, DumpTraitsNumeric<uint64_t, 6>>
+{};
+
+template<typename T>
+class DumpTraits<T, typename std::enable_if<std::is_enum<T>::value>::type>
+{
+    typedef DumpTraits<typename std::underlying_type<T>::type> TargetTraits;
+public:
+    static T Read(istream &stream)
+    {
+        auto target = TargetTraits::Read(stream);
+        return static_cast<T>(target);
+    }
+
+    static void Write(ostream &stream, const T value)
+    {
+        auto target = static_cast<typename std::underlying_type<T>::type>(value);
+        TargetTraits::Write(stream, target);
+    }
+
+    static uint32_t DumpSize(const T value)
+    {
+        auto target = static_cast<typename std::underlying_type<T>::type>(value);
+        return TargetTraits::DumpSize(target);
+    }
+};
+
 template<>
 class DumpTraits<string>
 {
@@ -183,10 +230,12 @@ public:
             else
                 throw DumpException();
         }
+        else
+        {
+            DumpTraits<uint8_t>::Write(stream, length);
 
-        DumpTraits<uint8_t>::Write(stream, length);
-
-        stream.write(value.data(), length);
+            stream.write(value.data(), length);
+        }
     }
 
     static void WriteLong(ostream &stream, const string value)
@@ -294,5 +343,87 @@ public:
         }
 
         return size;
+    }
+};
+
+template<typename TKey, typename TValue>
+class DumpTraits<std::map<TKey, TValue>>
+{
+public:
+    static std::map<TKey, TValue> Read(istream &stream)
+    {
+        uint16_t count = DumpTraits<uint16_t>::Read(stream);
+
+        std::vector<TKey> keys;
+
+        for (int i = 0; i < count; i++)
+        {
+            keys.push_back(DumpTraits<TKey>::Read(stream));
+        }
+
+        std::map<TKey, TValue> result;
+
+        for (int i = 0; i < count; i++)
+        {
+            result.insert(std::pair<TKey, TValue>(keys[i], DumpTraits<TValue>::Read(stream)));
+        }
+
+        return result;
+    }
+
+    static void Write(ostream &stream, const std::map<TKey, TValue> &value)
+    {
+        auto length = value.size();
+
+        if (length >= numeric_limits<uint16_t>::max())
+            throw DumpException();
+
+        DumpTraits<uint16_t>::Write(stream, length);
+
+        for (auto pair : value)
+        {
+            DumpTraits<TKey>::Write(stream, pair.first);
+        }
+
+        for (auto pair : value)
+        {
+            DumpTraits<TValue>::Write(stream, pair.second);
+        }
+    }
+
+    static uint32_t DumpSize(const std::map<TKey, TValue> &value)
+    {
+        uint32_t size = DumpTraits<uint16_t>::DumpSize(value.size());
+
+        for (auto pair : value)
+        {
+            size += DumpTraits<TKey>::DumpSize(pair.first) + DumpTraits<TValue>::DumpSize(pair.second);
+        }
+
+        return size;
+    }
+};
+
+template<typename T1, typename T2>
+class DumpTraits<std::pair<T1, T2>>
+{
+public:
+    static std::pair<T1, T2> Read(istream &stream)
+    {
+        T1 first = DumpTraits<T1>::Read(stream);
+        T2 second = DumpTraits<T2>::Read(stream);
+
+        return std::make_pair(first, second);
+    }
+
+    static void Write(ostream &stream, const std::pair<T1, T2> &value)
+    {
+        DumpTraits<T1>::Write(stream, value.first);
+        DumpTraits<T2>::Write(stream, value.second);
+    }
+
+    static uint32_t DumpSize(const std::pair<T1, T2> &value)
+    {
+        return DumpTraits<T1>::DumpSize(value.first) + DumpTraits<T2>::DumpSize(value.second);
     }
 };

@@ -22,11 +22,17 @@ IndexLeafIterator<TKey, TValue>& IndexLeafIterator<TKey, TValue>::operator ++()
 }
 
 template<typename TKey, typename TValue>
-bool IndexLeafIterator<TKey, TValue>::equals(const IndexNodeIterator<TKey, TValue> *other) const
+bool IndexLeafIterator<TKey, TValue>::Equals(const IndexNodeIterator<TKey, TValue> *other) const
 {
     auto otherCasted = dynamic_cast<const IndexLeafIterator<TKey, TValue>*>(other);
     if (otherCasted == nullptr)
         return false;
 
     return mapIterator == otherCasted->mapIterator;
+}
+
+template<typename TKey, typename TValue>
+std::unique_ptr<IndexNodeIterator<TKey, TValue>> IndexLeafIterator<TKey, TValue>::Clone() const
+{
+    return std::unique_ptr<IndexNodeIterator<TKey, TValue>>(new IndexLeafIterator<TKey, TValue>(*this));
 }

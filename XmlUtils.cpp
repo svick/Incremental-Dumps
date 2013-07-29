@@ -1,13 +1,12 @@
 #include "XmlUtils.h"
 
 #include <sstream>
-
-using std::ostringstream;
+#include "DumpException.h"
 
 // XMLIO doesn't seem to decode XML character entities, so this function does that
-string unescape(string original)
+std::string unescape(std::string original)
 {
-    ostringstream stream;
+    std::ostringstream stream;
 
     unsigned prevPos;
     unsigned pos = 0;
@@ -17,7 +16,7 @@ string unescape(string original)
         prevPos = pos;
 
         int ampPos = original.find('&', pos);
-        if (ampPos == string::npos)
+        if (ampPos == std::string::npos)
         {
             stream << original.substr(pos);
             break;
@@ -58,12 +57,12 @@ string unescape(string original)
     return stream.str();
 }
 
-string readElementData(XML::Element &elem)
+std::string readElementData(XML::Element &elem)
 {
     if (elem.IsEmpty())
-        return string();
+        return std::string();
 
-    ostringstream stream;
+    std::ostringstream stream;
 
     const size_t BUFFER_SIZE = 256;
 
@@ -78,4 +77,42 @@ string readElementData(XML::Element &elem)
     } while (read == BUFFER_SIZE);
     
     return unescape(stream.str());
+}
+
+std::string escapeElementText(std::string original)
+{
+    std::ostringstream stream;
+
+    unsigned prevPos;
+    unsigned pos = 0;
+
+    while (pos < original.length())
+    {
+        prevPos = pos;
+
+        int foundPos = original.find_first_of("<>\"&", pos);
+        if (foundPos == std::string::npos)
+        {
+            stream << original.substr(pos);
+            break;
+        }
+
+        pos = foundPos;
+        stream << original.substr(prevPos, pos - prevPos);
+
+        if (original[pos] == '<')
+            stream << "&lt;";
+        else if (original[pos] == '>')
+            stream << "&gt;";
+        else if (original[pos] == '"')
+            stream << "&quot;";
+        else if (original[pos] == '&')
+            stream << "&amp;";
+        else
+            throw DumpException();
+
+        pos++;
+    }
+
+    return stream.str();
 }

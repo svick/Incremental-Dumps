@@ -1,7 +1,6 @@
 #include "XmlPageProcessor.h"
 #include "XmlRevisionProcessor.h"
-#include "XmlUtils.h"
-#include "DumpWriters/DumpWriter.h"
+#include "../XmlUtils.h"
 
 using std::make_shared;
 using std::stoi;

@@ -1,16 +1,15 @@
 #pragma once
 
 #include <memory>
-#include "XML/xmlinput.h"
-#include "Objects/Page.h"
-#include "DumpWriters/DumpWriter.h"
+#include "../XML/xmlinput.h"
+#include "../Objects/Page.h"
+#include "../DumpWriters/DumpWriter.h"
 
 using std::shared_ptr;
 
 class XmlPageProcessor
 {
 private:
-    shared_ptr<Page> page;
     DumpWriter* dumpWriter;
     bool pageWritten;
 
@@ -19,6 +18,7 @@ private:
     void writePage();
     void completePage();
 public:
+    shared_ptr<Page> page;
     static void Handler(XML::Element &elem, void *userData);
     void ProcessRevision(const shared_ptr<const Revision> revision);
 };

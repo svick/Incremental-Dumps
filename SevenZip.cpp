@@ -46,5 +46,12 @@ std::string SevenZip::Decompress(std::string s)
 
     HRESULT result = decoder.Code(&inputWrapperStream, &outputWrapperStream, nullptr, nullptr, nullptr);
 
-    return outputStdStream.str();
+    // LZMA decompression seems to sometimes introduce trailing 0 byte
+    // this takes care of that
+    std::string decompressedString = outputStdStream.str();
+
+    if (!decompressedString.empty() && decompressedString.back() == '\0')
+        decompressedString.pop_back();
+
+    return decompressedString;
 }

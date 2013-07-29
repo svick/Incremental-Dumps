@@ -24,17 +24,12 @@ unique_ptr<DumpUser> DumpUser::Create(shared_ptr<User> user)
 unique_ptr<DumpUser> DumpUser::Read(RevisionFlags flags, istream &stream)
 {
     if (HasFlag(flags, RevisionFlags::IpV4User))
-    {
         return DumpIpV4User::Read(stream);
-    }
-    else if (HasFlag(flags, RevisionFlags::NamedUser))
-    {
+    if (HasFlag(flags, RevisionFlags::IpV6User))
+        return DumpIpV6User::Read(stream);
+    if (HasFlag(flags, RevisionFlags::NamedUser))
         return DumpNamedUser::Read(stream);
-    }
-    else
-    {
-        throw new DumpException();
-    }
+    throw new DumpException();
 }
 
 void DumpUser::Write(ostream *stream)

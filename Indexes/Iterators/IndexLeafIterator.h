@@ -20,7 +20,8 @@ private:
 public:
     virtual const pair<TKey, TValue> operator *() const override;
     virtual IndexLeafIterator& operator ++() override;
-    virtual bool equals(const IndexNodeIterator<TKey, TValue> *other) const override;
+    virtual bool Equals(const IndexNodeIterator<TKey, TValue> *other) const override;
+    virtual std::unique_ptr<IndexNodeIterator<TKey, TValue>> Clone() const override;
 };
 
 #include "IndexLeafIterator.tpp"

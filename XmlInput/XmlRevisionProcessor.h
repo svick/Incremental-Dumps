@@ -1,6 +1,6 @@
 #pragma once
 
-#include "XML/xmlinput.h"
+#include "../XML/xmlinput.h"
 
 class XmlRevisionProcessor
 {
