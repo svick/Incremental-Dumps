@@ -1,5 +1,9 @@
 #include <iostream>
-#include "DumpWriters/PagesHistoryWriter.h"
+#include <queue>
+#include "DumpWriters/CompositeWriter.h"
+#include "DumpWriters/DumpWriter.h"
+#include "DumpWriters/CurrentWriterWrapper.h"
+#include "DumpWriters/ArticlesWriterWrapper.h"
 #include "XmlInput/XmlMediawikiProcessor.h"
 #include "XmlWriter.h"
 #include "Dump.h"
@@ -7,19 +11,95 @@
 void printUsage()
 {
     std::cout << "Usage:\n";
-    std::cout << "creating dump: idumps c[reate] source.xml dump.id\n";
+    std::cout << "creating dump: idumps c[reate] source.xml spec dump.id\n";
+    std::cout << " spec is a 2 or 3-letter string that describes what kind of dump to create:\n";
+    std::cout << " 1. letter: p for pages dump or s for stub dump:\n";
+    std::cout << " 2. letter: h for history dump or c for current dump:\n";
+    std::cout << " 3. optional letter: a for articles dump:\n";
+    std::cout << " example: sh for stub-meta-history, pca for pages-articles\n";
     std::cout << "reading dump: idumps r[ead] dump.id output.xml\n";
 }
 
-void createDump(string inputFileName, string outputFileName)
+std::unique_ptr<IDumpWriter> createWriter(std::queue<std::string> &parameters)
 {
-    auto dump = WritableDump::Create(outputFileName);
+    std::unique_ptr<IDumpWriter> nullResult;
 
-    PagesHistoryWriter writer(dump);
+    if (parameters.size() < 2)
+        return nullResult;
+
+    auto spec = parameters.front();
+    parameters.pop();
+
+    if (spec.length() < 2 || spec.length() > 3)
+        return nullResult;
+
+    auto fileName = parameters.front();
+    parameters.pop();
+
+    bool withText;
+    if (spec[0] == 'p')
+        withText = true;
+    else if (spec[0] == 's')
+        withText = false;
+    else
+        return nullResult;
+
+    bool current;
+    if (spec[1] == 'c')
+        current = true;
+    else if (spec[1] == 'h')
+        current = false;
+    else
+        return nullResult;
+
+    bool articles = false;
+    if (spec.length() == 3)
+    {
+        if (spec[2] == 'a')
+            articles = true;
+        else
+            return nullResult;
+    }
+
+    auto dump = WritableDump::Create(fileName);
+
+    auto writer = std::unique_ptr<IDumpWriter>(new DumpWriter(dump, withText));
+
+    if (current)
+        writer = std::unique_ptr<IDumpWriter>(new CurrentWriterWrapper(std::move(writer)));
+
+    if (articles)
+        writer = std::unique_ptr<IDumpWriter>(new ArticlesWriterWrapper(std::move(writer)));
+
+    return writer;
+}
+
+bool createDump(std::queue<std::string> &parameters)
+{
+    std::string inputFileName = parameters.front();
+    parameters.pop();
+
+    std::vector<std::unique_ptr<IDumpWriter>> writers;
+
+    while (!parameters.empty())
+    {
+        auto writer = createWriter(parameters);
+
+        if (writer == nullptr)
+            return false;
+
+        writers.push_back(std::move(writer));
+    }
+
+    CompositeWriter writer(writers);
+
+    writer.SetDumpKind(DumpKind::None);
 
     XmlMediawikiProcessor::Process(&writer, inputFileName);
 
-    dump->WriteIndexes();
+    writer.WriteIndexes();
+
+    return true;
 }
 
 void readDump(string dumpFileName, string outputFileName)
@@ -41,14 +121,15 @@ int main(int argc, const char* argv[])
 
     if (action == "c" || action == "create")
     {
-        if (argc != 4)
+        std::queue<std::string> parameters;
+
+        for (int i = 2; i < argc; i++)
+            parameters.push(argv[i]);
+
+        if (!createDump(parameters))
         {
-            std::cout << "Invalid number of parameters\n";
+            std::cout << "Invalid parameters\n";
             printUsage();
-        }
-        else
-        {
-            createDump(argv[2], argv[3]);
         }
     }
     else if (action == "r" || action == "read")

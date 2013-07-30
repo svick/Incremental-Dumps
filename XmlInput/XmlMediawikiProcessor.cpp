@@ -5,7 +5,7 @@
 
 void mediawikiHandler(XML::Element &elem, void *userData)
 {
-    auto writer = (DumpWriter*)userData;
+    auto writer = (IDumpWriter*)userData;
 
     std::string lang = elem.GetAttribute("xml:lang");
 
@@ -21,7 +21,7 @@ void mediawikiHandler(XML::Element &elem, void *userData)
     elem.Process(handlers, writer);
 }
 
-void XmlMediawikiProcessor::Process(DumpWriter *writer, std::string inputFileName)
+void XmlMediawikiProcessor::Process(IDumpWriter *writer, std::string inputFileName)
 {
     XML::FileInputStream stream = XML::FileInputStream(inputFileName.c_str());
 

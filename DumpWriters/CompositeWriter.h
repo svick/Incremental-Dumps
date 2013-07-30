@@ -1,22 +1,16 @@
 #pragma once
 
+#include <memory>
+#include <vector>
 #include "IDumpWriter.h"
-#include "../DumpObjects/DumpPage.h"
-#include "../Dump.h"
-#include "../DumpObjects/DumpPage.h"
 
-
-class DumpWriter : public IDumpWriter
+class CompositeWriter : public IDumpWriter
 {
 private:
-    std::shared_ptr<WritableDump> dump;
-    unique_ptr<DumpPage> page;
-    vector<shared_ptr<const Revision>> revisions;
-    bool withText;
-
+    std::vector<std::unique_ptr<IDumpWriter>> writers;
 public:
-    DumpWriter(std::shared_ptr<WritableDump> dump, bool withText)
-        : dump(dump), withText(withText)
+    CompositeWriter(std::vector<std::unique_ptr<IDumpWriter>> &writers)
+        : writers(std::move(writers))
     {}
 
     virtual void StartPage(const std::shared_ptr<const Page> page) override;

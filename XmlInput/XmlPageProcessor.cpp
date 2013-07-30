@@ -19,7 +19,7 @@ void XmlPageProcessor::completePage()
     dumpWriter->EndPage();
 }
 
-XmlPageProcessor::XmlPageProcessor(const shared_ptr<Page> page, DumpWriter* dumpWriter)
+XmlPageProcessor::XmlPageProcessor(const shared_ptr<Page> page, IDumpWriter* dumpWriter)
     : page(page), dumpWriter(dumpWriter), pageWritten(false)
 {}
 
@@ -34,7 +34,7 @@ void XmlPageProcessor::Handler(XML::Element &elem, void *userData)
         XML::Handler::END
     };
 
-    XmlPageProcessor pageProcessor(make_shared<Page>(), (DumpWriter*)userData);
+    XmlPageProcessor pageProcessor(make_shared<Page>(), (IDumpWriter*)userData);
 
     elem.Process(handlers, &pageProcessor);
 

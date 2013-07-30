@@ -34,6 +34,6 @@ void XmlContributorProcessor::Handler(XML::Element &elem, void *userData)
     else
         user = std::make_shared<NamedUser>(processor.id, processor.userName);
 
-    revision->Contributor = shared_ptr<User>(user);
+    revision->Contributor = std::shared_ptr<User>(user);
     revision->Flags |= user->UserKind();
 }

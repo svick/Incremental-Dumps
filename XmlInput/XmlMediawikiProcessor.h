@@ -9,5 +9,5 @@ private:
     XmlMediawikiProcessor()
     {}
 public:
-    static void Process(DumpWriter *writer, std::string inputFileName);
+    static void Process(IDumpWriter *writer, std::string inputFileName);
 };

@@ -82,6 +82,7 @@
   <ItemGroup>
     <ClCompile Include="Dump.cpp" />
     <ClCompile Include="DumpException.cpp" />
+    <ClCompile Include="DumpKind.cpp" />
     <ClCompile Include="DumpObjects\DumpIpV4User.cpp" />
     <ClCompile Include="DumpObjects\DumpIpV6User.cpp" />
     <ClCompile Include="DumpObjects\DumpNamedUser.cpp" />
@@ -90,6 +91,7 @@
     <ClCompile Include="DumpObjects\FileHeader.cpp" />
     <ClInclude Include="CollectionHelpers.h" />
     <ClInclude Include="DumpException.h" />
+    <ClInclude Include="DumpKind.h" />
     <ClInclude Include="DumpObjects\DumpIpV4User.h" />
     <ClInclude Include="DumpObjects\DumpIpV6User.h" />
     <ClInclude Include="DumpObjects\DumpNamedUser.h" />
@@ -98,8 +100,10 @@
     <ClInclude Include="DumpObjects\DumpRevision.h" />
     <ClInclude Include="DumpObjects\DumpSiteInfo.h" />
     <ClInclude Include="DumpObjects\DumpUser.h" />
-    <ClInclude Include="DumpWriters\PagesHistoryWriter.h" />
-    <ClInclude Include="DumpWriters\StubHistoryWriter.h" />
+    <ClInclude Include="DumpWriters\ArticlesWriterWrapper.h" />
+    <ClInclude Include="DumpWriters\CompositeWriter.h" />
+    <ClInclude Include="DumpWriters\DumpWriter.h" />
+    <ClInclude Include="DumpWriters\WriterWrapper.h" />
     <ClInclude Include="Indexes\Index.h" />
     <ClInclude Include="Indexes\IndexInnerNode.h" />
     <ClInclude Include="Indexes\IndexLeafNode.tpp">
@@ -113,9 +117,10 @@
     <ClCompile Include="DumpObjects\DumpPage.cpp" />
     <ClCompile Include="DumpObjects\DumpRevision.cpp" />
     <ClCompile Include="DumpObjects\DumpUser.cpp" />
+    <ClCompile Include="DumpWriters\ArticlesWriterWrapper.cpp" />
+    <ClCompile Include="DumpWriters\CompositeWriter.cpp" />
     <ClCompile Include="DumpWriters\DumpWriter.cpp" />
-    <ClCompile Include="DumpWriters\PagesHistoryWriter.cpp" />
-    <ClCompile Include="DumpWriters\StubHistoryWriter.cpp" />
+    <ClCompile Include="DumpWriters\WriterWrapper.cpp" />
     <ClCompile Include="Objects\IpV4User.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="DumpObjects\Offset.cpp" />
@@ -125,7 +130,7 @@
     <ClCompile Include="Objects\Revision.cpp" />
     <ClCompile Include="SevenZip.cpp" />
     <ClCompile Include="SpaceManager.cpp" />
-    <ClCompile Include="DumpWriters\StubCurrentWriter.cpp" />
+    <ClCompile Include="DumpWriters\CurrentWriterWrapper.cpp" />
     <ClCompile Include="Objects\User.cpp" />
     <ClCompile Include="StringHelpers.cpp" />
     <ClCompile Include="Objects\Timestamp.cpp" />
@@ -147,7 +152,7 @@
     <ClInclude Include="Dump.h" />
     <ClInclude Include="DumpObjects\DumpObject.h" />
     <ClInclude Include="DumpObjects\DumpTraits.h" />
-    <ClInclude Include="DumpWriters\DumpWriter.h" />
+    <ClInclude Include="DumpWriters\IDumpWriter.h" />
     <ClInclude Include="DumpObjects\FileHeader.h" />
     <ClInclude Include="Indexes\IndexLeafNode.h" />
     <ClInclude Include="Indexes\IndexNode.h" />
@@ -166,7 +171,7 @@
     <ClInclude Include="Objects\SiteInfo.h" />
     <ClInclude Include="SevenZip.h" />
     <ClInclude Include="SpaceManager.h" />
-    <ClInclude Include="DumpWriters\StubCurrentWriter.h" />
+    <ClInclude Include="DumpWriters\CurrentWriterWrapper.h" />
     <ClInclude Include="Objects\User.h" />
     <ClInclude Include="StringHelpers.h" />
     <ClInclude Include="Objects\Timestamp.h" />

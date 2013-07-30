@@ -8,6 +8,7 @@ endif()
 set(SOURCES_files_ClCompile
   Dump.cpp
   DumpException.cpp
+  DumpKind.cpp
   DumpObjects/DumpIpV4User.cpp
   DumpObjects/DumpIpV6User.cpp
   DumpObjects/DumpNamedUser.cpp
@@ -26,10 +27,11 @@ set(SOURCES_files_ClCompile
   Objects/Revision.cpp
   SevenZip.cpp
   SpaceManager.cpp
+  DumpWriters/ArticlesWriterWrapper.cpp
+  DumpWriters/CompositeWriter.cpp
+  DumpWriters/CurrentWriterWrapper.cpp
   DumpWriters/DumpWriter.cpp
-  DumpWriters/StubCurrentWriter.cpp
-  DumpWriters/StubHistoryWriter.cpp
-  DumpWriters/PagesHistoryWriter.cpp
+  DumpWriters/WriterWrapper.cpp
   Objects/User.cpp
   StringHelpers.cpp
   Objects/Timestamp.cpp
@@ -51,6 +53,7 @@ set(SOURCES_files_ClCompile
 set(SOURCES_files_ClInclude
   CollectionHelpers.h
   DumpException.h
+  DumpKind.h
   DumpObjects/DumpIpV4User.h
   DumpObjects/DumpIpV6User.h
   DumpObjects/DumpNamedUser.h
@@ -67,7 +70,6 @@ set(SOURCES_files_ClInclude
   Dump.h
   DumpObjects/DumpObject.h
   DumpObjects/DumpTraits.h
-  DumpWriters/DumpWriter.h
   DumpObjects/FileHeader.h
   Indexes/IndexInnerNode.h
   Indexes/IndexLeafNode.h
@@ -88,9 +90,12 @@ set(SOURCES_files_ClInclude
   Indexes/Iterators/IndexNodeIterator.h
   SevenZip.h
   SpaceManager.h
-  DumpWriters/StubCurrentWriter.h
-  DumpWriters/StubHistoryWriter.h
-  DumpWriters/PagesHistoryWriter.h
+  DumpWriters/ArticlesWriterWrapper.h
+  DumpWriters/CompositeWriter.h
+  DumpWriters/CurrentWriterWrapper.h
+  DumpWriters/DumpWriter.h
+  DumpWriters/IDumpWriter.h
+  DumpWriters/WriterWrapper.h
   Objects/User.h
   StringHelpers.h
   Objects/Timestamp.h

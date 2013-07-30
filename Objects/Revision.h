@@ -5,10 +5,7 @@
 #include "User.h"
 #include "Timestamp.h"
 
-using std::shared_ptr;
-using std::string;
-
-enum class RevisionFlags : uint8_t
+enum class RevisionFlags : std::uint8_t
 {
     None      = 0x00,
 
@@ -34,13 +31,14 @@ public:
     Revision();
 
     RevisionFlags Flags;
-    uint32_t RevisionId;
-    uint32_t ParentId;
+    std::uint32_t RevisionId;
+    std::uint32_t ParentId;
     Timestamp DateTime;
-    shared_ptr<User> Contributor;
-    string Comment;
-    string Text;
-    string Sha1;
-    string Model;
-    string Format;
+    std::shared_ptr<User> Contributor;
+    std::string Comment;
+    std::string Text;
+    std::uint32_t TextLength;
+    std::string Sha1;
+    std::string Model;
+    std::string Format;
 };

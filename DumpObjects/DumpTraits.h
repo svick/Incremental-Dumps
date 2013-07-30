@@ -112,7 +112,7 @@ public:
         TargetTraits::Write(stream, target);
     }
 
-    static uint32_t DumpSize(const T value = 0)
+    static uint32_t DumpSize(const T value = T())
     {
         auto target = DumpConverter<T>::Convert(value);
         return TargetTraits::DumpSize(target);
@@ -178,7 +178,7 @@ public:
         TargetTraits::Write(stream, target);
     }
 
-    static uint32_t DumpSize(const T value)
+    static uint32_t DumpSize(const T value = T())
     {
         auto target = static_cast<typename std::underlying_type<T>::type>(value);
         return TargetTraits::DumpSize(target);

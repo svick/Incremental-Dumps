@@ -3,7 +3,7 @@
 #include "../XmlUtils.h"
 #include <tuple>
 
-XmlSiteInfoProcessor::XmlSiteInfoProcessor(DumpWriter* writer)
+XmlSiteInfoProcessor::XmlSiteInfoProcessor(IDumpWriter* writer)
     : siteInfo(std::make_shared<SiteInfo>()), writer(writer)
 {}
 

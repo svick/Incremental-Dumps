@@ -10,10 +10,10 @@ using std::shared_ptr;
 class XmlPageProcessor
 {
 private:
-    DumpWriter* dumpWriter;
+    IDumpWriter* dumpWriter;
     bool pageWritten;
 
-    XmlPageProcessor(const shared_ptr<Page> page, DumpWriter* dumpWriter);
+    XmlPageProcessor(const shared_ptr<Page> page, IDumpWriter* dumpWriter);
 
     void writePage();
     void completePage();

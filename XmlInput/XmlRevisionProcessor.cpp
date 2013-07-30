@@ -33,7 +33,10 @@ void XmlRevisionProcessor::Handler(XML::Element &elem, void *userData)
                 if (elem.GetAttribute("deleted") != nullptr)
                     revision->Flags |= RevisionFlags::TextDeleted;
                 else
+                {
                     revision->Text = readElementData(elem);
+                    revision->TextLength = revision->Text.length();
+                }
             }),
         XML::Handler("sha1", [](XML::Element &elem, void *userData) { ((Revision*)userData)->Sha1 = readElementData(elem); }),
         XML::Handler("model", [](XML::Element &elem, void *userData) { ((Revision*)userData)->Model = readElementData(elem); }),

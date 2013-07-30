@@ -3,6 +3,7 @@
 #include <iostream>
 #include "DumpObject.h"
 #include "Offset.h"
+#include "../DumpKind.h"
 
 class ReadableDump;
 
@@ -14,6 +15,7 @@ private:
     static uint32_t Length();
 
     FileHeader(
+        DumpKind kind,
         Offset fileEnd, Offset pageIdIndexRoot, Offset revisionIdIndexRoot, Offset modelFormatIndexRoot,
         Offset freeSpaceIndexRoot, Offset siteInfo, weak_ptr<WritableDump> dump = weak_ptr<WritableDump>());
 protected:
@@ -26,6 +28,8 @@ public:
 
     virtual void Write() override;
     virtual uint32_t NewLength() override;
+
+    DumpKind Kind;
 
     Offset FileEnd;
     Offset PageIdIndexRoot;

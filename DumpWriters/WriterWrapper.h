@@ -1,22 +1,14 @@
 #pragma once
 
 #include "IDumpWriter.h"
-#include "../DumpObjects/DumpPage.h"
-#include "../Dump.h"
-#include "../DumpObjects/DumpPage.h"
 
-
-class DumpWriter : public IDumpWriter
+class WriterWrapper : public IDumpWriter
 {
-private:
-    std::shared_ptr<WritableDump> dump;
-    unique_ptr<DumpPage> page;
-    vector<shared_ptr<const Revision>> revisions;
-    bool withText;
-
+protected:
+    std::unique_ptr<IDumpWriter> wrapped;
 public:
-    DumpWriter(std::shared_ptr<WritableDump> dump, bool withText)
-        : dump(dump), withText(withText)
+    WriterWrapper(std::unique_ptr<IDumpWriter> wrapped)
+        : wrapped(std::move(wrapped))
     {}
 
     virtual void StartPage(const std::shared_ptr<const Page> page) override;
@@ -25,6 +17,6 @@ public:
     virtual void DeleteRevision(std::uint32_t revisionId) override;
     virtual void EndPage() override;
     virtual void SetSiteInfo(const std::shared_ptr<const SiteInfo> siteInfo) override;
-    virtual void SetDumpKind(DumpKind dumpKind) override;
+    virtual void SetDumpKind(DumpKind dumpKind) override = 0;
     virtual void WriteIndexes() override;
 };

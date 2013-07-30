@@ -57,8 +57,16 @@ Revision DumpRevision::Read(shared_ptr<WritableDump> dump, Offset offset)
 
     if (!HasFlag(revision.Flags, RevisionFlags::TextDeleted))
     {
-        string compressedText = DumpTraits<string>::ReadLong(stream);
-        revision.Text = SevenZip::Decompress(compressedText);
+        if (IsPages(dump->fileHeader.Kind))
+        {
+            std::string compressedText = DumpTraits<string>::ReadLong(stream);
+            revision.Text = SevenZip::Decompress(compressedText);
+            revision.TextLength = revision.Text.length();
+        }
+        else
+        {
+            ReadValue(stream, revision.TextLength);
+        }
     }
 
     return revision;
@@ -94,7 +102,12 @@ void DumpRevision::WriteInternal()
         WriteValue(modelFormatId);
     
     if (!HasFlag(revision.Flags, RevisionFlags::TextDeleted))
-        DumpTraits<string>::WriteLong(*stream, withText ? compressedText : string());
+    {
+        if (withText)
+            DumpTraits<std::string>::WriteLong(*stream, compressedText);
+        else
+            WriteValue(revision.TextLength);
+    }
 }
 
 void DumpRevision::UpdateIndex(Offset offset, bool overwrite)
@@ -130,7 +143,12 @@ uint32_t DumpRevision::NewLength()
     if (modelFormatId != 0)
         result += ValueSize(modelFormatId);
     if (!HasFlag(revision.Flags, RevisionFlags::TextDeleted))
-        result += DumpTraits<string>::DumpSizeLong(withText ? compressedText : string());
+    {
+        if (withText)
+            result += DumpTraits<string>::DumpSizeLong(compressedText);
+        else
+            result += ValueSize(revision.TextLength);
+    }
 
     return result;
 }

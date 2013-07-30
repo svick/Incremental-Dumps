@@ -8,11 +8,11 @@
 class XmlSiteInfoProcessor
 {
 private:
-    DumpWriter *writer;
+    IDumpWriter *writer;
 public:
     shared_ptr<SiteInfo> siteInfo;
 
-    XmlSiteInfoProcessor(DumpWriter *writer);
+    XmlSiteInfoProcessor(IDumpWriter *writer);
 
     static Case ParseCase(const std::string &caseString);
     static void Handler(XML::Element &elem, void *userData);

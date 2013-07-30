@@ -137,6 +137,8 @@ void XmlWriter::WriteDump(std::shared_ptr<WritableDump> dump, std::string fileNa
 
             if (HasFlag(revision.Flags, RevisionFlags::TextDeleted))
                 output.WriteAttr("deleted", "deleted");
+            else if (IsStub(dump->fileHeader.Kind))
+                output.WriteAttr("bytes", (int)revision.TextLength);
             else
                 output.WriteAttr("xml:space", "preserve");
 
