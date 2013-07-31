@@ -94,7 +94,7 @@ void DumpRevision::WriteInternal()
     if (!HasFlag(revision.Flags, RevisionFlags::ContributorDeleted))
         DumpUser::Create(revision.Contributor)->Write(stream);
     if (!HasFlag(revision.Flags, RevisionFlags::CommentDeleted))
-    WriteValue(revision.Comment);
+        WriteValue(revision.Comment);
     // TODO: convert from base36 for saving
     WriteValue(revision.Sha1);
 

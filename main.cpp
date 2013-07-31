@@ -11,7 +11,7 @@
 void printUsage()
 {
     std::cout << "Usage:\n";
-    std::cout << "creating dump: idumps c[reate] source.xml spec dump.id\n";
+    std::cout << "creating dump: idumps c[reate] source.xml spec dump.id ...\n";
     std::cout << " spec is a 2 or 3-letter string that describes what kind of dump to create:\n";
     std::cout << " 1. letter: p for pages dump or s for stub dump:\n";
     std::cout << " 2. letter: h for history dump or c for current dump:\n";
