@@ -1,4 +1,5 @@
 #include "Revision.h"
+#include "../DumpException.h"
 
 RevisionFlags operator |(RevisionFlags first, RevisionFlags second)
 {
@@ -17,5 +18,30 @@ bool HasFlag(RevisionFlags value, RevisionFlags flag)
 }
 
 Revision::Revision()
-    : Flags(), RevisionId(), ParentId(), DateTime(), Contributor(), Comment(), Text()
+    : Flags(), RevisionId(), TextId(), ParentId(), DateTime(), Contributor(), Comment(), textSet(false)
 {}
+
+std::string Revision::GetText()
+{
+    if (textSet)
+        return text;
+
+    if (getTextFunction == nullptr)
+        throw DumpException();
+
+    SetText(getTextFunction());
+
+    return text;
+}
+
+void Revision::SetText(const std::string &text)
+{
+    this->text = text;
+    this->TextLength = text.length();
+    this->textSet = true;
+}
+
+void Revision::SetGetText(std::function<std::string()> getTextFunction)
+{
+    this->getTextFunction = getTextFunction;
+}

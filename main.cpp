@@ -5,8 +5,10 @@
 #include "DumpWriters/CurrentWriterWrapper.h"
 #include "DumpWriters/ArticlesWriterWrapper.h"
 #include "XmlInput/XmlMediawikiProcessor.h"
+#include "XmlInput/WrapperInputStream.h"
 #include "XmlWriter.h"
 #include "Dump.h"
+#include "FetchText.h"
 
 void printUsage()
 {
@@ -17,6 +19,7 @@ void printUsage()
     std::cout << " 2. letter: h for history dump or c for current dump:\n";
     std::cout << " 3. optional letter: a for articles dump:\n";
     std::cout << " example: sh for stub-meta-history, pca for pages-articles\n";
+    std::cout << "updating dump: idumps u[pdate] phpPath dumpBackup fetchText spec dump.id ...\n";
     std::cout << "reading dump: idumps r[ead] dump.id output.xml\n";
 }
 
@@ -74,11 +77,8 @@ std::unique_ptr<IDumpWriter> createWriter(std::queue<std::string> &parameters)
     return writer;
 }
 
-bool createDump(std::queue<std::string> &parameters)
+std::vector<std::unique_ptr<IDumpWriter>> createWriters(std::queue<std::string> &parameters)
 {
-    std::string inputFileName = parameters.front();
-    parameters.pop();
-
     std::vector<std::unique_ptr<IDumpWriter>> writers;
 
     while (!parameters.empty())
@@ -86,16 +86,61 @@ bool createDump(std::queue<std::string> &parameters)
         auto writer = createWriter(parameters);
 
         if (writer == nullptr)
-            return false;
+            return std::vector<std::unique_ptr<IDumpWriter>>();
 
         writers.push_back(std::move(writer));
     }
+
+    return writers;
+}
+
+bool createDump(std::queue<std::string> &parameters)
+{
+    std::string inputFileName = parameters.front();
+    parameters.pop();
+
+    auto writers = createWriters(parameters);
+
+    if (writers.empty())
+        return false;
 
     CompositeWriter writer(writers);
 
     writer.SetDumpKind(DumpKind::None);
 
     XmlMediawikiProcessor::Process(&writer, inputFileName);
+
+    writer.WriteIndexes();
+
+    return true;
+}
+
+bool updateDump(std::queue<std::string> &parameters)
+{
+    std::string phpPath = parameters.front();
+    parameters.pop();
+
+    std::string dumpBackupParameters = parameters.front();
+    parameters.pop();
+
+    std::string fetchTextParameters = parameters.front();
+    parameters.pop();
+
+    auto writers = createWriters(parameters);
+
+    if (writers.empty())
+        return false;
+
+    FetchText fetchText(std::unique_ptr<exec_stream_t>(new exec_stream_t(phpPath, fetchTextParameters)));
+
+    CompositeWriter writer(writers, [&](int textId) { return fetchText.GetText(textId); });
+
+    writer.SetDumpKind(DumpKind::None);
+
+    exec_stream_t dumpBackupProcess(phpPath, dumpBackupParameters);
+    WrapperInputStream dumpBackupStream(dumpBackupProcess.out());
+
+    XmlMediawikiProcessor::Process(&writer, dumpBackupStream);
 
     writer.WriteIndexes();
 
@@ -127,6 +172,19 @@ int main(int argc, const char* argv[])
             parameters.push(argv[i]);
 
         if (!createDump(parameters))
+        {
+            std::cout << "Invalid parameters\n";
+            printUsage();
+        }
+    }
+    else if (action == "u" || action == "update")
+    {
+        std::queue<std::string> parameters;
+
+        for (int i = 2; i < argc; i++)
+            parameters.push(argv[i]);
+
+        if (!updateDump(parameters))
         {
             std::cout << "Invalid parameters\n";
             printUsage();

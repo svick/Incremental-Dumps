@@ -21,11 +21,9 @@ void mediawikiHandler(XML::Element &elem, void *userData)
     elem.Process(handlers, writer);
 }
 
-void XmlMediawikiProcessor::Process(IDumpWriter *writer, std::string inputFileName)
+void XmlMediawikiProcessor::Process(IDumpWriter *writer, XML::InputStream &inputStream)
 {
-    XML::FileInputStream stream = XML::FileInputStream(inputFileName.c_str());
-
-    XML::Input input(stream);
+    XML::Input input(inputStream);
 
     XML::Handler handlers[] = {
         XML::Handler(mediawikiHandler),
@@ -33,4 +31,11 @@ void XmlMediawikiProcessor::Process(IDumpWriter *writer, std::string inputFileNa
     };
 
     input.Process(handlers, writer);
+}
+
+void XmlMediawikiProcessor::Process(IDumpWriter *writer, std::string inputFileName)
+{
+    XML::FileInputStream stream = XML::FileInputStream(inputFileName.c_str());
+
+    Process(writer, stream);
 }

@@ -32,6 +32,8 @@ set(SOURCES_files_ClCompile
   DumpWriters/CurrentWriterWrapper.cpp
   DumpWriters/DumpWriter.cpp
   DumpWriters/WriterWrapper.cpp
+  FetchText.cpp
+  libexecstream/exec-stream.cpp
   Objects/User.cpp
   StringHelpers.cpp
   Objects/Timestamp.cpp
@@ -88,6 +90,7 @@ set(SOURCES_files_ClInclude
   Indexes/Iterators/IndexLeafIterator.h
   Indexes/Iterators/IndexLeafIterator.tpp
   Indexes/Iterators/IndexNodeIterator.h
+  libexecstream/exec-stream.h
   SevenZip.h
   SpaceManager.h
   DumpWriters/ArticlesWriterWrapper.h
@@ -96,10 +99,11 @@ set(SOURCES_files_ClInclude
   DumpWriters/DumpWriter.h
   DumpWriters/IDumpWriter.h
   DumpWriters/WriterWrapper.h
+  FetchText.h
   Objects/User.h
   StringHelpers.h
   Objects/Timestamp.h
-  XmlInput/StandardInputStream.h
+  XmlInput/WrapperInputStream.h
   XmlInput/XmlContributorProcessor.h
   XmlInput/XmlMediawikiProcessor.h
   XmlInput/XmlNamespacesProcessor.h
@@ -132,6 +136,7 @@ link_directories(LZMA/CPP/7zip/Bundles/LzmaCon)
 add_executable(idumps ${SOURCES})
 
 target_link_libraries(idumps "lzma.a")
+target_link_libraries(idumps "pthread.so")
 
 if(CMAKE_COMPILER_IS_GNUCXX)
   add_custom_command(TARGET idumps

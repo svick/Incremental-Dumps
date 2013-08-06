@@ -142,10 +142,10 @@ void XmlWriter::WriteDump(std::shared_ptr<WritableDump> dump, std::string fileNa
             else
                 output.WriteAttr("xml:space", "preserve");
 
-            if (revision.Text != string())
+            if (IsPages(dump->fileHeader.Kind) && !HasFlag(revision.Flags, RevisionFlags::TextDeleted) && revision.GetText() != string())
             {
                 output.EndAttrs(XML::Output::terse);
-                output << escapeElementText(revision.Text);
+                output << escapeElementText(revision.GetText());
                 output.EndElement(XML::Output::terse);
             }
             else

@@ -2,15 +2,17 @@
 
 #include <memory>
 #include <vector>
+#include <functional>
 #include "IDumpWriter.h"
 
 class CompositeWriter : public IDumpWriter
 {
 private:
     std::vector<std::unique_ptr<IDumpWriter>> writers;
+    std::function<std::string(std::uint32_t)> getTextFunction;
 public:
-    CompositeWriter(std::vector<std::unique_ptr<IDumpWriter>> &writers)
-        : writers(std::move(writers))
+    CompositeWriter(std::vector<std::unique_ptr<IDumpWriter>> &writers, std::function<std::string(std::uint32_t)> getTextFunction = nullptr)
+        : writers(std::move(writers)), getTextFunction(getTextFunction)
     {}
 
     virtual void StartPage(const std::shared_ptr<const Page> page) override;

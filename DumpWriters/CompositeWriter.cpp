@@ -14,6 +14,9 @@ const std::vector<std::uint32_t> CompositeWriter::GetRevisionIds() const
 
 void CompositeWriter::AddRevision(const std::shared_ptr<const Revision> revision)
 {
+    if (getTextFunction != nullptr)
+        const_cast<Revision&>(*revision).SetGetText([=](){ return getTextFunction(revision->TextId); });
+
     for (auto &writer : writers)
         writer->AddRevision(revision);
 }

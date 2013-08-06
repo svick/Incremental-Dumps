@@ -9,5 +9,6 @@ private:
     XmlMediawikiProcessor()
     {}
 public:
+    static void Process(IDumpWriter *writer, XML::InputStream &inputStream);
     static void Process(IDumpWriter *writer, std::string inputFileName);
 };

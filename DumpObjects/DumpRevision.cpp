@@ -60,8 +60,7 @@ Revision DumpRevision::Read(shared_ptr<WritableDump> dump, Offset offset)
         if (IsPages(dump->fileHeader.Kind))
         {
             std::string compressedText = DumpTraits<string>::ReadLong(stream);
-            revision.Text = SevenZip::Decompress(compressedText);
-            revision.TextLength = revision.Text.length();
+            revision.SetText(SevenZip::Decompress(compressedText));
         }
         else
         {
@@ -74,8 +73,9 @@ Revision DumpRevision::Read(shared_ptr<WritableDump> dump, Offset offset)
 
 void DumpRevision::EnsureCompressed()
 {
-    if (withText && !revision.Text.empty() && compressedText.empty())
-        compressedText = SevenZip::Compress(revision.Text);
+    if (withText && !HasFlag(revision.Flags, RevisionFlags::TextDeleted)
+        && compressedText.empty() && !revision.GetText().empty())
+        compressedText = SevenZip::Compress(revision.GetText());
 }
 
 void DumpRevision::WriteInternal()

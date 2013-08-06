@@ -2,6 +2,7 @@
 
 #include <memory>
 #include <string>
+#include <functional>
 #include "User.h"
 #include "Timestamp.h"
 
@@ -27,6 +28,10 @@ bool HasFlag(RevisionFlags value, RevisionFlags flag);
 
 class Revision
 {
+private:
+    bool textSet;
+    std::string text;
+    std::function<std::string()> getTextFunction;
 public:
     Revision();
 
@@ -36,8 +41,11 @@ public:
     Timestamp DateTime;
     std::shared_ptr<User> Contributor;
     std::string Comment;
-    std::string Text;
+    std::string GetText();
+    void SetText(const std::string &text);
+    void SetGetText(std::function<std::string()> getTextFunction);
     std::uint32_t TextLength;
+    std::uint32_t TextId;
     std::string Sha1;
     std::string Model;
     std::string Format;
