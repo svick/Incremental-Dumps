@@ -12,9 +12,7 @@ public:
     {}
 
     virtual void StartPage(const std::shared_ptr<const Page> page) override;
-    virtual const std::vector<std::uint32_t> GetRevisionIds() const override;
     virtual void AddRevision(const std::shared_ptr<const Revision> revision) override;
-    virtual void DeleteRevision(std::uint32_t revisionId) override;
     virtual void EndPage() override;
     virtual void SetDumpKind(DumpKind dumpKind) override;
 };

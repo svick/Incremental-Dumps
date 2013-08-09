@@ -4,7 +4,7 @@
 #include "../SevenZip.h"
 #include "../Indexes/Index.h"
 
-void DumpRevision::Load(uint32_t revisionId)
+void DumpRevision::Load(std::uint32_t revisionId, bool loadText)
 {
     auto dumpRef = dump.lock();
     auto revisionOffset = dumpRef->revisionIdIndex->Get(revisionId);
@@ -13,16 +13,21 @@ void DumpRevision::Load(uint32_t revisionId)
         revision = Revision();
         savedOffset = 0;
         savedLength = 0;
+        wasLoaded = false;
     }
     else
     {
-        revision = Read(dumpRef, revisionOffset);
+        revision = Read(dumpRef, revisionOffset, loadText);
+
+        originalFlags = revision.Flags;
+        originalParentId = revision.ParentId;
+
         savedOffset = revisionOffset.value;
         savedLength = NewLength();
     }
 }
 
-Revision DumpRevision::Read(shared_ptr<WritableDump> dump, Offset offset)
+Revision DumpRevision::Read(std::shared_ptr<WritableDump> dump, Offset offset, bool loadText)
 {
     Revision revision;
 
@@ -57,10 +62,19 @@ Revision DumpRevision::Read(shared_ptr<WritableDump> dump, Offset offset)
 
     if (!HasFlag(revision.Flags, RevisionFlags::TextDeleted))
     {
-        if (IsPages(dump->fileHeader.Kind))
+        if (withText)
         {
-            std::string compressedText = DumpTraits<string>::ReadLong(stream);
-            revision.SetText(SevenZip::Decompress(compressedText));
+            if (loadText)
+            {
+                std::string compressedText = DumpTraits<string>::ReadLong(stream);
+                revision.SetText(SevenZip::Decompress(compressedText));
+            }
+            else
+            {
+                textOffset = stream.tellg();
+                ReadValue(stream, textLength);
+                textUnloaded = true;
+            }
         }
         else
         {
@@ -78,13 +92,29 @@ void DumpRevision::EnsureCompressed()
         compressedText = SevenZip::Compress(revision.GetText());
 }
 
+void DumpRevision::Write()
+{
+    modelFormatId = dump.lock()->GetIdForModelFormat(revision.Model, revision.Format);
+    if (modelFormatId == 0)
+        revision.Flags |= RevisionFlags::WikitextModelFormat;
+
+    if (wasLoaded && originalFlags == revision.Flags && originalParentId == revision.ParentId)
+        return;
+
+    if (textUnloaded)
+    {
+        auto dumpRef = dump.lock();
+        auto stream = dumpRef->stream.get();
+        stream->seekp(textOffset);
+        compressedText = DumpTraits<string>::ReadLong(*stream);
+    }
+
+    DumpObject::Write();
+}
+
 void DumpRevision::WriteInternal()
 {
     EnsureCompressed();
-
-    std::uint8_t modelFormatId = dump.lock()->GetIdForModelFormat(revision.Model, revision.Format);
-    if (modelFormatId == 0)
-        revision.Flags |= RevisionFlags::WikitextModelFormat;
 
     WriteValue((uint8_t)DumpObjectKind::Revision);
     WriteValue(revision.RevisionId);
@@ -122,8 +152,6 @@ void DumpRevision::UpdateIndex(Offset offset, bool overwrite)
 
 uint32_t DumpRevision::NewLength()
 {
-    EnsureCompressed();
-
     std::uint8_t modelFormatId = dump.lock()->GetIdForModelFormat(revision.Model, revision.Format);
     if (modelFormatId == 0)
         revision.Flags |= RevisionFlags::WikitextModelFormat;
@@ -145,7 +173,15 @@ uint32_t DumpRevision::NewLength()
     if (!HasFlag(revision.Flags, RevisionFlags::TextDeleted))
     {
         if (withText)
-            result += DumpTraits<string>::DumpSizeLong(compressedText);
+        {
+            if (textUnloaded)
+                result += DumpTraits<std::uint32_t>::DumpSize(textLength) + textLength;
+            else
+            {
+                EnsureCompressed();
+                result += DumpTraits<std::string>::DumpSizeLong(compressedText);
+            }
+        }
         else
             result += ValueSize(revision.TextLength);
     }
@@ -153,12 +189,13 @@ uint32_t DumpRevision::NewLength()
     return result;
 }
 
-DumpRevision::DumpRevision(weak_ptr<WritableDump> dump, uint32_t revisionId, bool withText)
-    : DumpObject(dump), revision(), withText(withText)
+DumpRevision::DumpRevision(std::weak_ptr<WritableDump> dump, std::uint32_t revisionId, bool loadText)
+    : DumpObject(dump), revision(), originalFlags(), originalParentId(), wasLoaded(true), textUnloaded(false)
 {
-    Load(revisionId);
+    withText = IsPages(dump.lock()->fileHeader.Kind);
+    Load(revisionId, loadText);
 }
 
-DumpRevision::DumpRevision(weak_ptr<WritableDump> dump, bool withText)
-    : DumpObject(dump), revision(), withText(withText)
+DumpRevision::DumpRevision(std::weak_ptr<WritableDump> dump)
+    : DumpObject(dump), revision(), originalFlags(), originalParentId(), wasLoaded(false), textUnloaded(false)
 {}

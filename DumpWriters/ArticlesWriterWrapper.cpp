@@ -11,26 +11,10 @@ void ArticlesWriterWrapper::StartPage(const std::shared_ptr<const Page> page)
         wrapped->StartPage(page);
 }
 
-const std::vector<std::uint32_t> ArticlesWriterWrapper::GetRevisionIds() const
-{
-    if (!pageInlcuded)
-        throw DumpException();
-
-    return WriterWrapper::GetRevisionIds();
-}
-
 void ArticlesWriterWrapper::AddRevision(const std::shared_ptr<const Revision> revision)
 {
     if (pageInlcuded)
         wrapped->AddRevision(revision);
-}
-
-void ArticlesWriterWrapper::DeleteRevision(std::uint32_t revisionId)
-{
-    if (!pageInlcuded)
-        throw DumpException();
-
-    WriterWrapper::DeleteRevision(revisionId);
 }
 
 void ArticlesWriterWrapper::EndPage()

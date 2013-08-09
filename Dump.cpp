@@ -5,6 +5,7 @@
 #include "Indexes/Index.h"
 #include "SpaceManager.h"
 #include "DumpObjects/DumpRevision.h"
+#include "DumpObjects/DumpPage.h"
 
 using std::move;
 using std::unique_ptr;
@@ -88,11 +89,26 @@ void WritableDump::WriteIndexes()
     modelFormatIndex->Write();
 }
 
-void WritableDump::DeleteRevision(uint32_t revisionId)
+void WritableDump::DeletePage(std::uint32_t pageId)
+{
+    Offset offset = pageIdIndex->Get(pageId);
+    DumpPage page(self, pageId);
+    std::uint32_t length = page.NewLength();
+
+    for (auto revisionId : page.page.RevisionIds)
+    {
+        DeleteRevision(revisionId);
+    }
+
+    pageIdIndex->Remove(pageId);
+    spaceManager->Delete(offset.value, length);
+}
+
+void WritableDump::DeleteRevision(std::uint32_t revisionId)
 {
     Offset offset = revisionIdIndex->Get(revisionId);
-    DumpRevision revision(self, true);
-    uint32_t length = revision.NewLength();
+    DumpRevision revision(self, revisionId, false);
+    std::uint32_t length = revision.NewLength();
 
     revisionIdIndex->Remove(revisionId);
     spaceManager->Delete(offset.value, length);

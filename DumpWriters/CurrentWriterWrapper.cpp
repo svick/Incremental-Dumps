@@ -7,11 +7,6 @@ void CurrentWriterWrapper::AddRevision(const std::shared_ptr<const Revision> rev
 
 void CurrentWriterWrapper::EndPage()
 {
-    for (uint32_t revisionId : wrapped->GetRevisionIds())
-    {
-        wrapped->DeleteRevision(revisionId);
-    }
-
     wrapped->AddRevision(this->revision);
     wrapped->EndPage();
 

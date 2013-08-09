@@ -4,20 +4,18 @@
 #include <string>
 #include <vector>
 
-using std::uint32_t;
-using std::string;
-using std::vector;
-
 class Page
 {
 public:
-    uint32_t PageId;
+    std::uint32_t PageId;
     std::int16_t Namespace;
-    string Title;
+    std::string Title;
     // if empty, the page is not a redirect
-    string RedirectTarget;
+    std::string RedirectTarget;
 
-    vector<uint32_t> RevisionIds;
+    std::vector<std::uint32_t> RevisionIds;
 
     Page();
 };
+
+bool operator ==(const Page &first, const Page &second);

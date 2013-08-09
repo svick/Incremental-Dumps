@@ -4,17 +4,24 @@
 #include "../Dump.h"
 #include "../Objects/Revision.h"
 
-using std::shared_ptr;
-
 // after DumpRevision is created, Text of its revision can't be changed
 class DumpRevision : public DumpObject
 {
 private:
     bool withText;
-    string compressedText;
+    std::string compressedText;
 
-    void Load(uint32_t revisionId);
-    static Revision Read(shared_ptr<WritableDump> dump, Offset offset);
+    RevisionFlags originalFlags;
+    std::uint32_t originalParentId;
+    bool wasLoaded;
+    std::uint8_t modelFormatId;
+
+    std::uint32_t textLength;
+    std::uint32_t textOffset;
+    bool textUnloaded;
+
+    void Load(std::uint32_t revisionId, bool loadText);
+    Revision Read(std::shared_ptr<WritableDump> dump, Offset offset, bool loadText);
     void EnsureCompressed();
 protected:
     virtual void WriteInternal() override;
@@ -22,8 +29,9 @@ protected:
 public:
     Revision revision;
 
-    DumpRevision(weak_ptr<WritableDump> dump, uint32_t revisionId, bool withText);
-    DumpRevision(weak_ptr<WritableDump> dump, bool withText);
+    DumpRevision(std::weak_ptr<WritableDump> dump, std::uint32_t revisionId, bool loadText);
+    DumpRevision(std::weak_ptr<WritableDump> dump);
 
-    virtual uint32_t NewLength() override;
+    virtual void Write() override;
+    virtual std::uint32_t NewLength() override;
 };

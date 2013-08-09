@@ -61,7 +61,9 @@ public:
     // it's necessary to call this after writing is finished
     void WriteIndexes();
 
-    void DeleteRevision(uint32_t revisionId);
+    // also recursively deletes revisions of the given page
+    void DeletePage(std::uint32_t pageId);
+    void DeleteRevision(std::uint32_t revisionId);
 
     std::uint8_t GetIdForModelFormat(std::string model, std::string format);
     std::pair<std::string, std::string> GetModelFormat(std::uint8_t id);

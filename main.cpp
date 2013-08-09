@@ -110,7 +110,7 @@ bool createDump(std::queue<std::string> &parameters)
 
     XmlMediawikiProcessor::Process(&writer, inputFileName);
 
-    writer.WriteIndexes();
+    writer.EndDump();
 
     return true;
 }
@@ -142,7 +142,7 @@ bool updateDump(std::queue<std::string> &parameters)
 
     XmlMediawikiProcessor::Process(&writer, dumpBackupStream);
 
-    writer.WriteIndexes();
+    writer.EndDump();
 
     return true;
 }

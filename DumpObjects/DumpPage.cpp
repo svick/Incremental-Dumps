@@ -9,12 +9,17 @@ void DumpPage::Load(uint32_t pageId)
     if (pageOffset.value == 0)
     {
         page = Page();
+        wasLoaded = false;
+
         savedOffset = 0;
         savedLength = 0;
     }
     else
     {
         page = Read(dumpRef, pageOffset);
+        originalPage = page;
+        wasLoaded = true;
+
         savedOffset = pageOffset.value;
         savedLength = NewLength();
     }
@@ -38,6 +43,14 @@ Page DumpPage::Read(shared_ptr<WritableDump> dump, Offset offset)
     page.RevisionIds = DumpTraits<vector<uint32_t>>::Read(stream);
 
     return page;
+}
+
+void DumpPage::Write()
+{
+    if (wasLoaded && originalPage == page)
+        return;
+
+    DumpObject::Write();
 }
 
 void DumpPage::WriteInternal()

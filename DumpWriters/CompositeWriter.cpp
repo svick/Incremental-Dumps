@@ -7,11 +7,6 @@ void CompositeWriter::StartPage(const std::shared_ptr<const Page> page)
         writer->StartPage(page);
 }
 
-const std::vector<std::uint32_t> CompositeWriter::GetRevisionIds() const
-{
-    throw DumpException();
-}
-
 void CompositeWriter::AddRevision(const std::shared_ptr<const Revision> revision)
 {
     if (getTextFunction != nullptr)
@@ -19,12 +14,6 @@ void CompositeWriter::AddRevision(const std::shared_ptr<const Revision> revision
 
     for (auto &writer : writers)
         writer->AddRevision(revision);
-}
-
-void CompositeWriter::DeleteRevision(std::uint32_t revisionId)
-{
-    for (auto &writer : writers)
-        writer->DeleteRevision(revisionId);
 }
 
 void CompositeWriter::EndPage()
@@ -45,8 +34,8 @@ void CompositeWriter::SetDumpKind(DumpKind dumpKind)
         writer->SetDumpKind(dumpKind);
 }
 
-void CompositeWriter::WriteIndexes()
+void CompositeWriter::EndDump()
 {
     for (auto &writer : writers)
-        writer->WriteIndexes();
+        writer->EndDump();
 }
