@@ -192,6 +192,7 @@ public:
 
     void get( exec_stream_t::stream_kind_t kind, char * dst, std::size_t & size, bool & no_more );
     void put( char * src, std::size_t & size, bool & no_more );
+    std::size_t size( exec_stream_t::stream_kind_t kind );
 
     void close_in();
     bool stop_thread();

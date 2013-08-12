@@ -137,8 +137,22 @@ bool updateDump(std::queue<std::string> &parameters)
 
     writer.SetDumpKind(DumpKind::None);
 
-    exec_stream_t dumpBackupProcess(phpPath, dumpBackupParameters);
-    WrapperInputStream dumpBackupStream(dumpBackupProcess.out());
+    exec_stream_t dumpBackupProcess;
+    dumpBackupProcess.set_buffer_limit(exec_stream_t::s_out, 8192);
+    dumpBackupProcess.start(phpPath, dumpBackupParameters);
+
+    WrapperInputStream dumpBackupStream(dumpBackupProcess.out(),
+        [&]()
+        {
+            auto &stream = dumpBackupProcess.err();
+            char buffer[1024];
+            std::streamsize count = 0;
+            do
+            {
+                count = stream.readsome(buffer, 1024);
+                std::cerr.write(buffer, count);
+            } while (count != 0);
+        });
 
     XmlMediawikiProcessor::Process(&writer, dumpBackupStream);
 

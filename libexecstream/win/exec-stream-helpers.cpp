@@ -290,7 +290,7 @@ thread_buffer_t::thread_buffer_t()
     m_error_code=ERROR_SUCCESS;
     m_error_message="";
 
-    m_wait_timeout=10000;
+    m_wait_timeout=100000;
     m_buffer_limit=0;
     m_read_buffer_size=4096;
 
@@ -725,3 +725,7 @@ void thread_buffer_t::note_thread_error( char const * message_prefix, DWORD erro
     m_error_message=error_message;
 }
 
+std::size_t thread_buffer_t::size( exec_stream_t::stream_kind_t )
+{
+    return m_buffer_list.size();
+}

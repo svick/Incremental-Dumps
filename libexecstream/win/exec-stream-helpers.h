@@ -145,6 +145,7 @@ public:
 
     void get( exec_stream_t::stream_kind_t kind, char * dst, std::size_t & size, bool & no_more );          // may be called only after start_reader_thread
     void put( char * const src, std::size_t & size, bool & no_more );// may be called only after start_writer_thread
+    std::size_t size( exec_stream_t::stream_kind_t kind );
     
     bool stop_thread();
     bool abort_thread();

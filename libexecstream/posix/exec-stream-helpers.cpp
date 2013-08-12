@@ -302,9 +302,9 @@ thread_buffer_t::thread_buffer_t( pipe_t & in_pipe, pipe_t & out_pipe, pipe_t & 
     m_in_bad=false;
     m_error_prefix="";
     m_error_code=0;
-    m_in_wait_timeout=2000;
-    m_out_wait_timeout=2000;
-    m_err_wait_timeout=2000;
+    m_in_wait_timeout=100000;
+    m_out_wait_timeout=100000;
+    m_err_wait_timeout=100000;
     m_thread_termination_timeout=1000;
     m_in_buffer_limit=0;
     m_out_buffer_limit=0;
@@ -839,4 +839,10 @@ void * thread_buffer_t::thread_func( void * param )
     
     pthread_cleanup_pop( 0 );
     return 0;
+}
+
+std::size_t thread_buffer_t::size( exec_stream_t::stream_kind_t kind )
+{
+    buffer_list_t & buffer= kind==exec_stream_t::s_out ? m_out_buffer : m_err_buffer;
+    return buffer.size();
 }

@@ -81,6 +81,7 @@ public:
 
     bool empty();
     bool full( std::size_t limit ); // limit==0 -> no limit
+    std::size_t size();
 
     void clear();
     
@@ -198,6 +199,11 @@ bool buffer_list_t::full( std::size_t limit )
     return limit!=0 && m_total_size>=limit;
 }
 
+std::size_t buffer_list_t::size()
+{
+    return m_total_size;
+}
+
 void buffer_list_t::clear()
 {
     for( buffers_t::iterator i=m_buffers.begin(); i!=m_buffers.end(); ++i ) {
@@ -230,9 +236,10 @@ public:
     void clear();
 
 protected:
-    virtual int_type underflow();
-    virtual int_type overflow( int_type c );
-    virtual int sync();
+    virtual int_type underflow() override;
+    virtual int_type overflow( int_type c ) override;
+    virtual int sync() override;
+    virtual std::streamsize showmanyc() override;
 
 private:
     bool send_buffer();
@@ -328,6 +335,11 @@ int exec_stream_buffer_t::sync()
         return -1;
     }
     return 0;
+}
+
+std::streamsize exec_stream_buffer_t::showmanyc()
+{
+    return m_thread_buffer.size( m_kind );
 }
 
 // stream  classes
