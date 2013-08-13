@@ -9,12 +9,12 @@
 template<typename TKey, typename TValue>
 IndexNode<TKey, TValue>* IndexInnerNode<TKey, TValue>::GetChildByIndex(std::uint16_t index)
 {
-    if (cachedChildren[index] == nullptr)
+    if (cachedChildren.at(index) == nullptr)
     {
-        cachedChildren[index] = IndexNode<TKey, TValue>::Read(this->dump, childOffsets[index].value);
+        cachedChildren.at(index) = IndexNode<TKey, TValue>::Read(this->dump, childOffsets.at(index).value);
     }
 
-    return cachedChildren[index].get();
+    return cachedChildren.at(index).get();
 }
 
 template<typename TKey, typename TValue>
@@ -48,8 +48,8 @@ void IndexInnerNode<TKey, TValue>::AfterAdd(std::uint16_t updatedChildIndex)
 
         insert_at(keys, updatedChildIndex, splitted.SplitKey);
 
-        childOffsets[updatedChildIndex] = splitted.LeftNode->SavedOffset();
-        cachedChildren[updatedChildIndex] = std::move(splitted.LeftNode);
+        childOffsets.at(updatedChildIndex) = splitted.LeftNode->SavedOffset();
+        cachedChildren.at(updatedChildIndex) = std::move(splitted.LeftNode);
 
         insert_at(childOffsets, updatedChildIndex + 1, splitted.RightNode->SavedOffset());
         insert_at(cachedChildren, updatedChildIndex + 1, std::move(splitted.RightNode));
@@ -188,27 +188,27 @@ typename IndexNode<TKey, TValue>::SplitResult IndexInnerNode<TKey, TValue>::Spli
 
     for (; i < middle; i++)
     {
-        left->keys.push_back(keys[i]);
-        left->childOffsets.push_back(childOffsets[i]);
-        left->cachedChildren.push_back(std::move(cachedChildren[i]));
+        left->keys.push_back(keys.at(i));
+        left->childOffsets.push_back(childOffsets.at(i));
+        left->cachedChildren.push_back(std::move(cachedChildren.at(i)));
     }
 
-    left->childOffsets.push_back(childOffsets[i]);
-    left->cachedChildren.push_back(std::move(cachedChildren[i]));
+    left->childOffsets.push_back(childOffsets.at(i));
+    left->cachedChildren.push_back(std::move(cachedChildren.at(i)));
 
-    TKey middleKey = keys[i];
+    TKey middleKey = keys.at(i);
 
     i++;
 
     for (; i < keys.size(); i++)
     {
-        right->keys.push_back(keys[i]);
-        right->childOffsets.push_back(childOffsets[i]);
-        right->cachedChildren.push_back(std::move(cachedChildren[i]));
+        right->keys.push_back(keys.at(i));
+        right->childOffsets.push_back(childOffsets.at(i));
+        right->cachedChildren.push_back(std::move(cachedChildren.at(i)));
     }
 
-    right->childOffsets.push_back(childOffsets[i]);
-    right->cachedChildren.push_back(std::move(cachedChildren[i]));
+    right->childOffsets.push_back(childOffsets.at(i));
+    right->cachedChildren.push_back(std::move(cachedChildren.at(i)));
 
     return SplitResult(
         std::unique_ptr<IndexNode<TKey, TValue>>(left),

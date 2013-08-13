@@ -12,7 +12,7 @@ DumpWriter::DumpWriter(std::shared_ptr<WritableDump> dump, bool withText)
         std::uint32_t pageId = pair.first;
         if (unvisitedPageIds.size() <= pageId)
             unvisitedPageIds.resize(pageId + 1);
-        unvisitedPageIds[pageId] = true;
+        unvisitedPageIds.at(pageId) = true;
     }
 }
 
@@ -29,7 +29,7 @@ void DumpWriter::StartPage(const std::shared_ptr<const Page> page)
     oldRevisionIds = this->page->page.RevisionIds;
     this->page->page = *page;
     if (pageId < unvisitedPageIds.size())
-        unvisitedPageIds[pageId] = false;
+        unvisitedPageIds.at(pageId) = false;
 }
 
 void DumpWriter::AddRevision(const std::shared_ptr<const Revision> revision)
@@ -71,7 +71,7 @@ void DumpWriter::EndDump()
 {
     for (std::uint32_t i = 0; i < unvisitedPageIds.size(); i++)
     {
-        if (unvisitedPageIds[i])
+        if (unvisitedPageIds.at(i))
             dump->DeletePage(i);
     }
 

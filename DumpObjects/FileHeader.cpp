@@ -42,9 +42,9 @@ FileHeader FileHeader::Read(ReadableDump const &dump)
 {
     istream &stream = *(dump.stream);
 
-    char bytes[6];
-    stream.read(bytes, 6);
-    if (strncmp(bytes, "WMID", 4) != 0 || bytes[4] != FileFormatVersion || bytes[5] != FileDataVersion)
+    std::string bytes(6, '\0');
+    stream.read(&bytes.at(0), 6);
+    if (bytes.substr(0, 4) != "WMID" || bytes.at(4) != FileFormatVersion || bytes.at(5) != FileDataVersion)
         throw new DumpException();
 
     DumpKind kind = DumpTraits<DumpKind>::Read(stream);

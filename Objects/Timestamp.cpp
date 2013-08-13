@@ -2,6 +2,7 @@
 
 #include <sstream>
 #include <cstdio>
+#include <array>
 
 using std::istringstream;
 
@@ -32,20 +33,20 @@ Timestamp::Timestamp(string s)
 {
     istringstream stream(s);
 
-    unsigned dateParts[6];
+    std::array<unsigned, 6> dateParts;
 
     for (int i = 0; i < 6; i++)
     {
         char delim;
-        stream >> dateParts[i] >> delim;
+        stream >> dateParts.at(i) >> delim;
     }
 
-    Year = dateParts[0];
-    Month = dateParts[1];
-    Day = dateParts[2];
-    Hour = dateParts[3];
-    Minute = dateParts[4];
-    Second = dateParts[5];
+    Year = std::get<0>(dateParts);
+    Month = std::get<1>(dateParts);;
+    Day = std::get<2>(dateParts);;
+    Hour = std::get<3>(dateParts);;
+    Minute = std::get<4>(dateParts);;
+    Second = std::get<5>(dateParts);;
 }
 
 uint32_t Timestamp::ToInteger() const

@@ -20,11 +20,11 @@ std::array<uint16_t, 8> IpV6User::TryParseAddress(string address, bool &success)
     for (int i = 0; i < 8; i++)
     {
         bool success;
-        long intPart = tryParseLong(stringParts[i], success, 16);
+        long intPart = tryParseLong(stringParts.at(i), success, 16);
         if (!success || intPart > 0xFFFF || intPart < 0)
             return std::array<uint16_t, 8>();
         
-        result[i] = intPart;
+        result.at(i) = intPart;
     }
 
     success = true;
@@ -53,7 +53,7 @@ string IpV6User::AddressToString(std::array<uint16_t, 8> address)
         if (i != 0)
             s << ':';
 
-        s << address[i];
+        s << address.at(i);
     }
 
     return s.str();

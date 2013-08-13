@@ -20,7 +20,7 @@ uint32_t IpV4User::TryParseAddress(string address, bool &success)
     for (int i = 0; i < 4; i++)
     {
         bool success;
-        long intPart = tryParseLong(stringParts[i], success);
+        long intPart = tryParseLong(stringParts.at(i), success);
         if (!success || intPart > 255 || intPart < 0)
             return 0;
         

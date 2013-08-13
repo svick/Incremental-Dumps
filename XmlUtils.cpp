@@ -100,13 +100,13 @@ std::string escapeElementText(std::string original)
         pos = foundPos;
         stream << original.substr(prevPos, pos - prevPos);
 
-        if (original[pos] == '<')
+        if (original.at(pos) == '<')
             stream << "&lt;";
-        else if (original[pos] == '>')
+        else if (original.at(pos) == '>')
             stream << "&gt;";
-        else if (original[pos] == '"')
+        else if (original.at(pos) == '"')
             stream << "&quot;";
-        else if (original[pos] == '&')
+        else if (original.at(pos) == '&')
             stream << "&amp;";
         else
             throw DumpException();

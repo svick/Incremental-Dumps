@@ -40,17 +40,17 @@ std::unique_ptr<IDumpWriter> createWriter(std::queue<std::string> &parameters)
     parameters.pop();
 
     bool withText;
-    if (spec[0] == 'p')
+    if (spec.at(0) == 'p')
         withText = true;
-    else if (spec[0] == 's')
+    else if (spec.at(0) == 's')
         withText = false;
     else
         return nullResult;
 
     bool current;
-    if (spec[1] == 'c')
+    if (spec.at(1) == 'c')
         current = true;
-    else if (spec[1] == 'h')
+    else if (spec.at(1) == 'h')
         current = false;
     else
         return nullResult;
@@ -58,7 +58,7 @@ std::unique_ptr<IDumpWriter> createWriter(std::queue<std::string> &parameters)
     bool articles = false;
     if (spec.length() == 3)
     {
-        if (spec[2] == 'a')
+        if (spec.at(2) == 'a')
             articles = true;
         else
             return nullResult;
@@ -176,14 +176,16 @@ int main(int argc, const char* argv[])
         return 0;
     }
 
-    string action = argv[1];
+    std::vector<std::string> args(argv, argv + argc);
+
+    string action = args.at(1);
 
     if (action == "c" || action == "create")
     {
         std::queue<std::string> parameters;
 
-        for (int i = 2; i < argc; i++)
-            parameters.push(argv[i]);
+        for (size_t i = 2; i < args.size(); i++)
+            parameters.push(args.at(i));
 
         if (!createDump(parameters))
         {
@@ -195,8 +197,8 @@ int main(int argc, const char* argv[])
     {
         std::queue<std::string> parameters;
 
-        for (int i = 2; i < argc; i++)
-            parameters.push(argv[i]);
+        for (size_t i = 2; i < args.size(); i++)
+            parameters.push(args.at(i));
 
         if (!updateDump(parameters))
         {
@@ -213,7 +215,7 @@ int main(int argc, const char* argv[])
         }
         else
         {
-            readDump(argv[2], argv[3]);
+            readDump(args.at(2), args.at(3));
         }
     }
     else

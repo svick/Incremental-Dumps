@@ -54,14 +54,14 @@ class DumpTraitsNumeric
 public:
     static T Read(istream &stream)
     {
-        char bytes[Size];
+        std::array<char, Size> bytes;
 
-        stream.read(bytes, Size);
+        stream.read(&bytes.at(0), Size);
 
         T result = 0;
         for (int i = 0; i < Size; i++)
         {
-            result |= (T)(std::uint8_t)bytes[i] << (8 * i);
+            result |= (T)(std::uint8_t)bytes.at(i) << (8 * i);
         }
 
         return result;
@@ -69,14 +69,14 @@ public:
 
     static void Write(ostream &stream, const T value)
     {
-        char bytes[Size];
+        std::array<char, Size> bytes;
 
         for (int i = 0; i < Size; i++)
         {
-            bytes[i] = (value >> (8 * i)) & 0xFF;
+            bytes.at(i) = (value >> (8 * i)) & 0xFF;
         }
 
-        stream.write(bytes, Size);
+        stream.write(&bytes.at(0), Size);
     }
 
     static uint32_t DumpSize(const T value = 0)
@@ -186,15 +186,16 @@ public:
 };
 
 template<>
-class DumpTraits<string>
+class DumpTraits<std::string>
 {
 private:
-    static string ReadCore(istream &stream, uint32_t count)
+    static string ReadCore(std::istream &stream, std::uint32_t count)
     {
-        auto bytes = unique_ptr<char[]>(new char[count]);
-        stream.read(bytes.get(), count);
+        std::string bytes(count, '\0');
 
-        return string(bytes.get(), count);
+        stream.read(&bytes.at(0), count);
+
+        return bytes;
     }
 
 public:
@@ -319,7 +320,7 @@ public:
 
         for (int i = 0; i < N; i++)
         {
-            result[i] = DumpTraits<T>::Read(stream);
+            result.at(i) = DumpTraits<T>::Read(stream);
         }
 
         return result;
