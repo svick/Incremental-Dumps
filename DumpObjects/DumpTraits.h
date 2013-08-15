@@ -18,8 +18,6 @@ using std::istream;
 using std::ostream;
 using std::vector;
 
-// TODO: add non-template wrapper with template methods, so that type inference can work?
-
 template<typename T, typename = void>
 class DumpTraits
 {
@@ -193,7 +191,8 @@ private:
     {
         std::string bytes(count, '\0');
 
-        stream.read(&bytes.at(0), count);
+        if (count > 0)
+            stream.read(&bytes.at(0), count);
 
         return bytes;
     }
