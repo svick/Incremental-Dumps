@@ -29,3 +29,6 @@ public:
     uint32_t ToInteger() const;
     string ToString() const;
 };
+
+bool operator ==(const Timestamp &first, const Timestamp &second);
+bool operator !=(const Timestamp &first, const Timestamp &second);

@@ -6,6 +6,19 @@ endif()
 
 # File list: C/C++ Compiler
 set(SOURCES_files_ClCompile
+  Diff/ChangeProcessor.cpp
+  Diff/Changes/Change.cpp
+  Diff/Changes/DeletePageChange.cpp
+  Diff/Changes/DeleteRevisionChange.cpp
+  Diff/Changes/NewModelFormatChange.cpp
+  Diff/Changes/NewPageChange.cpp
+  Diff/Changes/NewRevisionChange.cpp
+  Diff/Changes/PageChange.cpp
+  Diff/Changes/RevisionChange.cpp
+  Diff/Changes/SiteInfoChange.cpp
+  Diff/DiffReader.cpp
+  Diff/DiffWriter.cpp
+  CollectionHelpers.cpp
   Dump.cpp
   DumpException.cpp
   DumpKind.cpp
@@ -53,6 +66,18 @@ set(SOURCES_files_ClCompile
 )
 # File list: C/C++ Header
 set(SOURCES_files_ClInclude
+  Diff/ChangeProcessor.h
+  Diff/Changes/Change.h
+  Diff/Changes/DeletePageChange.h
+  Diff/Changes/DeleteRevisionChange.h
+  Diff/Changes/NewModelFormatChange.h
+  Diff/Changes/NewPageChange.h
+  Diff/Changes/NewRevisionChange.h
+  Diff/Changes/PageChange.h
+  Diff/Changes/RevisionChange.h
+  Diff/Changes/SiteInfoChange.h
+  Diff/DiffReader.h
+  Diff/DiffWriter.h
   CollectionHelpers.h
   DumpException.h
   DumpKind.h

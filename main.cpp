@@ -4,6 +4,7 @@
 #include "DumpWriters/DumpWriter.h"
 #include "DumpWriters/CurrentWriterWrapper.h"
 #include "DumpWriters/ArticlesWriterWrapper.h"
+#include "Diff/DiffReader.h"
 #include "XmlInput/XmlMediawikiProcessor.h"
 #include "XmlInput/WrapperInputStream.h"
 #include "XmlWriter.h"
@@ -14,13 +15,16 @@ void printUsage()
 {
     std::cout << "Usage:\n";
     std::cout << "creating dump: idumps c[reate] source.xml spec dump.id ...\n";
-    std::cout << " spec is a 2 or 3-letter string that describes what kind of dump to create:\n";
+    std::cout << " spec is a 2 to 4-letter string that describes what kind of dump to create:\n";
     std::cout << " 1. letter: p for pages dump or s for stub dump:\n";
     std::cout << " 2. letter: h for history dump or c for current dump:\n";
     std::cout << " 3. optional letter: a for articles dump:\n";
-    std::cout << " example: sh for stub-meta-history, pca for pages-articles\n";
+    std::cout << " 4. optional letter: d to also create diff dump:\n";
+    std::cout << "  add the path to the diff dump after the path to dump\n";
+    std::cout << " example: sh for stub-meta-history, pcad for pages-articles with diff dump\n";
     std::cout << "updating dump: idumps u[pdate] phpPath dumpBackup fetchText spec dump.id ...\n";
     std::cout << "reading dump: idumps r[ead] dump.id output.xml\n";
+    std::cout << "applying diff: idumps a[pply] dump.id diff.dd\n";
 }
 
 std::unique_ptr<IDumpWriter> createWriter(std::queue<std::string> &parameters)
@@ -56,17 +60,43 @@ std::unique_ptr<IDumpWriter> createWriter(std::queue<std::string> &parameters)
         return nullResult;
 
     bool articles = false;
-    if (spec.length() == 3)
+    bool diffDump = false;
+
+    if (spec.length() >= 3)
     {
-        if (spec.at(2) == 'a')
+        size_t i = 2;
+
+        if (spec.at(i) == 'a')
+        {
             articles = true;
-        else
+            i++;
+        }
+
+        if (i < spec.length() && spec.at(i) == 'd')
+        {
+            diffDump = true;
+            i++;
+        }
+
+        if (i != spec.length())
             return nullResult;
     }
 
     auto dump = WritableDump::Create(fileName);
 
-    auto writer = std::unique_ptr<IDumpWriter>(new DumpWriter(dump, withText));
+    std::unique_ptr<DiffWriter> diffWriter;
+    if (diffDump)
+    {
+        if (parameters.empty())
+            return nullResult;
+
+        auto diffFileName = parameters.front();
+        parameters.pop();
+
+        diffWriter = std::unique_ptr<DiffWriter>(new DiffWriter(diffFileName));
+    }
+
+    auto writer = std::unique_ptr<IDumpWriter>(new DumpWriter(dump, withText, std::move(diffWriter)));
 
     if (current)
         writer = std::unique_ptr<IDumpWriter>(new CurrentWriterWrapper(std::move(writer)));
@@ -161,11 +191,20 @@ bool updateDump(std::queue<std::string> &parameters)
     return true;
 }
 
-void readDump(string dumpFileName, string outputFileName)
+void readDump(std::string dumpFileName, std::string outputFileName)
 {
     auto dump = WritableDump::Create(dumpFileName);
 
     XmlWriter::WriteDump(dump, outputFileName);
+}
+
+void applyDiff(std::string dumpFileName, std::string diffFileName)
+{
+    auto dump = WritableDump::Create(dumpFileName);
+
+    ChangeProcessor changeProcessor(dump);
+    DiffReader diffReader(diffFileName, changeProcessor);
+    diffReader.Read();
 }
 
 int main(int argc, const char* argv[])
@@ -216,6 +255,18 @@ int main(int argc, const char* argv[])
         else
         {
             readDump(args.at(2), args.at(3));
+        }
+    }
+    else if (action == "a" || action == "apply")
+    {
+        if (argc != 4)
+        {
+            std::cout << "Invalid number of parameters\n";
+            printUsage();
+        }
+        else
+        {
+            applyDiff(args.at(2), args.at(3));
         }
     }
     else

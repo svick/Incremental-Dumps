@@ -70,6 +70,15 @@ IpV4User::IpV4User(uint32_t parsedAddress)
     : User(0, AddressToString(parsedAddress)), Address(parsedAddress)
 {}
 
+bool IpV4User::Equals(const User &second) const
+{
+    auto otherCasted = dynamic_cast<const IpV4User*>(&second);
+    if (otherCasted == nullptr)
+        return false;
+
+    return this->Address == otherCasted->Address;
+}
+
 RevisionFlags IpV4User::UserKind() const
 {
     return RevisionFlags::IpV4User;

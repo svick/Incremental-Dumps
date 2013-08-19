@@ -7,6 +7,6 @@ class SevenZip
 private:
     SevenZip() {}
 public:
-    static std::string Compress(std::string s);
-    static std::string Decompress(std::string s);
+    static std::string Compress(const std::string &s);
+    static std::string Decompress(const std::string &s);
 };

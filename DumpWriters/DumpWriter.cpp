@@ -4,15 +4,13 @@
 #include "../Indexes/Index.h"
 #include <algorithm>
 
-DumpWriter::DumpWriter(std::shared_ptr<WritableDump> dump, bool withText)
-    : dump(dump), withText(withText)
+DumpWriter::DumpWriter(std::shared_ptr<WritableDump> dump, bool withText, std::unique_ptr<DiffWriter> diffWriter)
+    : dump(dump), withText(withText), diffWriter(std::move(diffWriter))
 {
     for (auto pair : *dump->pageIdIndex)
     {
         std::uint32_t pageId = pair.first;
-        if (unvisitedPageIds.size() <= pageId)
-            unvisitedPageIds.resize(pageId + 1);
-        unvisitedPageIds.at(pageId) = true;
+        set(unvisitedPageIds, pageId);
     }
 }
 
@@ -20,16 +18,18 @@ void DumpWriter::SetSiteInfo(const std::shared_ptr<const SiteInfo> siteInfo)
 {
     dump->siteInfo->siteInfo = *siteInfo;
     dump->siteInfo->Write();
+
+    if (diffWriter != nullptr)
+        diffWriter->SetSiteInfo(*siteInfo, dump->fileHeader.Kind);
 }
 
 void DumpWriter::StartPage(const std::shared_ptr<const Page> page)
 {
     std::uint32_t pageId = page->PageId;
     this->page = std::unique_ptr<DumpPage>(new DumpPage(dump, pageId));
-    oldRevisionIds = this->page->page.RevisionIds;
+    oldPage = this->page->page;
     this->page->page = *page;
-    if (pageId < unvisitedPageIds.size())
-        unvisitedPageIds.at(pageId) = false;
+    unset(unvisitedPageIds, pageId);
 }
 
 void DumpWriter::AddRevision(const std::shared_ptr<const Revision> revision)
@@ -40,20 +40,42 @@ void DumpWriter::AddRevision(const std::shared_ptr<const Revision> revision)
 
 void DumpWriter::EndPage()
 {
-    page->Write();
-
-    auto deletedRevisionIds = except(oldRevisionIds, page->page.RevisionIds);
-
-    for (auto revisionId : deletedRevisionIds)
-        dump->DeleteRevision(revisionId);
+    page->Write(diffWriter.get());
 
     for (auto revision : revisions)
     {
         DumpRevision dumpRevision(dump, revision->RevisionId, false);
         dumpRevision.revision = *revision;
-        dumpRevision.Write();
+
+        if (diffWriter != nullptr)
+        {
+            bool isNew;
+            std::uint8_t modelFormatId = dumpRevision.GetModelFormatId(isNew);
+
+            if (isNew)
+                diffWriter->NewModelFormat(modelFormatId, dumpRevision.revision.Model, dumpRevision.revision.Format);
+        }
+
+        bool newRevision = !contains(oldPage.RevisionIds, revision->RevisionId);
+
+        if (newRevision)
+            newRevisionIds.insert(revision->RevisionId);
+
+        dumpRevision.Write(diffWriter.get(), newRevision);
     }
 
+    auto deletedRevisionIds = except(oldPage.RevisionIds, page->page.RevisionIds);
+
+    for (auto revisionId : deletedRevisionIds)
+    {
+        dump->DeleteRevision(revisionId, newRevisionIds);
+
+        if (diffWriter != nullptr)
+            diffWriter->DeleteRevision(revisionId);
+    }
+
+    if (diffWriter != nullptr)
+        diffWriter->EndPage();
     page = nullptr;
     revisions.clear();
 }
@@ -72,7 +94,12 @@ void DumpWriter::EndDump()
     for (std::uint32_t i = 0; i < unvisitedPageIds.size(); i++)
     {
         if (unvisitedPageIds.at(i))
-            dump->DeletePage(i);
+        {
+            dump->DeletePage(i, newRevisionIds);
+
+            if (diffWriter != nullptr)
+                diffWriter->DeletePage(i);
+        }
     }
 
     dump->WriteIndexes();

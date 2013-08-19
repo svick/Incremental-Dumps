@@ -89,7 +89,7 @@ void WritableDump::WriteIndexes()
     modelFormatIndex->Write();
 }
 
-void WritableDump::DeletePage(std::uint32_t pageId)
+void WritableDump::DeletePage(std::uint32_t pageId, const std::unordered_set<std::uint32_t> &doNotDeleteRevisions)
 {
     Offset offset = pageIdIndex->Get(pageId);
     DumpPage page(self, pageId);
@@ -97,15 +97,18 @@ void WritableDump::DeletePage(std::uint32_t pageId)
 
     for (auto revisionId : page.page.RevisionIds)
     {
-        DeleteRevision(revisionId);
+        DeleteRevision(revisionId, doNotDeleteRevisions);
     }
 
     pageIdIndex->Remove(pageId);
     spaceManager->Delete(offset.value, length);
 }
 
-void WritableDump::DeleteRevision(std::uint32_t revisionId)
+void WritableDump::DeleteRevision(std::uint32_t revisionId, const std::unordered_set<std::uint32_t> &doNotDeleteRevisions)
 {
+    if (doNotDeleteRevisions.count(revisionId) != 0)
+        return;
+
     Offset offset = revisionIdIndex->Get(revisionId);
     DumpRevision revision(self, revisionId, false);
     std::uint32_t length = revision.NewLength();
@@ -117,8 +120,10 @@ void WritableDump::DeleteRevision(std::uint32_t revisionId)
 const std::string WritableDump::WikitextModel = "wikitext";
 const std::string WritableDump::WikitextFormat = "text/x-wiki";
 
-std::uint8_t WritableDump::GetIdForModelFormat(std::string model, std::string format)
+std::uint8_t WritableDump::GetIdForModelFormat(std::string model, std::string format, bool &isNew)
 {
+    isNew = false;
+
     if (model == WikitextModel && format == WikitextFormat)
         return 0;
 
@@ -134,13 +139,14 @@ std::uint8_t WritableDump::GetIdForModelFormat(std::string model, std::string fo
 
     // pair's default ordering will work fine here
     auto maxPairRef = std::max_element(modelFormatIndex->begin(), modelFormatIndex->end());
-    uint8_t newId;
+    std::uint8_t newId;
     if (maxPairRef == modelFormatIndex->end())
         newId = 1;
     else
         newId = maxPairRef->first + 1;
 
     modelFormatIndex->Add(newId, searchedPair);
+    isNew = true;
     return newId;
 }
 

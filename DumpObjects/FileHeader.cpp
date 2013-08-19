@@ -6,7 +6,7 @@
 FileHeader::FileHeader(
     DumpKind kind,
     Offset fileEnd, Offset pageIdIndexRoot, Offset revisionIdIndexRoot, Offset modelFormatIndexRoot,
-    Offset freeSpaceIndexRoot, Offset siteInfo, weak_ptr<WritableDump> dump)
+    Offset freeSpaceIndexRoot, Offset siteInfo, std::weak_ptr<WritableDump> dump)
     : Kind(kind), DumpObject(dump), FileEnd(fileEnd), PageIdIndexRoot(pageIdIndexRoot), RevisionIdIndexRoot(revisionIdIndexRoot),
     ModelFormatIndexRoot(modelFormatIndexRoot), FreeSpaceIndexRoot(freeSpaceIndexRoot), SiteInfo(siteInfo)
 {}
@@ -42,9 +42,16 @@ FileHeader FileHeader::Read(ReadableDump const &dump)
 {
     istream &stream = *(dump.stream);
 
-    std::string bytes(6, '\0');
-    stream.read(&bytes.at(0), 6);
-    if (bytes.substr(0, 4) != "WMID" || bytes.at(4) != FileFormatVersion || bytes.at(5) != FileDataVersion)
+    std::string magicNumber(4, '\0');
+    stream.read(&magicNumber.at(0), 4);
+
+    std::uint8_t fileFormatVersion, fileDataVersion;
+    ReadValue(stream, fileFormatVersion);
+    ReadValue(stream, fileDataVersion);
+
+    if (magicNumber != "WMID"
+        || fileFormatVersion != FileFormatVersion
+        || fileDataVersion != FileDataVersion)
         throw new DumpException();
 
     DumpKind kind = DumpTraits<DumpKind>::Read(stream);
@@ -69,6 +76,6 @@ uint32_t FileHeader::NewLength()
     return Length();
 }
 
-FileHeader::FileHeader(weak_ptr<WritableDump> dump)
+FileHeader::FileHeader(std::weak_ptr<WritableDump> dump)
     : DumpObject(dump), FileEnd(Length()), PageIdIndexRoot(0), RevisionIdIndexRoot(0), ModelFormatIndexRoot(0), FreeSpaceIndexRoot(0), SiteInfo(0)
 {}

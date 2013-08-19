@@ -5,12 +5,7 @@
 void DumpSiteInfo::WriteInternal()
 {
     WriteValue(DumpObjectKind::SiteInfo);
-    WriteValue(siteInfo.Lang);
-    WriteValue(siteInfo.SiteName);
-    WriteValue(siteInfo.Base);
-    WriteValue(siteInfo.Generator);
-    WriteValue(siteInfo.SiteCase);
-    WriteValue(siteInfo.Namespaces);
+    WriteCore(*stream, siteInfo);
 }
 
 void DumpSiteInfo::UpdateIndex(Offset offset, bool overwrite)
@@ -39,10 +34,9 @@ DumpSiteInfo::DumpSiteInfo(std::weak_ptr<WritableDump> dump)
 
 SiteInfo DumpSiteInfo::Read(std::shared_ptr<WritableDump> dump, Offset offset)
 {
-    SiteInfo siteInfo;
 
     if (offset.value == 0)
-        return siteInfo;
+        return SiteInfo();
 
     auto &stream = *(dump->stream);
     stream.seekp(offset.value);
@@ -51,6 +45,23 @@ SiteInfo DumpSiteInfo::Read(std::shared_ptr<WritableDump> dump, Offset offset)
     ReadValue(stream, kind);
     if (kind != DumpObjectKind::SiteInfo)
         throw new DumpException();
+
+    return ReadCore(stream);
+}
+
+std::uint32_t DumpSiteInfo::NewLength()
+{
+    uint32_t length = ValueSize(DumpObjectKind::SiteInfo) + LengthCore(siteInfo);
+
+    // allocate more than necessary, so that reallocation isn't necessary when site info changes slightly
+    const uint32_t rounding = 100;
+
+    return (length + rounding - 1) / rounding * rounding;
+}
+
+SiteInfo DumpSiteInfo::ReadCore(std::istream &stream)
+{
+    SiteInfo siteInfo;
 
     ReadValue(stream, siteInfo.Lang);
     ReadValue(stream, siteInfo.SiteName);
@@ -62,19 +73,23 @@ SiteInfo DumpSiteInfo::Read(std::shared_ptr<WritableDump> dump, Offset offset)
     return siteInfo;
 }
 
-std::uint32_t DumpSiteInfo::NewLength()
+void DumpSiteInfo::WriteCore(std::ostream &stream, const SiteInfo &siteInfo)
 {
-    uint32_t length =
-        ValueSize(DumpObjectKind::SiteInfo)
-        + ValueSize(siteInfo.Lang)
+    WriteValue(stream, siteInfo.Lang);
+    WriteValue(stream, siteInfo.SiteName);
+    WriteValue(stream, siteInfo.Base);
+    WriteValue(stream, siteInfo.Generator);
+    WriteValue(stream, siteInfo.SiteCase);
+    WriteValue(stream, siteInfo.Namespaces);
+}
+
+std::uint32_t DumpSiteInfo::LengthCore(const SiteInfo &siteInfo)
+{
+    return
+        ValueSize(siteInfo.Lang)
         + ValueSize(siteInfo.SiteName)
         + ValueSize(siteInfo.Base)
         + ValueSize(siteInfo.Generator)
         + ValueSize(siteInfo.SiteCase)
         + ValueSize(siteInfo.Namespaces);
-
-    // allocate more than necessary, so that reallocation isn't necessary when site info changes slightly
-    const uint32_t rounding = 100;
-
-    return (length + rounding - 1) / rounding * rounding;
 }

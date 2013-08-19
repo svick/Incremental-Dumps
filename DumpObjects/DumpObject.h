@@ -8,50 +8,54 @@
 
 class WritableDump;
 
-using std::uint64_t;
-using std::unique_ptr;
-using std::weak_ptr;
-using std::ostream;
-
 class DumpObjectBase
 {
 protected:
-    ostream *stream;
+    std::ostream *stream;
 
     virtual void WriteInternal() = 0;
 
     template<typename T>
     void WriteValue(const T value);
+public:
+    template<typename T>
+    static void WriteValue(std::ostream &stream, const T value);
 
     template<typename T>
     static void ReadValue(std::istream &stream, T &value);
 
     template<typename T>
-    uint32_t ValueSize(const T value) const;
-public:
-    virtual uint32_t NewLength() = 0;
+    static std::uint32_t ValueSize(const T value);
+
+    virtual std::uint32_t NewLength() = 0;
 };
 
 class DumpObject : public DumpObjectBase
 {
 protected:
-    weak_ptr<WritableDump> dump;
-    uint64_t savedOffset;
-    uint32_t savedLength;
+    std::weak_ptr<WritableDump> dump;
+    std::uint64_t savedOffset;
+    std::uint32_t savedLength;
 
-    DumpObject(weak_ptr<WritableDump> dump);
-    virtual void WriteInternal() = 0;
+    DumpObject(std::weak_ptr<WritableDump> dump);
+    virtual void WriteInternal() override = 0;
     virtual void UpdateIndex(Offset offset, bool overwrite);
 public:
     virtual void Write();
-    virtual uint32_t NewLength() = 0;
-    uint64_t SavedOffset() const;
+    virtual std::uint32_t NewLength() override = 0;
+    std::uint64_t SavedOffset() const;
 };
 
 template<typename T>
 void DumpObjectBase::WriteValue(const T value)
 {
-    DumpTraits<T>::Write(*stream, value);
+    WriteValue(*stream, value);
+}
+
+template<typename T>
+void DumpObjectBase::WriteValue(std::ostream &stream, const T value)
+{
+    DumpTraits<T>::Write(stream, value);
 }
 
 template<typename T>
@@ -61,7 +65,7 @@ void DumpObjectBase::ReadValue(std::istream &stream, T &value)
 }
 
 template<typename T>
-uint32_t DumpObjectBase::ValueSize(const T value) const
+uint32_t DumpObjectBase::ValueSize(const T value)
 {
     return DumpTraits<T>::DumpSize(value);
 }

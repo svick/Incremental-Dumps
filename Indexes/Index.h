@@ -14,12 +14,12 @@ class Index
 private:
     bool rootNodeUnsaved;
     unique_ptr<IndexNode<TKey, TValue>> rootNode;
-    weak_ptr<WritableDump> dump;
-    weak_ptr<Offset> fileHeaderOffset;
+    std::weak_ptr<WritableDump> dump;
+    std::weak_ptr<Offset> fileHeaderOffset;
 
     void AfterAdd();
 public:
-    Index(weak_ptr<WritableDump> dump, weak_ptr<Offset> fileHeaderOffset, bool delaySave = false);
+    Index(std::weak_ptr<WritableDump> dump, std::weak_ptr<Offset> fileHeaderOffset, bool delaySave = false);
 
     TValue Get(TKey key);
     void Add(TKey key, TValue value);

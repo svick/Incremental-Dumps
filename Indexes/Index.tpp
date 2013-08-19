@@ -6,7 +6,7 @@
 using std::move;
 
 template<typename TKey, typename TValue>
-Index<TKey, TValue>::Index(weak_ptr<WritableDump> dump, weak_ptr<Offset> fileHeaderOffset, bool delaySave)
+Index<TKey, TValue>::Index(std::weak_ptr<WritableDump> dump, std::weak_ptr<Offset> fileHeaderOffset, bool delaySave)
     : dump(dump), fileHeaderOffset(fileHeaderOffset)
 {
     auto offset = fileHeaderOffset.lock();

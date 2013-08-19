@@ -72,6 +72,15 @@ IpV6User::IpV6User(std::array<uint16_t, 8> parsedAddress)
     : User(0, AddressToString(parsedAddress)), Address(parsedAddress)
 {}
 
+bool IpV6User::Equals(const User &second) const
+{
+    auto otherCasted = dynamic_cast<const IpV6User*>(&second);
+    if (otherCasted == nullptr)
+        return false;
+
+    return this->Address == otherCasted->Address;
+}
+
 RevisionFlags IpV6User::UserKind() const
 {
     return RevisionFlags::IpV6User;

@@ -14,9 +14,9 @@ private:
 protected:
     virtual void WriteInternal() override;
 public:
-    static unique_ptr<IndexNode<TKey, TValue>> Read(weak_ptr<WritableDump> dump, istream &stream);
+    static unique_ptr<IndexNode<TKey, TValue>> Read(std::weak_ptr<WritableDump> dump, std::istream &stream);
 
-    IndexLeafNode(weak_ptr<WritableDump> dump);
+    IndexLeafNode(std::weak_ptr<WritableDump> dump);
 
     using DumpObject::Write;
     using DumpObjectBase::WriteValue;

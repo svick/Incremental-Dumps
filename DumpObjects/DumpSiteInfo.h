@@ -16,4 +16,8 @@ public:
     SiteInfo siteInfo;
 
     virtual uint32_t NewLength() override;
+
+    static SiteInfo ReadCore(std::istream &stream);
+    static void WriteCore(std::ostream &stream, const SiteInfo &siteInfo);
+    static std::uint32_t LengthCore(const SiteInfo &siteInfo);
 };

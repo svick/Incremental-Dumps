@@ -21,7 +21,8 @@ std::string FetchText::GetText(std::uint32_t textId)
     out.ignore();
 
     std::string result(length, '\0');
-    out.read(&result[0], length);
+    if (length > 0)
+        out.read(&result.at(0), length);
 
     return result;
 }

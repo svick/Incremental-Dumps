@@ -48,3 +48,24 @@ unique_ptr<User> User::CreateFromIp(string ipAddress)
 User::User(uint32_t userId, string userName)
     : UserId(userId), UserName(userName)
 {}
+
+bool operator ==(const User &first, const User &second)
+{
+    return first.Equals(second);
+}
+
+bool operator !=(const User &first, const User &second)
+{
+    return !(first == second);
+}
+
+bool Equals(const User *first, const User *second)
+{
+    if (first == nullptr && second == nullptr)
+        return true;
+
+    if (first != nullptr && second != nullptr)
+        return *first == *second;
+
+    return false;
+}

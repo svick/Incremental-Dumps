@@ -4,6 +4,7 @@
 #include <memory>
 #include <string>
 #include <iostream>
+#include <unordered_set>
 #include "DumpObjects/FileHeader.h"
 #include "DumpObjects/DumpSiteInfo.h"
 
@@ -24,7 +25,7 @@ class SpaceManager;
 class ReadableDump
 {
 protected:
-    weak_ptr<WritableDump> self;
+    std::weak_ptr<WritableDump> self;
 
     ReadableDump(unique_ptr<iostream> stream);
 public:
@@ -38,7 +39,7 @@ public:
 
     ReadableDump(string fileName);
 
-    weak_ptr<WritableDump> GetSelf() const;
+    std::weak_ptr<WritableDump> GetSelf() const;
 };
 
 class WritableDump : public ReadableDump
@@ -47,7 +48,7 @@ private:
     static unique_ptr<iostream> openStream(string fileName);
 
     WritableDump(string fileName);
-    void init(weak_ptr<WritableDump> self);
+    void init(std::weak_ptr<WritableDump> self);
 
 public:
     static const std::string WikitextModel;
@@ -62,9 +63,9 @@ public:
     void WriteIndexes();
 
     // also recursively deletes revisions of the given page
-    void DeletePage(std::uint32_t pageId);
-    void DeleteRevision(std::uint32_t revisionId);
+    void DeletePage(std::uint32_t pageId, const std::unordered_set<std::uint32_t> &doNotDeleteRevisions = std::unordered_set<std::uint32_t>());
+    void DeleteRevision(std::uint32_t revisionId, const std::unordered_set<std::uint32_t> &doNotDeleteRevisions = std::unordered_set<std::uint32_t>());
 
-    std::uint8_t GetIdForModelFormat(std::string model, std::string format);
+    std::uint8_t GetIdForModelFormat(std::string model, std::string format, bool &isNew);
     std::pair<std::string, std::string> GetModelFormat(std::uint8_t id);
 };

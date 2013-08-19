@@ -68,3 +68,13 @@ string Timestamp::ToString() const
 
     return string(chars, count);
 }
+
+bool operator ==(const Timestamp &first, const Timestamp &second)
+{
+    return first.ToInteger() == second.ToInteger();
+}
+
+bool operator !=(const Timestamp &first, const Timestamp &second)
+{
+    return !(first == second);
+}

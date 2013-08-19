@@ -16,5 +16,7 @@ public:
 
     std::array<uint16_t, 8> Address;
 
+    virtual bool Equals(const User &second) const override;
+
     virtual RevisionFlags UserKind() const override;
 };

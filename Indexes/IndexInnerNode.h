@@ -24,10 +24,10 @@ private:
 protected:
     virtual void WriteInternal() override;
 public:
-    static std::unique_ptr<IndexNode<TKey, TValue>> Read(weak_ptr<WritableDump> dump, istream &stream);
+    static std::unique_ptr<IndexNode<TKey, TValue>> Read(std::weak_ptr<WritableDump> dump, std::istream &stream);
 
-    IndexInnerNode(weak_ptr<WritableDump> dump);
-    IndexInnerNode(weak_ptr<WritableDump> dump, SplitResult splitResult);
+    IndexInnerNode(std::weak_ptr<WritableDump> dump);
+    IndexInnerNode(std::weak_ptr<WritableDump> dump, SplitResult splitResult);
 
     virtual void Write() override;
 

@@ -31,6 +31,13 @@ void DumpObject::Write()
 
     WriteInternal();
 
+#ifdef _DEBUG
+    auto actualLength = (std::uint64_t)stream->tellp() - newOffset;
+
+    if (actualLength > newLength)
+        throw DumpException();
+#endif
+
     stream = nullptr;
 
     bool overwriteIndex = savedOffset != 0;

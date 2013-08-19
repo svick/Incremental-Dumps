@@ -36,10 +36,10 @@ public:
         TKey SplitKey;
     };
 
-    static unique_ptr<IndexNode> Read(weak_ptr<WritableDump> dump, uint64_t offset);
-    static unique_ptr<IndexNode> CreateNew(weak_ptr<WritableDump> dump);
+    static unique_ptr<IndexNode> Read(std::weak_ptr<WritableDump> dump, std::uint64_t offset);
+    static unique_ptr<IndexNode> CreateNew(std::weak_ptr<WritableDump> dump);
 
-    IndexNode(weak_ptr<WritableDump> dump);
+    IndexNode(std::weak_ptr<WritableDump> dump);
 
     using DumpObject::Write;
     // write to a pre-allocated offset

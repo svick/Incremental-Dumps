@@ -63,7 +63,6 @@ void XmlWriter::WriteDump(std::shared_ptr<WritableDump> dump, std::string fileNa
 
     output.EndElement();
 
-    int i = 0;
     for (auto pageInfo : *dump->pageIdIndex)
     {
         auto page = DumpPage(dump, pageInfo.second).page;
@@ -81,7 +80,6 @@ void XmlWriter::WriteDump(std::shared_ptr<WritableDump> dump, std::string fileNa
             output.EndElementAttrs();
         }
 
-        int j = 0;
         for (auto revisionId : page.RevisionIds)
         {
             auto revision = DumpRevision(dump, revisionId, true).revision;

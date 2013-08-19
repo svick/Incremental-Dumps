@@ -53,7 +53,7 @@
       </PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions);_CRT_SECURE_NO_WARNINGS</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_CONSOLE;_DEBUG;%(PreprocessorDefinitions);_CRT_SECURE_NO_WARNINGS;_ITERATOR_DEBUG_LEVEL=1</PreprocessorDefinitions>
       <SDLCheck>false</SDLCheck>
     </ClCompile>
     <Link>
@@ -80,6 +80,19 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="CollectionHelpers.cpp" />
+    <ClCompile Include="Diff\ChangeProcessor.cpp" />
+    <ClCompile Include="Diff\Changes\Change.cpp" />
+    <ClCompile Include="Diff\Changes\DeletePageChange.cpp" />
+    <ClCompile Include="Diff\Changes\DeleteRevisionChange.cpp" />
+    <ClCompile Include="Diff\DiffReader.cpp" />
+    <ClCompile Include="Diff\DiffWriter.cpp" />
+    <ClCompile Include="Diff\Changes\NewModelFormatChange.cpp" />
+    <ClCompile Include="Diff\Changes\NewPageChange.cpp" />
+    <ClCompile Include="Diff\Changes\NewRevisionChange.cpp" />
+    <ClCompile Include="Diff\Changes\PageChange.cpp" />
+    <ClCompile Include="Diff\Changes\RevisionChange.cpp" />
+    <ClCompile Include="Diff\Changes\SiteInfoChange.cpp" />
     <ClCompile Include="Dump.cpp" />
     <ClCompile Include="DumpException.cpp" />
     <ClCompile Include="DumpKind.cpp" />
@@ -90,6 +103,19 @@
     <ClCompile Include="DumpObjects\DumpSiteInfo.cpp" />
     <ClCompile Include="DumpObjects\FileHeader.cpp" />
     <ClInclude Include="CollectionHelpers.h" />
+    <ClInclude Include="Diff\ChangeProcessor.h" />
+    <ClInclude Include="Diff\Changes\Change.h" />
+    <ClInclude Include="Diff\Changes\DeletePageChange.h" />
+    <ClInclude Include="Diff\Changes\DeleteRevisionChange.h" />
+    <ClInclude Include="Diff\ChangeVisitor.h" />
+    <ClInclude Include="Diff\DiffReader.h" />
+    <ClInclude Include="Diff\DiffWriter.h" />
+    <ClInclude Include="Diff\Changes\NewModelFormatChange.h" />
+    <ClInclude Include="Diff\Changes\NewPageChange.h" />
+    <ClInclude Include="Diff\Changes\NewRevisionChange.h" />
+    <ClInclude Include="Diff\Changes\PageChange.h" />
+    <ClInclude Include="Diff\Changes\RevisionChange.h" />
+    <ClInclude Include="Diff\Changes\SiteInfoChange.h" />
     <ClInclude Include="DumpException.h" />
     <ClInclude Include="DumpKind.h" />
     <ClInclude Include="DumpObjects\DumpIpV4User.h" />

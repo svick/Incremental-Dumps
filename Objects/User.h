@@ -22,6 +22,15 @@ public:
     uint32_t UserId;
     string UserName;
 
+    virtual bool Equals(const User &second) const = 0;
+
     virtual RevisionFlags UserKind() const = 0;
     virtual ~User() {}
 };
+
+bool operator ==(const User &first, const User &second);
+
+bool operator !=(const User &first, const User &second);
+
+// compares pointers that can be null for value equality
+bool Equals(const User *first, const User *second);
