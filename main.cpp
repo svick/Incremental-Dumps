@@ -10,11 +10,14 @@
 #include "XmlWriter.h"
 #include "Dump.h"
 #include "FetchText.h"
+#include "format.h"
 
 void printUsage()
 {
     std::cout << "Usage:\n";
-    std::cout << "creating dump: idumps c[reate] source.xml spec dump.id ...\n";
+    std::cout << "creating dump: idumps c[reate] name timestamp source.xml spec dump.id ...\n";
+    std::cout << " name is the name of the wiki (e.g. enwiki)\n";
+    std::cout << " timestamp identifies this specific dump (it doesn't actually have to be a timestamp)\n";
     std::cout << " spec is a 2 to 4-letter string that describes what kind of dump to create:\n";
     std::cout << " 1. letter: p for pages dump or s for stub dump:\n";
     std::cout << " 2. letter: h for history dump or c for current dump:\n";
@@ -22,23 +25,21 @@ void printUsage()
     std::cout << " 4. optional letter: d to also create diff dump:\n";
     std::cout << "  add the path to the diff dump after the path to dump\n";
     std::cout << " example: sh for stub-meta-history, pcad for pages-articles with diff dump\n";
-    std::cout << "updating dump: idumps u[pdate] phpPath dumpBackup fetchText spec dump.id ...\n";
+    std::cout << "updating dump: idumps u[pdate] name new-timestamp phpPath dumpBackup fetchText spec dump.id ...\n";
     std::cout << "reading dump: idumps r[ead] dump.id output.xml\n";
     std::cout << "applying diff: idumps a[pply] dump.id diff.dd\n";
 }
 
-std::unique_ptr<IDumpWriter> createWriter(std::queue<std::string> &parameters)
+std::unique_ptr<IDumpWriter> createWriter(std::queue<std::string> &parameters, const std::string &name, const std::string &timestamp)
 {
-    std::unique_ptr<IDumpWriter> nullResult;
-
     if (parameters.size() < 2)
-        return nullResult;
+        throw ParametersException("Incorrect number of parameters.");
 
     auto spec = parameters.front();
     parameters.pop();
 
-    if (spec.length() < 2 || spec.length() > 3)
-        return nullResult;
+    if (spec.length() < 2 || spec.length() > 4)
+        throw ParametersException(str(fmt::Format("{0} is an invalid dump spec (wrong length).") << spec));
 
     auto fileName = parameters.front();
     parameters.pop();
@@ -49,7 +50,7 @@ std::unique_ptr<IDumpWriter> createWriter(std::queue<std::string> &parameters)
     else if (spec.at(0) == 's')
         withText = false;
     else
-        return nullResult;
+        throw ParametersException(str(fmt::Format("The first letter of spec has to be p (for pages) or s (for stub), not {0}.") << spec.at(0)));
 
     bool current;
     if (spec.at(1) == 'c')
@@ -57,7 +58,7 @@ std::unique_ptr<IDumpWriter> createWriter(std::queue<std::string> &parameters)
     else if (spec.at(1) == 'h')
         current = false;
     else
-        return nullResult;
+        throw ParametersException(str(fmt::Format("The second letter of spec has to be c (for current) or h (for history), not {0}.") << spec.at(1)));
 
     bool articles = false;
     bool diffDump = false;
@@ -79,21 +80,28 @@ std::unique_ptr<IDumpWriter> createWriter(std::queue<std::string> &parameters)
         }
 
         if (i != spec.length())
-            return nullResult;
+            throw ParametersException(str(fmt::Format("The letter {0} is not valid at this point in the spec.") << spec.at(i)));
     }
 
     auto dump = WritableDump::Create(fileName);
+
+    dump->siteInfo->CheckName(name, true);
+    dump->siteInfo->name = name;
+
+    dump->siteInfo->CheckTimestamp(timestamp, true);
+    auto oldTimestamp = dump->siteInfo->timestamp;
+    dump->siteInfo->timestamp = timestamp;
 
     std::unique_ptr<DiffWriter> diffWriter;
     if (diffDump)
     {
         if (parameters.empty())
-            return nullResult;
+            throw ParametersException("The filename of the diff dump is missing.");
 
         auto diffFileName = parameters.front();
         parameters.pop();
 
-        diffWriter = std::unique_ptr<DiffWriter>(new DiffWriter(diffFileName));
+        diffWriter = std::unique_ptr<DiffWriter>(new DiffWriter(diffFileName, name, oldTimestamp, timestamp));
     }
 
     auto writer = std::unique_ptr<IDumpWriter>(new DumpWriter(dump, withText, std::move(diffWriter)));
@@ -107,16 +115,13 @@ std::unique_ptr<IDumpWriter> createWriter(std::queue<std::string> &parameters)
     return writer;
 }
 
-std::vector<std::unique_ptr<IDumpWriter>> createWriters(std::queue<std::string> &parameters)
+std::vector<std::unique_ptr<IDumpWriter>> createWriters(std::queue<std::string> &parameters, const std::string &name, const std::string &timestamp)
 {
     std::vector<std::unique_ptr<IDumpWriter>> writers;
 
     while (!parameters.empty())
     {
-        auto writer = createWriter(parameters);
-
-        if (writer == nullptr)
-            return std::vector<std::unique_ptr<IDumpWriter>>();
+        auto writer = createWriter(parameters, name, timestamp);
 
         writers.push_back(std::move(writer));
     }
@@ -124,15 +129,33 @@ std::vector<std::unique_ptr<IDumpWriter>> createWriters(std::queue<std::string> 
     return writers;
 }
 
-bool createDump(std::queue<std::string> &parameters)
+void readNameAndTimestamp(std::queue<std::string> &parameters, std::string &name, std::string &timestamp)
 {
+    name = parameters.front();
+    parameters.pop();
+
+    if (name.empty())
+        throw ParametersException("The name of the dump can't be empty.");
+
+    timestamp = parameters.front();
+    parameters.pop();
+
+    if (timestamp.empty())
+        throw ParametersException("The timestamp can't be empty.");
+}
+
+void createDump(std::queue<std::string> &parameters)
+{
+    if (parameters.size() < 3 + 2)
+        throw ParametersException("Not enough parameters.");
+
+    std::string name, timestamp;
+    readNameAndTimestamp(parameters, name, timestamp);
+
     std::string inputFileName = parameters.front();
     parameters.pop();
 
-    auto writers = createWriters(parameters);
-
-    if (writers.empty())
-        return false;
+    auto writers = createWriters(parameters, name, timestamp);
 
     CompositeWriter writer(writers);
 
@@ -141,12 +164,16 @@ bool createDump(std::queue<std::string> &parameters)
     XmlMediawikiProcessor::Process(&writer, inputFileName);
 
     writer.EndDump();
-
-    return true;
 }
 
-bool updateDump(std::queue<std::string> &parameters)
+void updateDump(std::queue<std::string> &parameters)
 {
+    if (parameters.size() < 5 + 2)
+        throw ParametersException("Not enough parameters.");
+
+    std::string name, timestamp;
+    readNameAndTimestamp(parameters, name, timestamp);
+
     std::string phpPath = parameters.front();
     parameters.pop();
 
@@ -156,10 +183,7 @@ bool updateDump(std::queue<std::string> &parameters)
     std::string fetchTextParameters = parameters.front();
     parameters.pop();
 
-    auto writers = createWriters(parameters);
-
-    if (writers.empty())
-        return false;
+    auto writers = createWriters(parameters, name, timestamp);
 
     FetchText fetchText(std::unique_ptr<exec_stream_t>(new exec_stream_t(phpPath, fetchTextParameters)));
 
@@ -187,8 +211,6 @@ bool updateDump(std::queue<std::string> &parameters)
     XmlMediawikiProcessor::Process(&writer, dumpBackupStream);
 
     writer.EndDump();
-
-    return true;
 }
 
 void readDump(std::string dumpFileName, std::string outputFileName)
@@ -219,59 +241,52 @@ int main(int argc, const char* argv[])
 
     string action = args.at(1);
 
-    if (action == "c" || action == "create")
+    try
     {
-        std::queue<std::string> parameters;
-
-        for (size_t i = 2; i < args.size(); i++)
-            parameters.push(args.at(i));
-
-        if (!createDump(parameters))
+        if (action == "c" || action == "create")
         {
-            std::cout << "Invalid parameters\n";
-            printUsage();
+            std::queue<std::string> parameters;
+
+            for (size_t i = 2; i < args.size(); i++)
+                parameters.push(args.at(i));
+
+            createDump(parameters);
         }
-    }
-    else if (action == "u" || action == "update")
-    {
-        std::queue<std::string> parameters;
+        else if (action == "u" || action == "update")
+        {
+            std::queue<std::string> parameters;
 
-        for (size_t i = 2; i < args.size(); i++)
-            parameters.push(args.at(i));
+            for (size_t i = 2; i < args.size(); i++)
+                parameters.push(args.at(i));
 
-        if (!updateDump(parameters))
-        {
-            std::cout << "Invalid parameters\n";
-            printUsage();
+            updateDump(parameters);
         }
-    }
-    else if (action == "r" || action == "read")
-    {
-        if (argc != 4)
+        else if (action == "r" || action == "read")
         {
-            std::cout << "Invalid number of parameters\n";
-            printUsage();
-        }
-        else
-        {
+            if (argc != 4)
+                throw ParametersException("Invalid number of parameters.");
+
             readDump(args.at(2), args.at(3));
         }
-    }
-    else if (action == "a" || action == "apply")
-    {
-        if (argc != 4)
+        else if (action == "a" || action == "apply")
         {
-            std::cout << "Invalid number of parameters\n";
-            printUsage();
+            if (argc != 4)
+                throw ParametersException("Invalid number of parameters.");
+
+            applyDiff(args.at(2), args.at(3));
         }
         else
         {
-            applyDiff(args.at(2), args.at(3));
+            throw ParametersException(str(fmt::Format("Unknown action {0}.") << action));
         }
     }
-    else
+    catch (ParametersException &ex)
     {
-        std::cout << "Unknown action '" << action << "'\n";
+        std::cerr << "Error: " << ex.what() << "\n";
         printUsage();
+    }
+    catch (UserException &ex)
+    {
+        std::cerr << "Error: " << ex.what() << "\n";
     }
 }

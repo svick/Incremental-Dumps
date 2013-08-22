@@ -8,8 +8,12 @@ class SiteInfoChange : public Change
 public:
     SiteInfo siteInfo;
 
-    SiteInfoChange(const SiteInfo &siteInfo)
-        : siteInfo(siteInfo)
+    std::string name;
+    std::string oldTimestamp;
+    std::string newTimestamp;
+
+    SiteInfoChange(const SiteInfo &siteInfo, const std::string &name, const std::string &oldTimestamp, const std::string &newTimestamp)
+        : siteInfo(siteInfo), name(name), oldTimestamp(oldTimestamp), newTimestamp(newTimestamp)
     {}
 
     virtual void WriteInternal() override;

@@ -22,9 +22,10 @@ void DiffWriter::EnsurePageWritten()
     }
 }
 
-DiffWriter::DiffWriter(std::string fileName)
+DiffWriter::DiffWriter(const std::string &fileName, const std::string &name, const std::string &oldTimestamp, const std::string &newTimestamp)
     : stream(std::unique_ptr<std::ostream>(new std::ofstream(fileName, std::ios::binary))),
-    dumpStarted(false), pageStarted(false), pageWritten(false)
+        dumpStarted(false), pageStarted(false), pageWritten(false),
+        name(name), oldTimestamp(oldTimestamp), newTimestamp(newTimestamp)
 {}
 
 void DiffWriter::SetSiteInfo(const SiteInfo &siteInfo, DumpKind dumpKind)
@@ -41,7 +42,7 @@ void DiffWriter::SetSiteInfo(const SiteInfo &siteInfo, DumpKind dumpKind)
 
     dumpStarted = true;
 
-    SiteInfoChange change(siteInfo);
+    SiteInfoChange change(siteInfo, name, oldTimestamp, newTimestamp);
     change.Write(stream.get());
 }
 

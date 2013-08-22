@@ -18,9 +18,13 @@ private:
     bool pageWritten;
     std::unique_ptr<PageChange> unwrittenPage;
 
+    const std::string name;
+    const std::string oldTimestamp;
+    const std::string newTimestamp;
+
     void EnsurePageWritten();
 public:
-    DiffWriter(std::string fileName);
+    DiffWriter(const std::string &fileName, const std::string &name, const std::string &oldTimestamp, const std::string &newTimestamp);
 
     void SetSiteInfo(const SiteInfo &siteInfo, DumpKind dumpKind);
 

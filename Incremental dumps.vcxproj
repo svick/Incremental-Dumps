@@ -53,7 +53,7 @@
       </PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>WIN32;_CONSOLE;_DEBUG;%(PreprocessorDefinitions);_CRT_SECURE_NO_WARNINGS;_ITERATOR_DEBUG_LEVEL=1</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_CONSOLE;_DEBUG;%(PreprocessorDefinitions);_CRT_SECURE_NO_WARNINGS;_SCL_SECURE_NO_WARNINGS;_ITERATOR_DEBUG_LEVEL=1</PreprocessorDefinitions>
       <SDLCheck>false</SDLCheck>
     </ClCompile>
     <Link>
@@ -69,7 +69,7 @@
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;_CRT_SECURE_NO_WARNINGS;_SCL_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
     </ClCompile>
     <Link>
@@ -131,6 +131,7 @@
     <ClInclude Include="DumpWriters\DumpWriter.h" />
     <ClInclude Include="DumpWriters\WriterWrapper.h" />
     <ClInclude Include="FetchText.h" />
+    <ClInclude Include="format.h" />
     <ClInclude Include="Indexes\Index.h" />
     <ClInclude Include="Indexes\IndexInnerNode.h" />
     <ClInclude Include="Indexes\IndexLeafNode.tpp">
@@ -149,6 +150,7 @@
     <ClCompile Include="DumpWriters\DumpWriter.cpp" />
     <ClCompile Include="DumpWriters\WriterWrapper.cpp" />
     <ClCompile Include="FetchText.cpp" />
+    <ClCompile Include="format.cc" />
     <ClCompile Include="libexecstream\exec-stream.cpp" />
     <ClCompile Include="Objects\IpV4User.cpp" />
     <ClCompile Include="main.cpp" />

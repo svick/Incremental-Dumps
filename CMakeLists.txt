@@ -46,6 +46,7 @@ set(SOURCES_files_ClCompile
   DumpWriters/DumpWriter.cpp
   DumpWriters/WriterWrapper.cpp
   FetchText.cpp
+  format.cc
   libexecstream/exec-stream.cpp
   Objects/User.cpp
   StringHelpers.cpp
@@ -125,6 +126,7 @@ set(SOURCES_files_ClInclude
   DumpWriters/IDumpWriter.h
   DumpWriters/WriterWrapper.h
   FetchText.h
+  format.h
   Objects/User.h
   StringHelpers.h
   Objects/Timestamp.h
