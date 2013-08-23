@@ -15,19 +15,19 @@
 void printUsage()
 {
     std::cout << "Usage:\n";
-    std::cout << "creating dump: idumps c[reate] name timestamp source.xml spec dump.id ...\n";
+    std::cout << "reading dump: idumps r[ead] dump.id output.xml\n";
+    std::cout << "applying diff: idumps a[pply] dump.id diff.dd\n";
+    std::cout << "updating dump: idumps u[pdate] name new-timestamp phpPath dumpBackup fetchText spec dump.id ...\n";
     std::cout << " name is the name of the wiki (e.g. enwiki)\n";
     std::cout << " timestamp identifies this specific dump (it doesn't actually have to be a timestamp)\n";
     std::cout << " spec is a 2 to 4-letter string that describes what kind of dump to create:\n";
-    std::cout << " 1. letter: p for pages dump or s for stub dump:\n";
-    std::cout << " 2. letter: h for history dump or c for current dump:\n";
-    std::cout << " 3. optional letter: a for articles dump:\n";
-    std::cout << " 4. optional letter: d to also create diff dump:\n";
+    std::cout << " 1. letter: p for pages dump or s for stub dump\n";
+    std::cout << " 2. letter: h for history dump or c for current dump\n";
+    std::cout << " 3. optional letter: a for articles dump\n";
+    std::cout << " 4. optional letter: d to also create diff dump\n";
     std::cout << "  add the path to the diff dump after the path to dump\n";
     std::cout << " example: sh for stub-meta-history, pcad for pages-articles with diff dump\n";
-    std::cout << "updating dump: idumps u[pdate] name new-timestamp phpPath dumpBackup fetchText spec dump.id ...\n";
-    std::cout << "reading dump: idumps r[ead] dump.id output.xml\n";
-    std::cout << "applying diff: idumps a[pply] dump.id diff.dd\n";
+    std::cout << "creating dump: idumps c[reate] name timestamp source.xml spec dump.id ...\n";
 }
 
 std::unique_ptr<IDumpWriter> createWriter(std::queue<std::string> &parameters, const std::string &name, const std::string &timestamp)
@@ -193,7 +193,7 @@ void updateDump(std::queue<std::string> &parameters)
 
     exec_stream_t dumpBackupProcess;
     dumpBackupProcess.set_buffer_limit(exec_stream_t::s_out, 8192);
-    dumpBackupProcess.start(phpPath, dumpBackupParameters);
+    dumpBackupProcess.start(phpPath, dumpBackupParameters + " --full --stub");
 
     WrapperInputStream dumpBackupStream(dumpBackupProcess.out(),
         [&]()

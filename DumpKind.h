@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cstdint>
+#include <iostream>
 
 enum class DumpKind : std::uint8_t
 {
@@ -20,3 +21,5 @@ bool IsArticles(DumpKind dumpKind);
 
 DumpKind operator |(DumpKind first, DumpKind second);
 DumpKind operator |=(DumpKind &first, DumpKind second);
+
+std::ostream& operator<<(std::ostream& os, DumpKind obj);

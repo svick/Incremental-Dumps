@@ -35,3 +35,21 @@ DumpKind operator |=(DumpKind &first, DumpKind second)
     first = first | second;
     return first;
 }
+
+std::ostream& operator<<(std::ostream& stream, DumpKind dumpKind)
+{
+    if (IsStub(dumpKind))
+        stream << "stub";
+    else
+        stream << "pages";
+
+    if (IsCurrent(dumpKind))
+        stream << "-current";
+    else
+        stream << "-history";
+
+    if (IsArticles(dumpKind))
+        stream << "-articles";
+  
+    return stream;
+}

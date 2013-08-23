@@ -80,8 +80,8 @@ RevisionChange RevisionChange::Read(std::istream &stream, bool withText)
 {
     RevisionChange result(withText);
 
-    ReadValue(stream, result.flags);
     ReadValue(stream, result.revisionChanges.RevisionId);
+    ReadValue(stream, result.flags);
 
     if (HasFlag(result.flags, RevisionChangeFlags::Flags))
         ReadValue(stream, result.revisionChanges.Flags);
@@ -121,8 +121,8 @@ RevisionChange RevisionChange::Read(std::istream &stream, bool withText)
 void RevisionChange::WriteInternal()
 {
     WriteValue(ChangeKind::ChangeRevision);
-    WriteValue(flags);
     WriteValue(revisionChanges.RevisionId);
+    WriteValue(flags);
 
     if (HasFlag(flags, RevisionChangeFlags::Flags))
         WriteValue(revisionChanges.Flags);
@@ -158,8 +158,8 @@ std::uint32_t RevisionChange::NewLength()
     std::uint32_t result = 0;
 
     result += ValueSize(ChangeKind::ChangeRevision);
-    result += ValueSize(flags);
     result += ValueSize(revisionChanges.RevisionId);
+    result += ValueSize(flags);
 
     if (HasFlag(flags, RevisionChangeFlags::Flags))
         result += ValueSize(revisionChanges.Flags);

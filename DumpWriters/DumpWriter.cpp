@@ -1,8 +1,9 @@
+#include <algorithm>
 #include "DumpWriter.h"
 #include "../DumpObjects/DumpRevision.h"
 #include "../CollectionHelpers.h"
 #include "../Indexes/Index.h"
-#include <algorithm>
+#include "../format.h"
 
 DumpWriter::DumpWriter(std::shared_ptr<WritableDump> dump, bool withText, std::unique_ptr<DiffWriter> diffWriter)
     : dump(dump), withText(withText), diffWriter(std::move(diffWriter))
@@ -85,8 +86,18 @@ void DumpWriter::SetDumpKind(DumpKind dumpKind)
     if (withText)
         dumpKind |= DumpKind::Pages;
 
-    dump->fileHeader.Kind = dumpKind;
-    dump->fileHeader.Write();
+    // empty name means it's a new dump
+    if (dump->siteInfo->name.empty())
+    {
+        dump->fileHeader.Kind = dumpKind;
+        dump->fileHeader.Write();
+    }
+    else
+    {
+        if (dump->fileHeader.Kind != dumpKind)
+            throw UserException(str(fmt::Format(
+                "The specified dump kind ({0}) is not the same as the kind of the dump ({1}).") << dumpKind << dump->fileHeader.Kind));
+    }
 }
 
 void DumpWriter::EndDump()
