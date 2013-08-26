@@ -24,7 +24,7 @@ PageChange::PageChange(const Page &oldPage, const Page &newPage)
 {
     pageChanges = newPage;
     // revision ids are not needed here, so we can save some memory
-    pageChanges.RevisionIds = std::vector<std::uint32_t>();
+    pageChanges.RevisionIds = std::set<std::uint32_t>();
 
     flags = PageChangeFlags::NoChanges;
 

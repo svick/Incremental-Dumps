@@ -1,6 +1,7 @@
 #pragma once
 
 #include <vector>
+#include <set>
 #include <unordered_set>
 #include <algorithm>
 
@@ -22,13 +23,13 @@ T& insert_at(T& pContainer, size_t pIndex, typename T::value_type&& pValue)
 }
 
 template <typename T>
-bool contains(T& container, const typename T::value_type& value)
+bool contains(const std::set<T> &container, const T &value)
 {
-    return std::find(container.begin(), container.end(), value) != container.end();
+    return container.count(value) > 0;
 }
 
 template <typename T>
-std::unordered_set<T> except(std::vector<T> container1, std::vector<T> container2)
+std::unordered_set<T> except(const std::vector<T> &container1, const std::vector<T> &container2)
 {
     std::unordered_set<T> set(container1.begin(), container1.end());
 
@@ -38,6 +39,16 @@ std::unordered_set<T> except(std::vector<T> container1, std::vector<T> container
     return set;
 }
 
+template <typename T>
+std::set<T> except(const std::set<T> &container1, const std::set<T> &container2)
+{
+    std::set<T> result = container1;
+
+    for (auto item : container2)
+        result.erase(item);
+
+    return result;
+}
 
 void set(std::vector<bool> &vector, std::size_t index);
 

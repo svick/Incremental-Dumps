@@ -35,7 +35,7 @@ void DumpWriter::StartPage(const std::shared_ptr<const Page> page)
 
 void DumpWriter::AddRevision(const std::shared_ptr<const Revision> revision)
 {
-    page->page.RevisionIds.push_back(revision->RevisionId);
+    page->page.RevisionIds.insert(revision->RevisionId);
     revisions.push_back(revision);
 }
 

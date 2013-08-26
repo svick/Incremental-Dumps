@@ -2,7 +2,7 @@
 
 #include <cstdint>
 #include <string>
-#include <vector>
+#include <set>
 
 class Page
 {
@@ -13,7 +13,7 @@ public:
     // if empty, the page is not a redirect
     std::string RedirectTarget;
 
-    std::vector<std::uint32_t> RevisionIds;
+    std::set<std::uint32_t> RevisionIds;
 
     Page();
 };

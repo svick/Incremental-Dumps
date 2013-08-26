@@ -106,12 +106,12 @@ Page DumpPage::ReadCore(std::istream &stream, bool includeRevisionIds)
 {
     Page page;
 
-    page.PageId = DumpTraits<uint32_t>::Read(stream);
-    page.Namespace = DumpTraits<int16_t>::Read(stream);
-    page.Title = DumpTraits<string>::Read(stream);
-    page.RedirectTarget = DumpTraits<string>::Read(stream);
+    page.PageId = DumpTraits<std::uint32_t>::Read(stream);
+    page.Namespace = DumpTraits<std::int16_t>::Read(stream);
+    page.Title = DumpTraits<std::string>::Read(stream);
+    page.RedirectTarget = DumpTraits<std::string>::Read(stream);
     if (includeRevisionIds)
-        page.RevisionIds = DumpTraits<vector<uint32_t>>::Read(stream);
+        page.RevisionIds = DumpTraits<std::set<std::uint32_t>>::Read(stream);
 
     return page;
 }

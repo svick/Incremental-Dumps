@@ -69,7 +69,7 @@ void ChangeProcessor::Process(NewRevisionChange change)
     dumpRevision.SetModelFormatId(change.modelFormatId);
     dumpRevision.Write();
 
-    currentPage->page.RevisionIds.push_back(change.revision.RevisionId);
+    currentPage->page.RevisionIds.insert(change.revision.RevisionId);
 
     visitedRevisionIds.insert(change.revision.RevisionId);
 }
@@ -111,8 +111,7 @@ void ChangeProcessor::Process(RevisionChange change)
 
     dumpRevision.Write();
 
-    if (!contains(currentPage->page.RevisionIds, revision.RevisionId))
-        currentPage->page.RevisionIds.push_back(revision.RevisionId);
+    currentPage->page.RevisionIds.insert(revision.RevisionId);
 
     visitedRevisionIds.insert(change.revisionChanges.RevisionId);
 }

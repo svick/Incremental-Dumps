@@ -7,6 +7,7 @@
 #include <iostream>
 #include <array>
 #include <vector>
+#include <set>
 #include <map>
 #include "../DumpException.h"
 
@@ -264,16 +265,16 @@ public:
 };
 
 template<typename T>
-class DumpTraits<vector<T>>
+class DumpTraits<std::vector<T>>
 {
 public:
-    static vector<T> Read(istream &stream)
+    static std::vector<T> Read(std::istream &stream)
     {
-        uint32_t count = DumpTraits<uint32_t>::Read(stream);
+        std::uint32_t count = DumpTraits<std::uint32_t>::Read(stream);
 
-        vector<T> result;
+        std::vector<T> result;
 
-        for (uint32_t i = 0; i < count; i++)
+        for (std::uint32_t i = 0; i < count; i++)
         {
             result.push_back(DumpTraits<T>::Read(stream));
         }
@@ -281,14 +282,14 @@ public:
         return result;
     }
 
-    static void Write(ostream &stream, const vector<T> &value)
+    static void Write(std::ostream &stream, const std::vector<T> &value)
     {
         auto length = value.size();
 
-        if (length >= numeric_limits<uint32_t>::max())
+        if (length >= std::numeric_limits<std::uint32_t>::max())
             throw DumpException();
 
-        DumpTraits<uint32_t>::Write(stream, length);
+        DumpTraits<std::uint32_t>::Write(stream, length);
 
         for (T item : value)
         {
@@ -296,9 +297,9 @@ public:
         }
     }
 
-    static uint32_t DumpSize(const vector<T> &value)
+    static std::uint32_t DumpSize(const std::vector<T> &value)
     {
-        uint32_t size = DumpTraits<uint32_t>::DumpSize(value.size());
+        std::uint32_t size = DumpTraits<std::uint32_t>::DumpSize(value.size());
 
         for (T item : value)
         {
@@ -336,6 +337,52 @@ public:
     static uint32_t DumpSize(const std::array<T, N> &value)
     {
         uint32_t size = 0;
+
+        for (T item : value)
+        {
+            size += DumpTraits<T>::DumpSize(item);
+        }
+
+        return size;
+    }
+};
+
+template<typename T>
+class DumpTraits<std::set<T>>
+{
+public:
+    static std::set<T> Read(std::istream &stream)
+    {
+        std::uint32_t count = DumpTraits<std::uint32_t>::Read(stream);
+
+        std::set<T> result;
+
+        for (std::uint32_t i = 0; i < count; i++)
+        {
+            result.insert(result.end(), DumpTraits<T>::Read(stream));
+        }
+
+        return result;
+    }
+
+    static void Write(std::ostream &stream, const std::set<T> &value)
+    {
+        auto length = value.size();
+
+        if (length >= std::numeric_limits<std::uint32_t>::max())
+            throw DumpException();
+
+        DumpTraits<std::uint32_t>::Write(stream, length);
+
+        for (T item : value)
+        {
+            DumpTraits<T>::Write(stream, item);
+        }
+    }
+
+    static std::uint32_t DumpSize(const std::set<T> &value)
+    {
+        std::uint32_t size = DumpTraits<std::uint32_t>::DumpSize(value.size());
 
         for (T item : value)
         {

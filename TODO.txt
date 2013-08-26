@@ -1,8 +1,4 @@
 This is a list of smaller things that should (or could) be done.
 
-short term:
-- dump name and timestamp
-- order revisions by id
-
 long term:
 - https://www.mediawiki.org/wiki/User:ArielGlenn/Dumps_new_format_%28deltas,_changesets%29#Open_issues_on_GSOC_2013_project
