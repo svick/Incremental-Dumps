@@ -11,8 +11,6 @@ private:
 
     std::unique_ptr<DumpPage> currentPage;
 
-    std::unordered_set<std::uint32_t> visitedRevisionIds;
-
     void WritePage();
 public:
     ChangeProcessor(std::shared_ptr<WritableDump> dump);
@@ -24,7 +22,8 @@ public:
     void Process(NewRevisionChange change);
     void Process(RevisionChange change);
     void Process(DeleteRevisionChange change);
-    void Process(DeletePageChange change);
+    void Process(FullDeletePageChange change);
+    void Process(PartialDeletePageChange change);
 
     // has to be called after processing is complete
     void End();

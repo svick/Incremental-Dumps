@@ -22,6 +22,7 @@ class Index;
 
 class SpaceManager;
 
+// TODO: ReadableDump is unusable; either merge it with WritableDump, or make it usable
 class ReadableDump
 {
 protected:
@@ -29,7 +30,7 @@ protected:
 
     ReadableDump(unique_ptr<iostream> stream);
 public:
-    // TODO: others should not be able to steal this stream
+    // TODO: others should not be able to steal these
     unique_ptr<iostream> stream;
     unique_ptr<Index<uint32_t, Offset>> pageIdIndex;
     unique_ptr<Index<uint32_t, Offset>> revisionIdIndex;
@@ -52,6 +53,8 @@ private:
     WritableDump(string fileName);
     void init(std::weak_ptr<WritableDump> self);
 
+    std::pair<bool, std::vector<std::uint32_t>> DeletePage(
+        std::uint32_t pageId, bool fullDelete, const std::unordered_set<std::uint32_t> &doNotDeleteRevisions);
 public:
     static const std::string WikitextModel;
     static const std::string WikitextFormat;
@@ -64,9 +67,15 @@ public:
     // it's necessary to call this after writing is finished
     void WriteIndexes();
 
-    // also recursively deletes revisions of the given page
-    void DeletePage(std::uint32_t pageId, const std::unordered_set<std::uint32_t> &doNotDeleteRevisions = std::unordered_set<std::uint32_t>());
-    void DeleteRevision(std::uint32_t revisionId, const std::unordered_set<std::uint32_t> &doNotDeleteRevisions = std::unordered_set<std::uint32_t>());
+    void DeletePagePartial(std::uint32_t pageId);
+    // also deletes revisions of the given page
+    // first member of returned pair indicates whether all revisions of the page were deleted
+    // if it's false, second member contains ids of revisions that were actually deleted
+    std::pair<bool, std::vector<std::uint32_t>> DeletePageFull(
+        std::uint32_t pageId, const std::unordered_set<std::uint32_t> &doNotDeleteRevisions = std::unordered_set<std::uint32_t>());
+    // returns whether the revision was actually deleted
+    bool DeleteRevision(
+        std::uint32_t revisionId, const std::unordered_set<std::uint32_t> &doNotDeleteRevisions = std::unordered_set<std::uint32_t>());
 
     std::uint8_t GetIdForModelFormat(std::string model, std::string format, bool &isNew);
     std::pair<std::string, std::string> GetModelFormat(std::uint8_t id);

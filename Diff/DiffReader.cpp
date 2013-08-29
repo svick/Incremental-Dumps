@@ -63,8 +63,11 @@ void DiffReader::Read()
         case ChangeKind::DeleteRevision:
             changeProcessor.Process(DeleteRevisionChange::Read(*stream));
             break;
-        case ChangeKind::DeletePage:
-            changeProcessor.Process(DeletePageChange::Read(*stream));
+        case ChangeKind::DeletePageFull:
+            changeProcessor.Process(FullDeletePageChange::Read(*stream));
+            break;
+        case ChangeKind::DeletePagePartial:
+            changeProcessor.Process(PartialDeletePageChange::Read(*stream));
             break;
         default:
             throw DumpException();

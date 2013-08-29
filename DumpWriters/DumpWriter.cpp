@@ -105,10 +105,22 @@ void DumpWriter::EndDump()
     {
         if (unvisitedPageIds.at(i))
         {
-            dump->DeletePage(i, newRevisionIds);
+            auto deletedRevisions = dump->DeletePageFull(i, newRevisionIds);
 
             if (diffWriter != nullptr)
-                diffWriter->DeletePage(i);
+            {
+                if (deletedRevisions.first)
+                {
+                    diffWriter->DeletePageFull(i);
+                }
+                else
+                {
+                    diffWriter->DeletePagePartial(i);
+
+                    for (auto revisionId : deletedRevisions.second)
+                        diffWriter->DeleteRevision(revisionId);
+                }
+            }
         }
     }
 

@@ -70,8 +70,6 @@ void ChangeProcessor::Process(NewRevisionChange change)
     dumpRevision.Write();
 
     currentPage->page.RevisionIds.insert(change.revision.RevisionId);
-
-    visitedRevisionIds.insert(change.revision.RevisionId);
 }
 
 void ChangeProcessor::Process(RevisionChange change)
@@ -112,22 +110,26 @@ void ChangeProcessor::Process(RevisionChange change)
     dumpRevision.Write();
 
     currentPage->page.RevisionIds.insert(revision.RevisionId);
-
-    visitedRevisionIds.insert(change.revisionChanges.RevisionId);
 }
 
 void ChangeProcessor::Process(DeleteRevisionChange change)
 {
-    dump->DeleteRevision(change.revisionId, visitedRevisionIds);
+    dump->DeleteRevision(change.revisionId);
 
     auto &revisionIds = currentPage->page.RevisionIds;
     auto deletedPos = std::find(revisionIds.begin(), revisionIds.end(), change.revisionId);
-    revisionIds.erase(deletedPos);
+    if (deletedPos != revisionIds.end())
+        revisionIds.erase(deletedPos);
 }
 
-void ChangeProcessor::Process(DeletePageChange change)
+void ChangeProcessor::Process(FullDeletePageChange change)
 {
-    dump->DeletePage(change.pageId, visitedRevisionIds);
+    dump->DeletePageFull(change.pageId);
+}
+
+void ChangeProcessor::Process(PartialDeletePageChange change)
+{
+    dump->DeletePagePartial(change.pageId);
 }
 
 void ChangeProcessor::End()

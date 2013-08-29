@@ -41,5 +41,6 @@ public:
 
     void EndPage();
 
-    void DeletePage(const std::uint32_t pageId);
+    void DeletePageFull(std::uint32_t pageId);
+    void DeletePagePartial(std::uint32_t pageId);
 };

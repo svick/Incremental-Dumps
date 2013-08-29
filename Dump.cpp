@@ -91,25 +91,51 @@ void WritableDump::WriteIndexes()
     modelFormatIndex->Write();
 }
 
-void WritableDump::DeletePage(std::uint32_t pageId, const std::unordered_set<std::uint32_t> &doNotDeleteRevisions)
+std::pair<bool, std::vector<std::uint32_t>> WritableDump::DeletePage(
+    std::uint32_t pageId, bool full, const std::unordered_set<std::uint32_t> &doNotDeleteRevisions)
 {
     Offset offset = pageIdIndex->Get(pageId);
     DumpPage page(self, pageId);
     std::uint32_t length = page.NewLength();
 
-    for (auto revisionId : page.page.RevisionIds)
+    bool allRevisionsDeleted = true;
+    std::vector<std::uint32_t> deletedRevisions;
+
+    if (full)
     {
-        DeleteRevision(revisionId, doNotDeleteRevisions);
+        for (auto revisionId : page.page.RevisionIds)
+        {
+            if (DeleteRevision(revisionId, doNotDeleteRevisions))
+                deletedRevisions.push_back(revisionId);
+            else
+                allRevisionsDeleted = false;
+        }
     }
 
     pageIdIndex->Remove(pageId);
     spaceManager->Delete(offset.value, length);
+
+    if (allRevisionsDeleted)
+        return std::make_pair(true, std::vector<std::uint32_t>());
+    
+    return std::make_pair(false, deletedRevisions);
 }
 
-void WritableDump::DeleteRevision(std::uint32_t revisionId, const std::unordered_set<std::uint32_t> &doNotDeleteRevisions)
+void WritableDump::DeletePagePartial(std::uint32_t pageId)
+{
+    DeletePage(pageId, false, std::unordered_set<std::uint32_t>());
+}
+
+std::pair<bool, std::vector<std::uint32_t>> WritableDump::DeletePageFull(
+    std::uint32_t pageId, const std::unordered_set<std::uint32_t> &doNotDeleteRevisions)
+{
+    return DeletePage(pageId, true, doNotDeleteRevisions);
+}
+
+bool WritableDump::DeleteRevision(std::uint32_t revisionId, const std::unordered_set<std::uint32_t> &doNotDeleteRevisions)
 {
     if (doNotDeleteRevisions.count(revisionId) != 0)
-        return;
+        return false;
 
     Offset offset = revisionIdIndex->Get(revisionId);
     DumpRevision revision(self, revisionId, false);
@@ -117,6 +143,8 @@ void WritableDump::DeleteRevision(std::uint32_t revisionId, const std::unordered
 
     revisionIdIndex->Remove(revisionId);
     spaceManager->Delete(offset.value, length);
+
+    return true;
 }
 
 const std::string WritableDump::WikitextModel = "wikitext";

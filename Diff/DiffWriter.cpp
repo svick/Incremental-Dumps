@@ -7,7 +7,8 @@
 #include "Changes/NewRevisionChange.h"
 #include "Changes/RevisionChange.h"
 #include "Changes/DeleteRevisionChange.h"
-#include "Changes/DeletePageChange.h"
+#include "Changes/FullDeletePageChange.h"
+#include "Changes/PartialDeletePageChange.h"
 #include "../DumpObjects/FileHeader.h"
 
 void DiffWriter::EnsurePageWritten()
@@ -139,10 +140,9 @@ void DiffWriter::DeleteRevision(std::uint32_t revisionId)
 {
     if (!dumpStarted)
         throw DumpException();
-    if (!pageStarted)
-        throw DumpException();
 
-    EnsurePageWritten();
+    if (pageStarted)
+        EnsurePageWritten();
 
     DeleteRevisionChange change(revisionId);
     change.Write(stream.get());
@@ -161,13 +161,24 @@ void DiffWriter::EndPage()
     pageStarted = false;
 }
 
-void DiffWriter::DeletePage(const std::uint32_t pageId)
+void DiffWriter::DeletePageFull(std::uint32_t pageId)
 {
     if (!dumpStarted)
         throw DumpException();
     if (pageStarted)
         throw DumpException();
 
-    DeletePageChange change(pageId);
+    FullDeletePageChange change(pageId);
+    change.Write(stream.get());
+}
+
+void DiffWriter::DeletePagePartial(std::uint32_t pageId)
+{
+    if (!dumpStarted)
+        throw DumpException();
+    if (pageStarted)
+        throw DumpException();
+
+    PartialDeletePageChange change(pageId);
     change.Write(stream.get());
 }
