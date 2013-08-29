@@ -19,6 +19,7 @@ private:
 protected:
     void WriteInternal();
 public:
+    static const std::string MagicNumber;
     static const std::uint8_t FileFormatVersion = 1;
     static const std::uint8_t FileDataVersion = 1;
 

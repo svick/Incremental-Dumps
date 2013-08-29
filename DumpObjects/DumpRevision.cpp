@@ -154,6 +154,122 @@ void DumpRevision::SetModelFormatId(std::uint8_t modelFormatId)
     this->modelFormatId = modelFormatId;
 }
 
+char getCharForDigit(std::uint8_t digit, std::uint16_t base)
+{
+    if (base >= 2 && base <= 36)
+    {
+        if (digit >= base)
+            throw DumpException();
+
+        if (digit < 10)
+            return '0' + digit;
+
+        return 'a' + (digit - 10);
+    }
+
+    if (base == 256)
+    {
+        return (char)digit;
+    }
+
+    throw DumpException();
+}
+
+std::uint8_t getDigitForChar(char c, std::uint16_t base)
+{
+    if (base >= 2 && base <= 36)
+    {
+        std::uint8_t result;
+
+        if (c >= '0' && c <= '9')
+            result = c - '0';
+        else if (c >= 'a' && c <= 'z')
+            result = 10 + (c - 'a');
+        else
+            throw DumpException();
+
+        if (result >= base)
+            throw DumpException();
+
+        return result;
+    }
+
+    if (base == 256)
+    {
+        return (std::uint8_t)c;
+    }
+
+    throw DumpException();
+}
+
+// ported version of wfBaseConvert
+std::string baseConvert(const std::string& input, std::uint16_t sourceBase, std::uint16_t destBase, std::uint8_t pad)
+{
+    std::string result;
+    result.reserve(pad);
+
+    std::vector<std::uint8_t> inDigits;
+
+    std::transform(input.begin(), input.end(), std::back_inserter(inDigits), [=](char c) { return getDigitForChar(c, sourceBase); });
+
+    while (!inDigits.empty())
+    {
+        std::uint16_t work = 0;
+        std::vector<std::uint8_t> workDigits;
+
+        for (std::uint8_t digit : inDigits)
+        {
+            work *= sourceBase;
+            work += digit;
+
+            if (!workDigits.empty() || work >= destBase)
+                workDigits.push_back(work / destBase);
+
+            work %= destBase;
+        }
+
+        result.push_back(getCharForDigit(work, destBase));
+
+        inDigits = workDigits;
+    }
+
+    if (pad > result.length())
+        result.resize(pad, getCharForDigit(0, destBase));
+
+    std::reverse(result.begin(), result.end());
+
+    return result;
+}
+
+std::string convertFromBase36(const std::string& input)
+{
+    const std::uint8_t expectedLength = 20;
+
+    auto result = baseConvert(input, 36, 256, expectedLength);
+
+    if (result.length() != expectedLength)
+        throw DumpException();
+
+    std::reverse(result.begin(), result.end());
+
+    return result;
+}
+
+// note: modifies its input
+std::string convertToBase36(std::string& input)
+{
+    std::reverse(input.begin(), input.end());
+
+    const std::uint8_t expectedLength = 31;
+
+    auto result =  baseConvert(input, 256, 36, expectedLength);
+
+    if (result.length() != expectedLength)
+        throw DumpException();
+
+    return result;
+}
+
 Revision DumpRevision::ReadCore(std::istream &stream, std::uint8_t &modelFormatId, bool withText, bool loadText)
 {
     Revision revision;
@@ -174,7 +290,13 @@ Revision DumpRevision::ReadCore(std::istream &stream, std::uint8_t &modelFormatI
 
     if (!HasFlag(revision.Flags, RevisionFlags::TextDeleted))
     {
-        revision.Sha1 = DumpTraits<std::string>::Read(stream);
+        std::string rawSha1;
+        rawSha1.reserve(20);
+
+        for (int i = 0; i < 20; i++)
+            rawSha1.push_back(DumpTraits<char>::Read(stream));
+
+        revision.Sha1 = convertToBase36(rawSha1);
 
         if (withText)
         {
@@ -209,8 +331,9 @@ void DumpRevision::WriteCore(std::ostream &stream, Revision &revision, std::uint
     
     if (!HasFlag(revision.Flags, RevisionFlags::TextDeleted))
     {
-        // TODO: convert from base36 for saving
-        WriteValue(stream, revision.Sha1);
+        auto convertedSha1 = convertFromBase36(revision.Sha1);
+        for (int i = 0; i < 20; i++)
+            WriteValue(stream, convertedSha1[i]);
 
         if (withText)
             DumpTraits<std::string>::WriteLong(stream, revision.GetCompressedText());

@@ -37,6 +37,8 @@ public:
 
     unique_ptr<DumpSiteInfo> siteInfo;
 
+    bool isNew;
+
     ReadableDump(string fileName);
 
     std::weak_ptr<WritableDump> GetSelf() const;

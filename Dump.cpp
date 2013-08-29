@@ -55,10 +55,12 @@ void WritableDump::init(weak_ptr<WritableDump> self)
         stream->clear();
         fileHeader = FileHeader(self);
         fileHeader.Write();
+        isNew = true;
     }
     else
     {
         fileHeader = FileHeader::Read(*this);
+        isNew = false;
     }
 
     spaceManager = unique_ptr<SpaceManager>(new SpaceManager(self));

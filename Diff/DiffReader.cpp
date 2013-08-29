@@ -3,6 +3,8 @@
 #include "../DumpObjects/DumpObject.h"
 #include "../DumpObjects/FileHeader.h"
 
+const std::string Diff::MagicNumber = "MWDD";
+
 DiffReader::DiffReader(std::string fileName, ChangeProcessor &changeProcessor)
     : stream(std::unique_ptr<std::istream>(new std::ifstream(fileName, std::ios::binary))),
         changeProcessor(changeProcessor)
@@ -10,14 +12,14 @@ DiffReader::DiffReader(std::string fileName, ChangeProcessor &changeProcessor)
 
 void DiffReader::Read()
 {
-    std::string magicNumber(4, '\0');
-    stream->read(&magicNumber.at(0), 4);
+    std::string magicNumber(Diff::MagicNumber.length(), '\0');
+    stream->read(&magicNumber.at(0), Diff::MagicNumber.length());
 
     std::uint8_t fileFormatVersion, fileDataVersion;
     DumpObject::ReadValue(*stream, fileFormatVersion);
     DumpObject::ReadValue(*stream, fileDataVersion);
 
-    if (magicNumber != "WMDD"
+    if (magicNumber != Diff::MagicNumber
         || fileFormatVersion != FileHeader::FileFormatVersion
         || fileDataVersion != FileHeader::FileDataVersion)
         throw new DumpException();

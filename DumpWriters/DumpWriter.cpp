@@ -86,8 +86,7 @@ void DumpWriter::SetDumpKind(DumpKind dumpKind)
     if (withText)
         dumpKind |= DumpKind::Pages;
 
-    // empty name means it's a new dump
-    if (dump->siteInfo->name.empty())
+    if (dump->isNew)
     {
         dump->fileHeader.Kind = dumpKind;
         dump->fileHeader.Write();

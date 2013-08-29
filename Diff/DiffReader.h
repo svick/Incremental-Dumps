@@ -2,6 +2,14 @@
 
 #include "ChangeProcessor.h"
 
+class Diff
+{
+private:
+    Diff(){};
+public:
+    static const std::string MagicNumber;
+};
+
 class DiffReader
 {
 private:

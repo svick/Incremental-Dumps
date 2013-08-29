@@ -55,7 +55,7 @@ public:
     {
         std::array<char, Size> bytes;
 
-        stream.read(&bytes.at(0), Size);
+        stream.read(bytes.data(), Size);
 
         T result = 0;
         for (int i = 0; i < Size; i++)
@@ -75,7 +75,7 @@ public:
             bytes.at(i) = (value >> (8 * i)) & 0xFF;
         }
 
-        stream.write(&bytes.at(0), Size);
+        stream.write(bytes.data(), Size);
     }
 
     static uint32_t DumpSize(const T value = 0)
@@ -401,18 +401,13 @@ public:
     {
         uint16_t count = DumpTraits<uint16_t>::Read(stream);
 
-        std::vector<TKey> keys;
-
-        for (int i = 0; i < count; i++)
-        {
-            keys.push_back(DumpTraits<TKey>::Read(stream));
-        }
-
         std::map<TKey, TValue> result;
 
         for (int i = 0; i < count; i++)
         {
-            result.insert(std::pair<TKey, TValue>(keys[i], DumpTraits<TValue>::Read(stream)));
+            auto key = DumpTraits<TKey>::Read(stream);
+            auto value = DumpTraits<TValue>::Read(stream);
+            result.insert(std::make_pair(key, value));
         }
 
         return result;
@@ -430,10 +425,6 @@ public:
         for (auto pair : value)
         {
             DumpTraits<TKey>::Write(stream, pair.first);
-        }
-
-        for (auto pair : value)
-        {
             DumpTraits<TValue>::Write(stream, pair.second);
         }
     }

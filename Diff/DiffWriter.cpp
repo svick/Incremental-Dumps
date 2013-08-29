@@ -1,5 +1,6 @@
 #include <fstream>
 #include "DiffWriter.h"
+#include "DiffReader.h"
 #include "Changes/SiteInfoChange.h"
 #include "Changes/NewPageChange.h"
 #include "Changes/NewModelFormatChange.h"
@@ -35,7 +36,7 @@ void DiffWriter::SetSiteInfo(const SiteInfo &siteInfo, DumpKind dumpKind)
 
     this->dumpKind = dumpKind;
 
-    stream->write("WMDD", 4);
+    stream->write(Diff::MagicNumber.data(), Diff::MagicNumber.length());
     DumpObject::WriteValue(*stream, FileHeader::FileFormatVersion);
     DumpObject::WriteValue(*stream, FileHeader::FileDataVersion);
     DumpObject::WriteValue(*stream, dumpKind);

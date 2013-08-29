@@ -3,6 +3,8 @@
 #include "../Dump.h"
 #include "../DumpException.h"
 
+const std::string FileHeader::MagicNumber = "MWID";
+
 FileHeader::FileHeader(
     DumpKind kind,
     Offset fileEnd, Offset pageIdIndexRoot, Offset revisionIdIndexRoot, Offset modelFormatIndexRoot,
@@ -13,7 +15,7 @@ FileHeader::FileHeader(
 
 void FileHeader::WriteInternal()
 {
-    stream->write("WMID", 4);
+    stream->write(MagicNumber.data(), MagicNumber.length());
     WriteValue(FileFormatVersion);
     WriteValue(FileDataVersion);
     WriteValue(Kind);
@@ -42,14 +44,14 @@ FileHeader FileHeader::Read(ReadableDump const &dump)
 {
     istream &stream = *(dump.stream);
 
-    std::string magicNumber(4, '\0');
-    stream.read(&magicNumber.at(0), 4);
+    std::string magicNumber(MagicNumber.length(), '\0');
+    stream.read(&magicNumber.at(0), MagicNumber.length());
 
     std::uint8_t fileFormatVersion, fileDataVersion;
     ReadValue(stream, fileFormatVersion);
     ReadValue(stream, fileDataVersion);
 
-    if (magicNumber != "WMID"
+    if (magicNumber != MagicNumber
         || fileFormatVersion != FileFormatVersion
         || fileDataVersion != FileDataVersion)
         throw new DumpException();
