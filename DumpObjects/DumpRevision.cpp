@@ -241,13 +241,14 @@ std::string baseConvert(const std::string& input, std::uint16_t sourceBase, std:
     return result;
 }
 
+const std::uint8_t rawSha1Length = 20;
+const std::uint8_t base36Sha1Length = 31;
+
 std::string convertFromBase36(const std::string& input)
 {
-    const std::uint8_t expectedLength = 20;
+    auto result = baseConvert(input, 36, 256, rawSha1Length);
 
-    auto result = baseConvert(input, 36, 256, expectedLength);
-
-    if (result.length() != expectedLength)
+    if (result.length() != rawSha1Length)
         throw DumpException();
 
     std::reverse(result.begin(), result.end());
@@ -260,11 +261,9 @@ std::string convertToBase36(std::string& input)
 {
     std::reverse(input.begin(), input.end());
 
-    const std::uint8_t expectedLength = 31;
+    auto result =  baseConvert(input, 256, 36, base36Sha1Length);
 
-    auto result =  baseConvert(input, 256, 36, expectedLength);
-
-    if (result.length() != expectedLength)
+    if (result.length() != base36Sha1Length)
         throw DumpException();
 
     return result;
@@ -291,9 +290,9 @@ Revision DumpRevision::ReadCore(std::istream &stream, std::uint8_t &modelFormatI
     if (!HasFlag(revision.Flags, RevisionFlags::TextDeleted))
     {
         std::string rawSha1;
-        rawSha1.reserve(20);
+        rawSha1.reserve(rawSha1Length);
 
-        for (int i = 0; i < 20; i++)
+        for (int i = 0; i < rawSha1Length; i++)
             rawSha1.push_back(DumpTraits<char>::Read(stream));
 
         revision.Sha1 = convertToBase36(rawSha1);
@@ -332,7 +331,7 @@ void DumpRevision::WriteCore(std::ostream &stream, Revision &revision, std::uint
     if (!HasFlag(revision.Flags, RevisionFlags::TextDeleted))
     {
         auto convertedSha1 = convertFromBase36(revision.Sha1);
-        for (int i = 0; i < 20; i++)
+        for (int i = 0; i < rawSha1Length; i++)
             WriteValue(stream, convertedSha1[i]);
 
         if (withText)
@@ -358,7 +357,7 @@ std::uint32_t DumpRevision::LengthCore(const Revision &revision, std::uint8_t mo
         result += ValueSize(modelFormatId);
     if (!HasFlag(revision.Flags, RevisionFlags::TextDeleted))
     {
-        result += ValueSize(revision.Sha1);
+        result += rawSha1Length;
 
         if (withText)
             result += ValueSize(textLength) + textLength;
