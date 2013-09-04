@@ -19,7 +19,6 @@ private:
     weak_ptr<WritableDump> dump;
     multimap<uint32_t, Offset> spaceByLength;
 public:
-    Index<Offset, uint32_t> spaceIndex;
 
     SpaceManager(weak_ptr<WritableDump> dump);
 

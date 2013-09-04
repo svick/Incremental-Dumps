@@ -3,8 +3,9 @@
 #include "DumpUser.h"
 #include "../SevenZip.h"
 #include "../Indexes/Index.h"
+#include "../TextGroupsManager.h"
 
-void DumpRevision::Load(std::uint32_t revisionId, bool loadText)
+void DumpRevision::Load(std::uint32_t revisionId)
 {
     auto dumpRef = dump.lock();
     auto revisionOffset = dumpRef->revisionIdIndex->Get(revisionId);
@@ -17,7 +18,7 @@ void DumpRevision::Load(std::uint32_t revisionId, bool loadText)
     }
     else
     {
-        revision = Read(dumpRef, revisionOffset, loadText);
+        revision = Read(dumpRef, revisionOffset);
 
         originalRevision = revision;
 
@@ -26,17 +27,17 @@ void DumpRevision::Load(std::uint32_t revisionId, bool loadText)
     }
 }
 
-Revision DumpRevision::Read(std::shared_ptr<WritableDump> dump, Offset offset, bool loadText)
+Revision DumpRevision::Read(std::shared_ptr<WritableDump> dump, Offset offset)
 {
     auto &stream = *(dump->stream);
     stream.seekp(offset.value);
 
-    auto kind = DumpTraits<uint8_t>::Read(stream);
-    if (kind != (uint8_t)DumpObjectKind::Revision)
+    auto kind = DumpTraits<DumpObjectKind>::Read(stream);
+    if (kind != DumpObjectKind::Revision)
         throw new DumpException();
 
     std::uint8_t modelFormatId;
-    auto revision = ReadCore(stream, modelFormatId, withText, loadText);
+    auto revision = ReadCore(stream, modelFormatId, withText);
 
     if (HasFlag(revision.Flags, RevisionFlags::WikitextModelFormat))
     {
@@ -50,11 +51,12 @@ Revision DumpRevision::Read(std::shared_ptr<WritableDump> dump, Offset offset, b
         revision.Format = modelFormat.second;
     }
 
-    if (!HasFlag(revision.Flags, RevisionFlags::TextDeleted) && withText && !loadText)
+    if (!HasFlag(revision.Flags, RevisionFlags::TextDeleted) && withText)
     {
-        textOffset = stream.tellg();
-        ReadValue(stream, textLength);
-        textUnloaded = true;
+        ReadValue(stream, textGroupId);
+        ReadValue(stream, textId);
+
+        revision.SetGetText([this](){ return this->dump.lock()->textGroupsManager->GetTextFromGroup(textGroupId, textId); });
     }
 
     return revision;
@@ -71,14 +73,6 @@ void DumpRevision::Write()
             diffWriter->ChangeRevision(originalRevision, revision, modelFormatId);
 
         return;
-    }
-
-    if (textUnloaded)
-    {
-        auto dumpRef = dump.lock();
-        auto stream = dumpRef->stream.get();
-        stream->seekp(textOffset);
-        revision.SetCompressedText(DumpTraits<string>::ReadLong(*stream));
     }
 
     DumpObject::Write();
@@ -98,6 +92,22 @@ void DumpRevision::WriteInternal()
     WriteValue(DumpObjectKind::Revision);
     WriteCore(*stream, revision, modelFormatId, withText);
 
+    if (withText && !HasFlag(revision.Flags, RevisionFlags::TextDeleted))
+    {
+        if (textGroupId == 0 || originalRevision.Sha1 != revision.Sha1)
+        {
+            if (textGroupId != 0)
+                DeleteText();
+
+            auto textLocation = dump.lock()->textGroupsManager->AddTextToGroup(revision.GetText());
+            textGroupId = textLocation.first;
+            textId = textLocation.second;
+        }
+
+        WriteValue(textGroupId);
+        WriteValue(textId);
+    }
+
     if (diffWriter != nullptr)
     {
         if (wasLoaded)
@@ -115,25 +125,29 @@ void DumpRevision::UpdateIndex(Offset offset, bool overwrite)
         dumpRef->revisionIdIndex->AddOrUpdate(revision.RevisionId, offset);
     else
         dumpRef->revisionIdIndex->Add(revision.RevisionId, offset);
+
+    dumpRef->textGroupsManager->WriteTextGroupIfFull();
 }
 
-uint32_t DumpRevision::NewLength()
+std::uint32_t DumpRevision::NewLength()
 {
     bool ignored;
     GetModelFormatId(ignored);
 
-    if (withText && !textUnloaded && !HasFlag(revision.Flags, RevisionFlags::TextDeleted))
-        textLength = revision.GetCompressedText().length();
+    auto result = ValueSize(DumpObjectKind::Revision) + LengthCore(revision, modelFormatId, withText);
 
-    return ValueSize(DumpObjectKind::Revision) + LengthCore(revision, modelFormatId, withText, textLength);
+    if (withText)
+        result += ValueSize(textGroupId) + ValueSize(textId);
+
+    return result;
 }
 
-DumpRevision::DumpRevision(std::weak_ptr<WritableDump> dump, std::uint32_t revisionId, bool loadText)
-    : DumpObject(dump), revision(), modelFormatId(),
+DumpRevision::DumpRevision(std::weak_ptr<WritableDump> dump, std::uint32_t revisionId)
+    : DumpObject(dump), revision(), modelFormatId(), textGroupId(0), textId(0),
         isModelFormatIdNew(false), wasLoaded(true), textUnloaded(false), diffWriter(), forceDiff(false)
 {
     withText = IsPages(dump.lock()->fileHeader.Kind);
-    Load(revisionId, loadText);
+    Load(revisionId);
 }
 
 std::uint8_t DumpRevision::GetModelFormatId(bool &isNew)
@@ -269,7 +283,7 @@ std::string convertToBase36(std::string& input)
     return result;
 }
 
-Revision DumpRevision::ReadCore(std::istream &stream, std::uint8_t &modelFormatId, bool withText, bool loadText)
+Revision DumpRevision::ReadCore(std::istream &stream, std::uint8_t &modelFormatId, bool withText)
 {
     Revision revision;
 
@@ -297,18 +311,8 @@ Revision DumpRevision::ReadCore(std::istream &stream, std::uint8_t &modelFormatI
 
         revision.Sha1 = convertToBase36(rawSha1);
 
-        if (withText)
-        {
-            if (loadText)
-            {
-                std::string compressedText = DumpTraits<string>::ReadLong(stream);
-                revision.SetCompressedText(compressedText);
-            }
-        }
-        else
-        {
+        if (!withText)
             ReadValue(stream, revision.TextLength);
-        }
     }
 
     return revision;
@@ -334,14 +338,12 @@ void DumpRevision::WriteCore(std::ostream &stream, Revision &revision, std::uint
         for (int i = 0; i < rawSha1Length; i++)
             WriteValue(stream, convertedSha1[i]);
 
-        if (withText)
-            DumpTraits<std::string>::WriteLong(stream, revision.GetCompressedText());
-        else
+        if (!withText)
             WriteValue(stream, revision.TextLength);
     }
 }
 
-std::uint32_t DumpRevision::LengthCore(const Revision &revision, std::uint8_t modelFormatId, bool withText, std::uint32_t textLength)
+std::uint32_t DumpRevision::LengthCore(const Revision &revision, std::uint8_t modelFormatId, bool withText)
 {
     uint32_t result = 0;
 
@@ -359,11 +361,17 @@ std::uint32_t DumpRevision::LengthCore(const Revision &revision, std::uint8_t mo
     {
         result += rawSha1Length;
 
-        if (withText)
-            result += ValueSize(textLength) + textLength;
-        else
+        if (!withText)
             result += ValueSize(revision.TextLength);
     }
 
     return result;
+}
+
+void DumpRevision::DeleteText()
+{
+    if (withText && !HasFlag(revision.Flags, RevisionFlags::TextDeleted))
+    {
+        dump.lock()->textGroupsManager->DeleteTextFromGroup(textGroupId, textId);
+    }
 }

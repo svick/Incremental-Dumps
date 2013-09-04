@@ -128,6 +128,7 @@
     <ClInclude Include="DumpObjects\DumpRevision.h" />
     <ClInclude Include="DumpObjects\DumpSiteInfo.h" />
     <ClInclude Include="DumpObjects\DumpUser.h" />
+    <ClInclude Include="DumpObjects\TextGroup.h" />
     <ClInclude Include="DumpWriters\ArticlesWriterWrapper.h" />
     <ClInclude Include="DumpWriters\CompositeWriter.h" />
     <ClInclude Include="DumpWriters\DumpWriter.h" />
@@ -147,6 +148,7 @@
     <ClCompile Include="DumpObjects\DumpPage.cpp" />
     <ClCompile Include="DumpObjects\DumpRevision.cpp" />
     <ClCompile Include="DumpObjects\DumpUser.cpp" />
+    <ClCompile Include="DumpObjects\TextGroup.cpp" />
     <ClCompile Include="DumpWriters\ArticlesWriterWrapper.cpp" />
     <ClCompile Include="DumpWriters\CompositeWriter.cpp" />
     <ClCompile Include="DumpWriters\DumpWriter.cpp" />
@@ -167,6 +169,7 @@
     <ClCompile Include="Objects\User.cpp" />
     <ClCompile Include="StringHelpers.cpp" />
     <ClCompile Include="Objects\Timestamp.cpp" />
+    <ClCompile Include="TextGroupsManager.cpp" />
     <ClCompile Include="XmlInput\XmlContributorProcessor.cpp" />
     <ClCompile Include="XmlInput\XmlMediawikiProcessor.cpp" />
     <ClCompile Include="XmlInput\XmlNamespacesProcessor.cpp" />
@@ -209,6 +212,7 @@
     <ClInclude Include="Objects\User.h" />
     <ClInclude Include="StringHelpers.h" />
     <ClInclude Include="Objects\Timestamp.h" />
+    <ClInclude Include="TextGroupsManager.h" />
     <ClInclude Include="XmlInput\WrapperInputStream.h" />
     <ClInclude Include="XmlInput\XmlContributorProcessor.h" />
     <ClInclude Include="XmlInput\XmlMediawikiProcessor.h" />

@@ -7,12 +7,17 @@ class NewRevisionChange : public Change
 {
 private:
     bool withText;
+
+    std::string compressedText;
+    bool compressedTextSet;
+
+    void EnsureCompressed();
 public:
     Revision revision;
     std::uint8_t modelFormatId;
 
     NewRevisionChange(const Revision &revision, std::uint8_t modelFormatId, bool withText)
-        : revision(revision), modelFormatId(modelFormatId), withText(withText)
+        : revision(revision), modelFormatId(modelFormatId), withText(withText), compressedTextSet(false)
     {}
 
     static NewRevisionChange Read(std::istream &stream, bool withText);

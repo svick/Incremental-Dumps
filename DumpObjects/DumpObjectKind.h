@@ -12,5 +12,7 @@ enum class DumpObjectKind : uint8_t
     Page           = 0x11,
     Revision       = 0x12,
 
-    SiteInfo       = 0x21
+    SiteInfo       = 0x21,
+
+    TextGroup      = 0x31
 };

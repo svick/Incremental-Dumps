@@ -1,4 +1,14 @@
-This is a list of smaller things that should (or could) be done.
+short term:
+- don't write empty unsaved indexes
+- compression of metadata and indexes
+- better (group) compression of diff dumps
+ - one group for id and dd (no compressing twice)
+- idumps r to stdout
+- std::
+- encapsulate public fields? (e.g. in WritableDump)
+- deal with Readable/WritableDump
+- extract base36 code from DumpRevision
+- do something with build process
 
 long term:
 - https://www.mediawiki.org/wiki/User:ArielGlenn/Dumps_new_format_%28deltas,_changesets%29#Open_issues_on_GSOC_2013_project

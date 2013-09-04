@@ -31,8 +31,6 @@ class Revision
 private:
     bool textSet;
     std::string text;
-    bool compressedTextSet;
-    std::string compressedText;
     std::function<std::string()> getTextFunction;
 public:
     Revision();
@@ -50,8 +48,8 @@ public:
     std::uint32_t TextLength;
     std::uint32_t TextId;
 
-    std::string GetCompressedText(bool canUseDecompressed = true);
-    void SetCompressedText(const std::string &compressedText);
+    // whether GetText() can be called safely
+    bool HasTextSet() const;
 
     std::string Sha1;
     std::string Model;

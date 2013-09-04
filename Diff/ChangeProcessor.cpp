@@ -64,7 +64,7 @@ void ChangeProcessor::Process(NewModelFormatChange change)
 
 void ChangeProcessor::Process(NewRevisionChange change)
 {
-    DumpRevision dumpRevision(dump, change.revision.RevisionId, false);
+    DumpRevision dumpRevision(dump, change.revision.RevisionId);
     dumpRevision.revision = change.revision;
     dumpRevision.SetModelFormatId(change.modelFormatId);
     dumpRevision.Write();
@@ -74,7 +74,7 @@ void ChangeProcessor::Process(NewRevisionChange change)
 
 void ChangeProcessor::Process(RevisionChange change)
 {
-    DumpRevision dumpRevision(dump, change.revisionChanges.RevisionId, false);
+    DumpRevision dumpRevision(dump, change.revisionChanges.RevisionId);
 
     Revision &revisionChanges = change.revisionChanges;
     Revision &revision = dumpRevision.revision;
@@ -99,7 +99,7 @@ void ChangeProcessor::Process(RevisionChange change)
         revision.Sha1 = revisionChanges.Sha1;
 
         if (IsPages(dump->fileHeader.Kind))
-            revision.SetCompressedText(revisionChanges.GetCompressedText());
+            revision.SetText(revisionChanges.GetText());
         else
             revision.TextLength = revisionChanges.TextLength;
     }
@@ -136,5 +136,5 @@ void ChangeProcessor::End()
 {
     WritePage();
 
-    dump->WriteIndexes();
+    dump->Complete();
 }

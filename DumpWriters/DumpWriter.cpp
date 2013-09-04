@@ -78,7 +78,7 @@ void DumpWriter::AddRevision(const std::shared_ptr<const Revision> revision)
 {
     page->page.RevisionIds.insert(revision->RevisionId);
 
-    DumpRevision dumpRevision(dump, revision->RevisionId, false);
+    DumpRevision dumpRevision(dump, revision->RevisionId);
     dumpRevision.revision = *revision;
 
     NormalizeComment(dumpRevision.revision);
@@ -162,5 +162,5 @@ void DumpWriter::EndDump()
         }
     }
 
-    dump->WriteIndexes();
+    dump->Complete();
 }

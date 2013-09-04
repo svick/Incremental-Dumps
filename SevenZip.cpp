@@ -6,7 +6,7 @@
 #include "DumpException.h"
 #include "SevenZip.h"
 
-std::string properties("\x5D\x00\x00\x00\x01", 5);
+const std::string properties("\x5D\x00\x00\x00\x01", 5);
 
 std::string SevenZip::Compress(const std::string &s)
 {

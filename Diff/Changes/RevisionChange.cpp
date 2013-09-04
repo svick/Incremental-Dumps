@@ -1,6 +1,7 @@
 #include "RevisionChange.h"
 #include "../ChangeVisitor.h"
 #include "../../DumpObjects/DumpUser.h"
+#include "../../SevenZip.h"
 
 RevisionChangeFlags operator &(RevisionChangeFlags first, RevisionChangeFlags second)
 {
@@ -29,6 +30,15 @@ bool flagChangedToUnset(const Revision &oldRevision, const Revision &newRevision
     return HasFlag(oldRevision.Flags, flag) && !HasFlag(newRevision.Flags, flag);
 }
 
+
+void RevisionChange::EnsureCompressed()
+{
+    if (compressedTextSet)
+        return;
+
+    compressedText = SevenZip::Compress(revisionChanges.GetText());
+    compressedTextSet = true;
+}
 
 RevisionChange::RevisionChange(bool withText)
     : withText(withText)
@@ -107,7 +117,10 @@ RevisionChange RevisionChange::Read(std::istream &stream, bool withText)
         ReadValue(stream, result.revisionChanges.Sha1);
 
         if (withText)
-            result.revisionChanges.SetCompressedText(DumpTraits<std::string>::ReadLong(stream));
+        {
+            auto compressedText = DumpTraits<std::string>::ReadLong(stream);
+            result.revisionChanges.SetText(SevenZip::Decompress(compressedText));
+        }
         else
             ReadValue(stream, result.revisionChanges.TextLength);
     }
@@ -144,7 +157,10 @@ void RevisionChange::WriteInternal()
         WriteValue(revisionChanges.Sha1);
 
         if (withText)
-            DumpTraits<std::string>::WriteLong(*stream, revisionChanges.GetCompressedText());
+        {
+            EnsureCompressed();
+            DumpTraits<std::string>::WriteLong(*stream, compressedText);
+        }
         else
             WriteValue(revisionChanges.TextLength);
     }
@@ -181,7 +197,10 @@ std::uint32_t RevisionChange::NewLength()
         result += ValueSize(revisionChanges.Sha1);
 
         if (withText)
-            result += DumpTraits<std::string>::DumpSizeLong(revisionChanges.GetCompressedText());
+        {
+            EnsureCompressed();
+            result += DumpTraits<std::string>::DumpSizeLong(compressedText);
+        }
         else
             result += ValueSize(revisionChanges.TextLength);
     }

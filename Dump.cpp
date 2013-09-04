@@ -4,6 +4,7 @@
 #include "Dump.h"
 #include "Indexes/Index.h"
 #include "SpaceManager.h"
+#include "TextGroupsManager.h"
 #include "DumpObjects/DumpRevision.h"
 #include "DumpObjects/DumpPage.h"
 
@@ -46,7 +47,7 @@ WritableDump::WritableDump(string fileName)
     : ReadableDump(openStream(fileName))
 {}
 
-void WritableDump::init(weak_ptr<WritableDump> self)
+void WritableDump::init(std::shared_ptr<WritableDump> self)
 {
     this->self = self;
 
@@ -63,16 +64,23 @@ void WritableDump::init(weak_ptr<WritableDump> self)
         isNew = false;
     }
 
-    spaceManager = unique_ptr<SpaceManager>(new SpaceManager(self));
+    spaceIndex = std::unique_ptr<Index<Offset, std::uint32_t>>(
+        new Index<Offset, std::uint32_t>(self, &fileHeader.FreeSpaceIndexRoot, true));
 
-    pageIdIndex = unique_ptr<Index<uint32_t, Offset>>(
-        new Index<uint32_t, Offset>(self, shared_ptr<Offset>(self.lock(), &fileHeader.PageIdIndexRoot)));
-    revisionIdIndex = unique_ptr<Index<uint32_t, Offset>>(
-        new Index<uint32_t, Offset>(self, shared_ptr<Offset>(self.lock(), &fileHeader.RevisionIdIndexRoot)));
-    modelFormatIndex = unique_ptr<Index<uint8_t, std::pair<std::string, std::string>>>(
-        new Index<uint8_t, std::pair<std::string, std::string>>(self, shared_ptr<Offset>(self.lock(), &fileHeader.ModelFormatIndexRoot)));
+    spaceManager = std::unique_ptr<SpaceManager>(new SpaceManager(self));
 
-    siteInfo = unique_ptr<DumpSiteInfo>(new DumpSiteInfo(self));
+    pageIdIndex = std::unique_ptr<Index<std::uint32_t, Offset>>(
+        new Index<std::uint32_t, Offset>(self, &fileHeader.PageIdIndexRoot));
+    revisionIdIndex = std::unique_ptr<Index<std::uint32_t, Offset>>(
+        new Index<std::uint32_t, Offset>(self, &fileHeader.RevisionIdIndexRoot));
+    textGroupIdIndex = std::unique_ptr<Index<std::uint32_t, Offset>>(
+        new Index<std::uint32_t, Offset>(self, &fileHeader.TextGroupIdIndexRoot));
+    modelFormatIndex = std::unique_ptr<Index<std::uint8_t, std::pair<std::string, std::string>>>(
+        new Index<std::uint8_t, std::pair<std::string, std::string>>(self, &fileHeader.ModelFormatIndexRoot));
+
+    textGroupsManager = std::unique_ptr<TextGroupsManager>(new TextGroupsManager(self));
+
+    siteInfo = std::unique_ptr<DumpSiteInfo>(new DumpSiteInfo(self));
 }
 
 shared_ptr<WritableDump> WritableDump::Create(string fileName)
@@ -82,12 +90,14 @@ shared_ptr<WritableDump> WritableDump::Create(string fileName)
     return dump;
 }
 
-void WritableDump::WriteIndexes()
+void WritableDump::Complete()
 {
-    spaceManager->spaceIndex.Write();
+    textGroupsManager->Complete();
 
+    spaceIndex->Write();
     pageIdIndex->Write();
     revisionIdIndex->Write();
+    textGroupIdIndex->Write();
     modelFormatIndex->Write();
 }
 
@@ -138,8 +148,10 @@ bool WritableDump::DeleteRevision(std::uint32_t revisionId, const std::unordered
         return false;
 
     Offset offset = revisionIdIndex->Get(revisionId);
-    DumpRevision revision(self, revisionId, false);
+    DumpRevision revision(self, revisionId);
     std::uint32_t length = revision.NewLength();
+
+    revision.DeleteText();
 
     revisionIdIndex->Remove(revisionId);
     spaceManager->Delete(offset.value, length);
@@ -167,16 +179,11 @@ std::uint8_t WritableDump::GetIdForModelFormat(std::string model, std::string fo
     if (found != modelFormatIndex->end())
         return found->first;
 
-    // pair's default ordering will work fine here
-    auto maxPairRef = std::max_element(modelFormatIndex->begin(), modelFormatIndex->end());
-    std::uint8_t newId;
-    if (maxPairRef == modelFormatIndex->end())
-        newId = 1;
-    else
-        newId = maxPairRef->first + 1;
+    std::uint8_t newId = getNewId(*modelFormatIndex);
 
     modelFormatIndex->Add(newId, searchedPair);
     isNew = true;
+
     return newId;
 }
 

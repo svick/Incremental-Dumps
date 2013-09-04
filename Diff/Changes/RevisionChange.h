@@ -26,7 +26,12 @@ class RevisionChange : public Change
 private:
     bool withText;
 
+    std::string compressedText;
+    bool compressedTextSet;
+
     RevisionChange(bool withText);
+
+    void EnsureCompressed();
 public:
     RevisionChangeFlags flags;
 

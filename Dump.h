@@ -7,6 +7,7 @@
 #include <unordered_set>
 #include "DumpObjects/FileHeader.h"
 #include "DumpObjects/DumpSiteInfo.h"
+#include "DumpObjects/TextGroup.h"
 
 using std::int32_t;
 using std::int64_t;
@@ -21,6 +22,7 @@ template<typename TKey, typename TValue>
 class Index;
 
 class SpaceManager;
+class TextGroupsManager;
 
 // TODO: ReadableDump is unusable; either merge it with WritableDump, or make it usable
 class ReadableDump
@@ -28,19 +30,21 @@ class ReadableDump
 protected:
     std::weak_ptr<WritableDump> self;
 
-    ReadableDump(unique_ptr<iostream> stream);
+    ReadableDump(std::unique_ptr<std::iostream> stream);
 public:
     // TODO: others should not be able to steal these
-    unique_ptr<iostream> stream;
-    unique_ptr<Index<uint32_t, Offset>> pageIdIndex;
-    unique_ptr<Index<uint32_t, Offset>> revisionIdIndex;
-    unique_ptr<Index<uint8_t, std::pair<std::string, std::string>>> modelFormatIndex;
+    std::unique_ptr<std::iostream> stream;
+    std::unique_ptr<Index<Offset, std::uint32_t>> spaceIndex;
+    std::unique_ptr<Index<std::uint32_t, Offset>> pageIdIndex;
+    std::unique_ptr<Index<std::uint32_t, Offset>> revisionIdIndex;
+    std::unique_ptr<Index<std::uint32_t, Offset>> textGroupIdIndex;
+    std::unique_ptr<Index<std::uint8_t, std::pair<std::string, std::string>>> modelFormatIndex;
 
-    unique_ptr<DumpSiteInfo> siteInfo;
+    std::unique_ptr<DumpSiteInfo> siteInfo;
 
     bool isNew;
 
-    ReadableDump(string fileName);
+    ReadableDump(std::string fileName);
 
     std::weak_ptr<WritableDump> GetSelf() const;
 };
@@ -48,10 +52,10 @@ public:
 class WritableDump : public ReadableDump
 {
 private:
-    static unique_ptr<iostream> openStream(string fileName);
+    static std::unique_ptr<std::iostream> openStream(std::string fileName);
 
     WritableDump(string fileName);
-    void init(std::weak_ptr<WritableDump> self);
+    void init(std::shared_ptr<WritableDump> self);
 
     std::pair<bool, std::vector<std::uint32_t>> DeletePage(
         std::uint32_t pageId, bool fullDelete, const std::unordered_set<std::uint32_t> &doNotDeleteRevisions);
@@ -62,10 +66,11 @@ public:
     static shared_ptr<WritableDump> Create(string fileName);
 
     FileHeader fileHeader;
-    unique_ptr<SpaceManager> spaceManager;
+    std::unique_ptr<SpaceManager> spaceManager;
+    std::unique_ptr<TextGroupsManager> textGroupsManager;
 
     // it's necessary to call this after writing is finished
-    void WriteIndexes();
+    void Complete();
 
     void DeletePagePartial(std::uint32_t pageId);
     // also deletes revisions of the given page
@@ -73,6 +78,7 @@ public:
     // if it's false, second member contains ids of revisions that were actually deleted
     std::pair<bool, std::vector<std::uint32_t>> DeletePageFull(
         std::uint32_t pageId, const std::unordered_set<std::uint32_t> &doNotDeleteRevisions = std::unordered_set<std::uint32_t>());
+
     // returns whether the revision was actually deleted
     bool DeleteRevision(
         std::uint32_t revisionId, const std::unordered_set<std::uint32_t> &doNotDeleteRevisions = std::unordered_set<std::uint32_t>());

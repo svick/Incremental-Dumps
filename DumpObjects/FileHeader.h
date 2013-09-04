@@ -14,7 +14,8 @@ private:
 
     FileHeader(
         DumpKind kind,
-        Offset fileEnd, Offset pageIdIndexRoot, Offset revisionIdIndexRoot, Offset modelFormatIndexRoot,
+        Offset fileEnd, Offset pageIdIndexRoot, Offset revisionIdIndexRoot,
+        Offset textGroupIdIndexRoot, Offset modelFormatIndexRoot,
         Offset freeSpaceIndexRoot, Offset siteInfo, std::weak_ptr<WritableDump> dump = std::weak_ptr<WritableDump>());
 protected:
     void WriteInternal();
@@ -33,6 +34,7 @@ public:
     Offset FileEnd;
     Offset PageIdIndexRoot;
     Offset RevisionIdIndexRoot;
+    Offset TextGroupIdIndexRoot;
     Offset ModelFormatIndexRoot;
     Offset FreeSpaceIndexRoot;
     Offset SiteInfo;

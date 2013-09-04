@@ -7,10 +7,12 @@ const std::string FileHeader::MagicNumber = "MWID";
 
 FileHeader::FileHeader(
     DumpKind kind,
-    Offset fileEnd, Offset pageIdIndexRoot, Offset revisionIdIndexRoot, Offset modelFormatIndexRoot,
+    Offset fileEnd, Offset pageIdIndexRoot, Offset revisionIdIndexRoot,
+    Offset textGroupIdIndexRoot, Offset modelFormatIndexRoot,
     Offset freeSpaceIndexRoot, Offset siteInfo, std::weak_ptr<WritableDump> dump)
     : Kind(kind), DumpObject(dump), FileEnd(fileEnd), PageIdIndexRoot(pageIdIndexRoot), RevisionIdIndexRoot(revisionIdIndexRoot),
-    ModelFormatIndexRoot(modelFormatIndexRoot), FreeSpaceIndexRoot(freeSpaceIndexRoot), SiteInfo(siteInfo)
+        TextGroupIdIndexRoot(textGroupIdIndexRoot), ModelFormatIndexRoot(modelFormatIndexRoot),
+        FreeSpaceIndexRoot(freeSpaceIndexRoot), SiteInfo(siteInfo)
 {}
 
 void FileHeader::WriteInternal()
@@ -23,6 +25,7 @@ void FileHeader::WriteInternal()
     WriteValue(FileEnd);
     WriteValue(PageIdIndexRoot);
     WriteValue(RevisionIdIndexRoot);
+    WriteValue(TextGroupIdIndexRoot);
     WriteValue(ModelFormatIndexRoot);
     WriteValue(FreeSpaceIndexRoot);
     WriteValue(SiteInfo);
@@ -61,16 +64,17 @@ FileHeader FileHeader::Read(ReadableDump const &dump)
     Offset fileEnd = DumpTraits<Offset>::Read(stream);
     Offset pageIdIndexRoot = DumpTraits<Offset>::Read(stream);
     Offset revisionIdIndexRoot = DumpTraits<Offset>::Read(stream);
+    Offset textGroupIdIndexRoot = DumpTraits<Offset>::Read(stream);
     Offset modelFormatIndexRoot = DumpTraits<Offset>::Read(stream);
     Offset freeSpaceIndexRoot = DumpTraits<Offset>::Read(stream);
     Offset siteInfo = DumpTraits<Offset>::Read(stream);
 
-    return FileHeader(kind, fileEnd, pageIdIndexRoot, revisionIdIndexRoot, modelFormatIndexRoot, freeSpaceIndexRoot, siteInfo, dump.GetSelf());
+    return FileHeader(kind, fileEnd, pageIdIndexRoot, revisionIdIndexRoot, textGroupIdIndexRoot, modelFormatIndexRoot, freeSpaceIndexRoot, siteInfo, dump.GetSelf());
 }
 
 uint32_t FileHeader::Length()
 {
-    return 4 + 2 * DumpTraits<std::uint8_t>::DumpSize() + DumpTraits<DumpKind>::DumpSize() + 6 * DumpTraits<Offset>::DumpSize();
+    return 4 + 2 * DumpTraits<std::uint8_t>::DumpSize() + DumpTraits<DumpKind>::DumpSize() + 7 * DumpTraits<Offset>::DumpSize();
 }
 
 uint32_t FileHeader::NewLength()
@@ -79,5 +83,5 @@ uint32_t FileHeader::NewLength()
 }
 
 FileHeader::FileHeader(std::weak_ptr<WritableDump> dump)
-    : DumpObject(dump), FileEnd(Length()), PageIdIndexRoot(0), RevisionIdIndexRoot(0), ModelFormatIndexRoot(0), FreeSpaceIndexRoot(0), SiteInfo(0)
+    : DumpObject(dump), FileEnd(Length()), PageIdIndexRoot(0), RevisionIdIndexRoot(0), TextGroupIdIndexRoot(0), ModelFormatIndexRoot(0), FreeSpaceIndexRoot(0), SiteInfo(0)
 {}

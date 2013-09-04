@@ -87,7 +87,7 @@ void XmlWriter::WriteDump(std::shared_ptr<WritableDump> dump, std::string fileNa
 
         for (auto revisionId : page.RevisionIds)
         {
-            auto revision = DumpRevision(dump, revisionId, true).revision;
+            auto revision = DumpRevision(dump, revisionId).revision;
 
             if (revision.RevisionId != revisionId)
                 throw DumpException();

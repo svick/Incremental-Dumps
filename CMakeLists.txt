@@ -32,6 +32,7 @@ set(SOURCES_files_ClCompile
   DumpObjects/DumpPage.cpp
   DumpObjects/DumpRevision.cpp
   DumpObjects/DumpUser.cpp
+  DumpObjects/TextGroup.cpp
   Objects/IpV4User.cpp
   Objects/IpV6User.cpp
   Objects/NamedUser.cpp
@@ -41,6 +42,7 @@ set(SOURCES_files_ClCompile
   Objects/Revision.cpp
   SevenZip.cpp
   SpaceManager.cpp
+  TextGroupsManager.cpp
   DumpWriters/ArticlesWriterWrapper.cpp
   DumpWriters/CompositeWriter.cpp
   DumpWriters/CurrentWriterWrapper.cpp
@@ -92,6 +94,7 @@ set(SOURCES_files_ClInclude
   DumpObjects/DumpRevision.h
   DumpObjects/DumpSiteInfo.h
   DumpObjects/DumpUser.h
+  DumpObjects/TextGroup.h
   Indexes/Index.h
   Indexes/IndexInnerNode.tpp
   Indexes/IndexLeafNode.tpp
@@ -121,6 +124,7 @@ set(SOURCES_files_ClInclude
   libexecstream/exec-stream.h
   SevenZip.h
   SpaceManager.h
+  TextGroupsManager.h
   DumpWriters/ArticlesWriterWrapper.h
   DumpWriters/CompositeWriter.h
   DumpWriters/CurrentWriterWrapper.h

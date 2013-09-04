@@ -6,17 +6,16 @@
 using std::move;
 
 template<typename TKey, typename TValue>
-Index<TKey, TValue>::Index(std::weak_ptr<WritableDump> dump, std::weak_ptr<Offset> fileHeaderOffset, bool delaySave)
-    : dump(dump), fileHeaderOffset(fileHeaderOffset), recentChanges(0)
+Index<TKey, TValue>::Index(std::weak_ptr<WritableDump> dump, Offset *fileHeaderOffset, bool delaySave)
+    : dump(dump), fileHeaderOffset(std::shared_ptr<Offset>(dump.lock(), fileHeaderOffset)), recentChanges(0)
 {
-    auto offset = fileHeaderOffset.lock();
-
     rootNodeUnsaved = false;
 
-    if (offset->value == 0)
+    if (fileHeaderOffset->value == 0)
     {
         rootNode = IndexNode<TKey, TValue>::CreateNew(dump);
 
+        // delaySave is not the only option, so that root nodes of most indexes were at the start of the file
         if (delaySave)
         {
             rootNodeUnsaved = true;
@@ -24,12 +23,12 @@ Index<TKey, TValue>::Index(std::weak_ptr<WritableDump> dump, std::weak_ptr<Offse
         else
         {
             rootNode->Write();
-            fileHeaderOffset.lock()->value = rootNode->SavedOffset();
+            fileHeaderOffset->value = rootNode->SavedOffset();
             dump.lock()->fileHeader.Write();
         }
     }
     else
-        rootNode = IndexNode<TKey, TValue>::Read(dump, offset->value);
+        rootNode = IndexNode<TKey, TValue>::Read(dump, fileHeaderOffset->value);
 }
 
 template<typename TKey, typename TValue>

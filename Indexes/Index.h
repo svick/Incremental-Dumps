@@ -21,7 +21,8 @@ private:
 
     void AfterAdd();
 public:
-    Index(std::weak_ptr<WritableDump> dump, std::weak_ptr<Offset> fileHeaderOffset, bool delaySave = false);
+    // fileHeaderOffset is assumed to be part of dump
+    Index(std::weak_ptr<WritableDump> dump, Offset* fileHeaderOffset, bool delaySave = false);
 
     TValue Get(TKey key);
     void Add(TKey key, TValue value);
@@ -33,5 +34,19 @@ public:
 
     void Write();
 };
+
+template<typename TIndex>
+auto getNewId(const TIndex &index) -> decltype(index.begin()->first)
+{
+    // pair's default ordering will work fine here
+    auto maxPairRef = std::max_element(index.begin(), index.end());
+    decltype(index.begin()->first) newId;
+    if (maxPairRef == index.end())
+        newId = 1;
+    else
+        newId = maxPairRef->first + 1;
+
+    return newId;
+}
 
 #include "Index.tpp"

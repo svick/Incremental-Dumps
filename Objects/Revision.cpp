@@ -19,7 +19,7 @@ bool HasFlag(RevisionFlags value, RevisionFlags flag)
 }
 
 Revision::Revision()
-    : Flags(), RevisionId(), TextId(), ParentId(), DateTime(), Contributor(), Comment(), textSet(false), compressedTextSet(false)
+    : Flags(), RevisionId(), TextId(), ParentId(), DateTime(), Contributor(), Comment(), textSet(false)
 {}
 
 std::string Revision::GetText(bool canUseCompressed)
@@ -27,9 +27,7 @@ std::string Revision::GetText(bool canUseCompressed)
     if (textSet)
         return text;
 
-    if (canUseCompressed && compressedTextSet)
-        SetText(SevenZip::Decompress(GetCompressedText(false)));
-    else if (getTextFunction != nullptr)
+    if (getTextFunction != nullptr)
         SetText(getTextFunction());
     else
         throw DumpException();
@@ -42,35 +40,16 @@ void Revision::SetText(const std::string &text)
     this->text = text;
     this->TextLength = text.length();
     this->textSet = true;
-
-    this->compressedText = std::string();
-    this->compressedTextSet = false;
 }
 
-// doesn't override compressed text (if set)
 void Revision::SetGetText(std::function<std::string()> getTextFunction)
 {
     this->getTextFunction = getTextFunction;
 }
 
-std::string Revision::GetCompressedText(bool canUseDecompressed)
+bool Revision::HasTextSet() const
 {
-    if (compressedTextSet)
-        return compressedText;
-
-    if (canUseDecompressed)
-    {
-        SetCompressedText(SevenZip::Compress(GetText(false)));
-        return compressedText;
-    }
-
-    throw DumpException();
-}
-
-void Revision::SetCompressedText(const std::string &compressedText)
-{
-    this->compressedText = compressedText;
-    this->compressedTextSet = true;
+    return textSet || getTextFunction != nullptr;
 }
 
 bool operator ==(const Revision &first, const Revision &second)
