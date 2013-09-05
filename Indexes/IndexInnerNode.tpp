@@ -152,6 +152,8 @@ void IndexInnerNode<TKey, TValue>::WriteInternal()
 template<typename TKey, typename TValue>
 void IndexInnerNode<TKey, TValue>::Write()
 {
+    // TODO: don't do anything when there are no changes
+
     IndexNode<TKey, TValue>::Write();
 
     for (auto &cachedChild : cachedChildren)
@@ -214,6 +216,17 @@ typename IndexNode<TKey, TValue>::SplitResult IndexInnerNode<TKey, TValue>::Spli
         std::unique_ptr<IndexNode<TKey, TValue>>(left),
         std::unique_ptr<IndexNode<TKey, TValue>>(right),
         middleKey);
+}
+
+template<typename TKey, typename TValue>
+void IndexInnerNode<TKey, TValue>::ClearCached()
+{
+    Write();
+
+    for (unsigned i = 0; i < cachedChildren.size(); i++)
+    {
+        cachedChildren.at(i) = nullptr;
+    }
 }
 
 template<typename TKey, typename TValue>

@@ -41,6 +41,8 @@ public:
     virtual std::uint32_t RealLength() override;
     virtual SplitResult Split() override;
 
+    virtual void ClearCached() override;
+
     virtual std::unique_ptr<IndexNodeIterator<TKey, TValue>> begin() override;
     virtual std::unique_ptr<IndexNodeIterator<TKey, TValue>> end() override;
 };

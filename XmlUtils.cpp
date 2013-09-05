@@ -66,14 +66,14 @@ std::string readElementData(XML::Element &elem)
 
     const size_t BUFFER_SIZE = 256;
 
-    char* buffer = new char[BUFFER_SIZE];
+    std::string buffer(BUFFER_SIZE, '\0');
 
     int read;
 
     do
     {
-        read = elem.ReadData(buffer, BUFFER_SIZE - 1);
-        stream.write(buffer, read);
+        read = elem.ReadData(&buffer.at(0), BUFFER_SIZE - 1);
+        stream.write(buffer.data(), read);
     } while (read == BUFFER_SIZE);
     
     return unescape(stream.str());

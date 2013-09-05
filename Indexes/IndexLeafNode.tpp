@@ -115,6 +115,10 @@ typename IndexNode<TKey, TValue>::SplitResult IndexLeafNode<TKey, TValue>::Split
 }
 
 template<typename TKey, typename TValue>
+void IndexLeafNode<TKey, TValue>::ClearCached()
+{}
+
+template<typename TKey, typename TValue>
 std::unique_ptr<IndexNodeIterator<TKey, TValue>> IndexLeafNode<TKey, TValue>::begin()
 {
     return std::unique_ptr<IndexNodeIterator<TKey, TValue>>(new IndexLeafIterator<TKey, TValue>(indexMap.begin()));

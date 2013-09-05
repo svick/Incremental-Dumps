@@ -7,7 +7,7 @@ using std::move;
 
 template<typename TKey, typename TValue>
 Index<TKey, TValue>::Index(std::weak_ptr<WritableDump> dump, std::weak_ptr<Offset> fileHeaderOffset, bool delaySave)
-    : dump(dump), fileHeaderOffset(fileHeaderOffset)
+    : dump(dump), fileHeaderOffset(fileHeaderOffset), recentChanges(0)
 {
     auto offset = fileHeaderOffset.lock();
 
@@ -62,6 +62,14 @@ void Index<TKey, TValue>::AfterAdd()
         dump.lock()->fileHeader.Write();
 
         rootNodeUnsaved = false;
+    }
+
+    recentChanges++;
+
+    if (recentChanges >= 100000)
+    {
+        rootNode->ClearCached();
+        recentChanges = 0;
     }
 }
 
