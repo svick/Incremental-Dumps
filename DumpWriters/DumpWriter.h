@@ -12,9 +12,6 @@ private:
     std::unique_ptr<DiffWriter> diffWriter;
 
     std::unique_ptr<DumpPage> page;
-    // this is necessary, so that page object can be on disk before its revision objects
-    // it shouldn't waste too much memory, because these revisions don't contain any text
-    std::vector<std::shared_ptr<const Revision>> revisions;
     Page oldPage;
 
     std::vector<bool> unvisitedPageIds;

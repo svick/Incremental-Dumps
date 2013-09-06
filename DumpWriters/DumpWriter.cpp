@@ -31,39 +31,38 @@ void DumpWriter::StartPage(const std::shared_ptr<const Page> page)
     oldPage = this->page->page;
     this->page->page = *page;
     unset(unvisitedPageIds, pageId);
+
+    if (diffWriter != nullptr)
+        this->page->WriteDiff(*diffWriter);
 }
 
 void DumpWriter::AddRevision(const std::shared_ptr<const Revision> revision)
 {
     page->page.RevisionIds.insert(revision->RevisionId);
-    revisions.push_back(revision);
+
+    DumpRevision dumpRevision(dump, revision->RevisionId, false);
+    dumpRevision.revision = *revision;
+
+    if (diffWriter != nullptr)
+    {
+        bool isNew;
+        std::uint8_t modelFormatId = dumpRevision.GetModelFormatId(isNew);
+
+        if (isNew)
+            diffWriter->NewModelFormat(modelFormatId, dumpRevision.revision.Model, dumpRevision.revision.Format);
+    }
+
+    bool newRevision = !contains(oldPage.RevisionIds, revision->RevisionId);
+
+    if (newRevision)
+        newRevisionIds.insert(revision->RevisionId);
+
+    dumpRevision.Write(diffWriter.get(), newRevision);
 }
 
 void DumpWriter::EndPage()
 {
-    page->Write(diffWriter.get());
-
-    for (auto revision : revisions)
-    {
-        DumpRevision dumpRevision(dump, revision->RevisionId, false);
-        dumpRevision.revision = *revision;
-
-        if (diffWriter != nullptr)
-        {
-            bool isNew;
-            std::uint8_t modelFormatId = dumpRevision.GetModelFormatId(isNew);
-
-            if (isNew)
-                diffWriter->NewModelFormat(modelFormatId, dumpRevision.revision.Model, dumpRevision.revision.Format);
-        }
-
-        bool newRevision = !contains(oldPage.RevisionIds, revision->RevisionId);
-
-        if (newRevision)
-            newRevisionIds.insert(revision->RevisionId);
-
-        dumpRevision.Write(diffWriter.get(), newRevision);
-    }
+    page->Write();
 
     auto deletedRevisionIds = except(oldPage.RevisionIds, page->page.RevisionIds);
 
@@ -78,7 +77,6 @@ void DumpWriter::EndPage()
     if (diffWriter != nullptr)
         diffWriter->EndPage();
     page = nullptr;
-    revisions.clear();
 }
 
 void DumpWriter::SetDumpKind(DumpKind dumpKind)

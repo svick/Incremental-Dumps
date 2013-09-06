@@ -11,8 +11,6 @@ private:
     Page originalPage;
     bool wasLoaded;
 
-    DiffWriter *diffWriter;
-
     void Load(std::uint32_t pageId);
     static Page Read(std::shared_ptr<WritableDump> dump, Offset offset);
 protected:
@@ -25,7 +23,7 @@ public:
     DumpPage(std::weak_ptr<WritableDump> dump, Offset offset);
 
     virtual void Write() override;
-    void Write(DiffWriter *diffWriter);
+    void WriteDiff(DiffWriter& diffWriter);
     virtual std::uint32_t NewLength() override;
 
     static Page ReadCore(std::istream &stream, bool includeRevisionIds);

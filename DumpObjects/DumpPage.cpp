@@ -40,35 +40,28 @@ Page DumpPage::Read(shared_ptr<WritableDump> dump, Offset offset)
 void DumpPage::Write()
 {
     if (wasLoaded && originalPage == page)
-    {
-        if (diffWriter != nullptr)
-            diffWriter->StartExistingPage(page.PageId);
-
         return;
-    }
 
     DumpObject::Write();
 }
 
-void DumpPage::Write(DiffWriter *diffWriter)
+void DumpPage::WriteDiff(DiffWriter &diffWriter)
 {
-    this->diffWriter = diffWriter;
-    Write();
-    this->diffWriter = nullptr;
+    if (wasLoaded)
+    {
+        if (originalPage == page)
+            diffWriter.StartExistingPage(page.PageId);
+        else
+            diffWriter.StartExistingPage(originalPage, page);
+    }
+    else
+        diffWriter.StartNewPage(page);
 }
 
 void DumpPage::WriteInternal()
 {
     WriteValue((uint8_t)DumpObjectKind::Page);
     WriteCore(*stream, page, true);
-
-    if (diffWriter != nullptr)
-    {
-        if (wasLoaded)
-            diffWriter->StartExistingPage(originalPage, page);
-        else
-            diffWriter->StartNewPage(page);
-    }
 }
 
 void DumpPage::UpdateIndex(Offset offset, bool overwrite)
@@ -87,13 +80,13 @@ uint32_t DumpPage::NewLength()
 }
 
 DumpPage::DumpPage(weak_ptr<WritableDump> dump, uint32_t pageId)
-    : DumpObject(dump), page(), diffWriter()
+    : DumpObject(dump), page()
 {
     Load(pageId);
 }
 
 DumpPage::DumpPage(weak_ptr<WritableDump> dump, Offset offset)
-    : DumpObject(dump), page(), diffWriter()
+    : DumpObject(dump), page()
 {
     auto dumpRef = dump.lock();
 
