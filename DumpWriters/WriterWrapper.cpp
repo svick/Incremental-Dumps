@@ -1,8 +1,8 @@
 #include "WriterWrapper.h"
 
-void WriterWrapper::StartPage(const std::shared_ptr<const Page> page)
+void WriterWrapper::StartPage(const std::shared_ptr<const Page> page, bool titleWithNamespace)
 {
-    wrapped->StartPage(page);
+    wrapped->StartPage(page, titleWithNamespace);
 }
 
 void WriterWrapper::AddRevision(const std::shared_ptr<const Revision> revision)

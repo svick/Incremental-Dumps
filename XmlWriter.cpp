@@ -69,7 +69,12 @@ void XmlWriter::WriteDump(std::shared_ptr<WritableDump> dump, std::string fileNa
 
         output.BeginElement("page");
 
-        output.WriteElement("title", escapeElementText(page.Title));
+        std::string title = page.Title;
+        std::string ns = dump->siteInfo->siteInfo.Namespaces.at(page.Namespace).second;
+        if (!ns.empty())
+            title = ns + ':' + title;
+
+        output.WriteElement("title", escapeElementText(title));
         output.WriteElement("ns", page.Namespace);
         output.WriteElement("id", page.PageId);
 
@@ -83,6 +88,9 @@ void XmlWriter::WriteDump(std::shared_ptr<WritableDump> dump, std::string fileNa
         for (auto revisionId : page.RevisionIds)
         {
             auto revision = DumpRevision(dump, revisionId, true).revision;
+
+            if (revision.RevisionId != revisionId)
+                throw DumpException();
 
             output.BeginElement("revision");
 

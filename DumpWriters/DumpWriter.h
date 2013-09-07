@@ -19,10 +19,11 @@ private:
     std::unordered_set<std::uint32_t> newRevisionIds;
     bool withText;
 
+    void RemoveNamespace(Page& page);
 public:
     DumpWriter(std::shared_ptr<WritableDump> dump, bool withText, std::unique_ptr<DiffWriter> diffWriter = nullptr);
 
-    virtual void StartPage(const std::shared_ptr<const Page> page) override;
+    virtual void StartPage(const std::shared_ptr<const Page> page, bool titleWithNamespace) override;
     virtual void AddRevision(const std::shared_ptr<const Revision> revision) override;
     virtual void EndPage() override;
     virtual void SetSiteInfo(const std::shared_ptr<const SiteInfo> siteInfo) override;

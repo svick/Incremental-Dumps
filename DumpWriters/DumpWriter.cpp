@@ -5,6 +5,21 @@
 #include "../Indexes/Index.h"
 #include "../format.h"
 
+void DumpWriter::RemoveNamespace(Page& page)
+{
+    std::string namespapceName = dump->siteInfo->siteInfo.Namespaces.at(page.Namespace).second;
+
+    if (namespapceName.empty())
+        return;
+
+    namespapceName.append(":");
+
+    if (page.Title.substr(0, namespapceName.length()) != namespapceName)
+        throw DumpException();
+
+    page.Title.erase(0, namespapceName.length());
+}
+
 DumpWriter::DumpWriter(std::shared_ptr<WritableDump> dump, bool withText, std::unique_ptr<DiffWriter> diffWriter)
     : dump(dump), withText(withText), diffWriter(std::move(diffWriter))
 {
@@ -24,12 +39,17 @@ void DumpWriter::SetSiteInfo(const std::shared_ptr<const SiteInfo> siteInfo)
         diffWriter->SetSiteInfo(*siteInfo, dump->fileHeader.Kind);
 }
 
-void DumpWriter::StartPage(const std::shared_ptr<const Page> page)
+void DumpWriter::StartPage(const std::shared_ptr<const Page> page, bool titleWithNamespace)
 {
     std::uint32_t pageId = page->PageId;
+
     this->page = std::unique_ptr<DumpPage>(new DumpPage(dump, pageId));
     oldPage = this->page->page;
     this->page->page = *page;
+
+    if (titleWithNamespace)
+        RemoveNamespace(this->page->page);
+
     unset(unvisitedPageIds, pageId);
 
     if (diffWriter != nullptr)

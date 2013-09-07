@@ -9,7 +9,7 @@ void XmlPageProcessor::writePage()
 {
     if (!pageWritten)
     {
-        dumpWriter->StartPage(page);
+        dumpWriter->StartPage(page, true);
         pageWritten = true;
     }
 }

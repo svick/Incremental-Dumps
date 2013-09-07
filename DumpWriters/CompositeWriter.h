@@ -15,7 +15,7 @@ public:
         : writers(std::move(writers)), getTextFunction(getTextFunction)
     {}
 
-    virtual void StartPage(const std::shared_ptr<const Page> page) override;
+    virtual void StartPage(const std::shared_ptr<const Page> page, bool titleWithNamespace) override;
     virtual void AddRevision(const std::shared_ptr<const Revision> revision) override;
     virtual void EndPage() override;
     virtual void SetSiteInfo(const std::shared_ptr<const SiteInfo> siteInfo) override;

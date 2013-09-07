@@ -3,12 +3,12 @@
 
 const std::int16_t UserNamespace = 2;
 
-void ArticlesWriterWrapper::StartPage(const std::shared_ptr<const Page> page)
+void ArticlesWriterWrapper::StartPage(const std::shared_ptr<const Page> page, bool titleWithNamespace)
 {
     pageInlcuded = page->Namespace % 2 == 0 && page->Namespace != UserNamespace;
 
     if (pageInlcuded)
-        wrapped->StartPage(page);
+        wrapped->StartPage(page, titleWithNamespace);
 }
 
 void ArticlesWriterWrapper::AddRevision(const std::shared_ptr<const Revision> revision)

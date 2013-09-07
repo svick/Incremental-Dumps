@@ -1,10 +1,10 @@
 #include "CompositeWriter.h"
 #include "../DumpException.h"
 
-void CompositeWriter::StartPage(const std::shared_ptr<const Page> page)
+void CompositeWriter::StartPage(const std::shared_ptr<const Page> page, bool titleWithNamespace)
 {
     for (auto &writer : writers)
-        writer->StartPage(page);
+        writer->StartPage(page, titleWithNamespace);
 }
 
 void CompositeWriter::AddRevision(const std::shared_ptr<const Revision> revision)
