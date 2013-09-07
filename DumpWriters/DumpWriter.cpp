@@ -20,6 +20,24 @@ void DumpWriter::RemoveNamespace(Page& page)
     page.Title.erase(0, namespapceName.length());
 }
 
+void DumpWriter::NormalizeComment(Revision& revision)
+{
+    std::string &comment = revision.Comment;
+    if (comment.length() > 255)
+    {
+        // invalid UTF-8 at the end of a string is represented as U+FFFD
+        // this can get string over 255 bytes, so that character needs to be removed
+
+        std::string replacementChar = "\xEF\xBF\xBD"; // UTF-8 encoded U+FFFD REPLACEMENT CHARACTER
+        if (comment.substr(comment.length() - 3) == replacementChar)
+            comment.erase(comment.length() - 3, 3);
+        else if (comment.substr(comment.length() - 6) == replacementChar + "...")
+            comment.pop_back();
+        else
+            throw DumpException();
+    }
+}
+
 DumpWriter::DumpWriter(std::shared_ptr<WritableDump> dump, bool withText, std::unique_ptr<DiffWriter> diffWriter)
     : dump(dump), withText(withText), diffWriter(std::move(diffWriter))
 {
@@ -62,6 +80,8 @@ void DumpWriter::AddRevision(const std::shared_ptr<const Revision> revision)
 
     DumpRevision dumpRevision(dump, revision->RevisionId, false);
     dumpRevision.revision = *revision;
+
+    NormalizeComment(dumpRevision.revision);
 
     if (diffWriter != nullptr)
     {

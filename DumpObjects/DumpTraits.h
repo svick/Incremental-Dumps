@@ -219,17 +219,7 @@ public:
 
         if (length > 255)
         {
-            // invalid UTF-8 at the end of a string is represented as U+FFFD
-            // this can get string over 255 bytes, so that character needs to be removed
-
-            string replacementChar = "\xEF\xBF\xBD"; // UTF-8 encoded U+FFFD REPLACEMENT CHARACTER
-            if (value.substr(value.length() - 3) == replacementChar)
-            {
-                string fixedValue = value.substr(0, value.length() - 3);
-                Write(stream, fixedValue);
-            }
-            else
-                throw DumpException();
+            throw DumpException();
         }
         else
         {

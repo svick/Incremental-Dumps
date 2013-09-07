@@ -20,6 +20,7 @@ private:
     bool withText;
 
     void RemoveNamespace(Page& page);
+    void NormalizeComment(Revision& revision);
 public:
     DumpWriter(std::shared_ptr<WritableDump> dump, bool withText, std::unique_ptr<DiffWriter> diffWriter = nullptr);
 
