@@ -1,5 +1,4 @@
 #include "NewModelFormatChange.h"
-#include "../ChangeVisitor.h"
 
 NewModelFormatChange NewModelFormatChange::Read(std::istream &stream)
 {
@@ -25,9 +24,4 @@ std::uint32_t NewModelFormatChange::NewLength()
 {
     return ValueSize(ChangeKind::NewModelFormat) + ValueSize(id)
         + ValueSize(model) + ValueSize(format);
-}
-
-void NewModelFormatChange::Accept(ChangeVisitor &visitor)
-{
-    visitor.Visit(*this);
 }

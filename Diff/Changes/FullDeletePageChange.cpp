@@ -1,5 +1,4 @@
 #include "FullDeletePageChange.h"
-#include "../ChangeVisitor.h"
 
 FullDeletePageChange FullDeletePageChange::Read(std::istream &stream)
 {
@@ -18,9 +17,4 @@ void FullDeletePageChange::WriteInternal()
 std::uint32_t FullDeletePageChange::NewLength()
 {
     return ValueSize(ChangeKind::DeletePageFull) + ValueSize(pageId);
-}
-
-void FullDeletePageChange::Accept(ChangeVisitor &visitor)
-{
-    visitor.Visit(*this);
 }

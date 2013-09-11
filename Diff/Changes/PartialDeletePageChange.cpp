@@ -1,5 +1,4 @@
 #include "PartialDeletePageChange.h"
-#include "../ChangeVisitor.h"
 
 PartialDeletePageChange PartialDeletePageChange::Read(std::istream &stream)
 {
@@ -18,9 +17,4 @@ void PartialDeletePageChange::WriteInternal()
 std::uint32_t PartialDeletePageChange::NewLength()
 {
     return ValueSize(ChangeKind::DeletePagePartial) + ValueSize(pageId);
-}
-
-void PartialDeletePageChange::Accept(ChangeVisitor &visitor)
-{
-    visitor.Visit(*this);
 }

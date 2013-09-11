@@ -1,5 +1,4 @@
 #include "DeleteRevisionChange.h"
-#include "../ChangeVisitor.h"
 
 DeleteRevisionChange DeleteRevisionChange::Read(std::istream &stream)
 {
@@ -18,9 +17,4 @@ void DeleteRevisionChange::WriteInternal()
 std::uint32_t DeleteRevisionChange::NewLength()
 {
     return ValueSize(ChangeKind::DeleteRevision) + ValueSize(revisionId);
-}
-
-void DeleteRevisionChange::Accept(ChangeVisitor &visitor)
-{
-    visitor.Visit(*this);
 }

@@ -1,5 +1,4 @@
 #include "NewRevisionChange.h"
-#include "../ChangeVisitor.h"
 #include "../../DumpObjects/DumpRevision.h"
 #include "../../SevenZip.h"
 
@@ -55,9 +54,4 @@ std::uint32_t NewRevisionChange::NewLength()
     }
 
     return result;
-}
-
-void NewRevisionChange::Accept(ChangeVisitor &visitor)
-{
-    visitor.Visit(*this);
 }

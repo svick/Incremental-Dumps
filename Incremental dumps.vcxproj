@@ -109,7 +109,6 @@
     <ClInclude Include="Diff\Changes\DeleteRevisionChange.h" />
     <ClInclude Include="Diff\Changes\FullDeletePageChange.h" />
     <ClInclude Include="Diff\Changes\PartialDeletePageChange.h" />
-    <ClInclude Include="Diff\ChangeVisitor.h" />
     <ClInclude Include="Diff\DiffReader.h" />
     <ClInclude Include="Diff\DiffWriter.h" />
     <ClInclude Include="Diff\Changes\NewModelFormatChange.h" />

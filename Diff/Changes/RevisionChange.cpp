@@ -1,5 +1,4 @@
 #include "RevisionChange.h"
-#include "../ChangeVisitor.h"
 #include "../../DumpObjects/DumpUser.h"
 #include "../../SevenZip.h"
 
@@ -209,9 +208,4 @@ std::uint32_t RevisionChange::NewLength()
         result += ValueSize(newRevisionModelFormatId);
 
     return result;
-}
-
-void RevisionChange::Accept(ChangeVisitor &visitor)
-{
-    visitor.Visit(*this);
 }

@@ -2,8 +2,6 @@
 
 #include "../../DumpObjects/DumpObject.h"
 
-class ChangeVisitor;
-
 enum class ChangeKind : std::uint8_t
 {
     SiteInfo          = 0x01,
@@ -24,8 +22,6 @@ class Change : public DumpObjectBase
 {
 public:
     void Write(std::ostream *stream);
-
-    virtual void Accept(ChangeVisitor &visitor) = 0;
 
     virtual ~Change() {}
 };

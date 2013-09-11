@@ -1,5 +1,4 @@
 #include "PageChange.h"
-#include "../ChangeVisitor.h"
 
 PageChangeFlags operator |(PageChangeFlags first, PageChangeFlags second)
 {
@@ -99,9 +98,4 @@ std::uint32_t PageChange::NewLength()
         result += ValueSize(pageChanges.RedirectTarget);
 
     return result;
-}
-
-void PageChange::Accept(ChangeVisitor &visitor)
-{
-    visitor.Visit(*this);
 }

@@ -1,5 +1,4 @@
 #include "SiteInfoChange.h"
-#include "../ChangeVisitor.h"
 #include "../../DumpObjects/DumpSiteInfo.h"
 
 void SiteInfoChange::WriteInternal()
@@ -33,9 +32,4 @@ SiteInfoChange SiteInfoChange::Read(std::istream &stream)
     SiteInfo siteInfo = DumpSiteInfo::ReadCore(stream);
     
     return SiteInfoChange(siteInfo, name, oldTimestamp, newTimestamp);
-}
-
-void SiteInfoChange::Accept(ChangeVisitor &visitor)
-{
-    visitor.Visit(*this);
 }

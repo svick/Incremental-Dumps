@@ -1,5 +1,4 @@
 #include "NewPageChange.h"
-#include "../ChangeVisitor.h"
 #include "../../DumpObjects/DumpPage.h"
 
 NewPageChange NewPageChange::Read(std::istream &stream)
@@ -16,9 +15,4 @@ void NewPageChange::WriteInternal()
 std::uint32_t NewPageChange::NewLength()
 {
     return ValueSize(ChangeKind::NewPage) + DumpPage::LengthCore(page, false);
-}
-
-void NewPageChange::Accept(ChangeVisitor &visitor)
-{
-    visitor.Visit(*this);
 }

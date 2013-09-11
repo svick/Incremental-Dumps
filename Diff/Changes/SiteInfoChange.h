@@ -20,6 +20,4 @@ public:
     virtual std::uint32_t NewLength() override;
 
     static SiteInfoChange Read(std::istream &stream);
-
-    virtual void Accept(ChangeVisitor &visitor) override;
 };

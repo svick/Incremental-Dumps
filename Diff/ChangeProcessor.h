@@ -1,7 +1,16 @@
 #pragma once
 
-#include "ChangeVisitor.h"
 #include "Changes/Change.h"
+#include "Changes/SiteInfoChange.h"
+#include "Changes/NewPageChange.h"
+#include "Changes/PageChange.h"
+#include "Changes/NewModelFormatChange.h"
+#include "Changes/NewRevisionChange.h"
+#include "Changes/RevisionChange.h"
+#include "Changes/DeleteRevisionChange.h"
+#include "Changes/FullDeletePageChange.h"
+#include "Changes/PartialDeletePageChange.h"
+#include "Changes/DiffTextGroup.h"
 #include "../DumpObjects/DumpPage.h"
 
 class ChangeProcessor
