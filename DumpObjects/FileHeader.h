@@ -21,8 +21,8 @@ protected:
     void WriteInternal();
 public:
     static const std::string MagicNumber;
-    static const std::uint8_t FileFormatVersion = 1;
-    static const std::uint8_t FileDataVersion = 1;
+    static const std::uint8_t FileFormatVersion;
+    static const std::uint8_t FileDataVersion;
 
     static FileHeader Read(ReadableDump const &dump);
 

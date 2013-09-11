@@ -4,6 +4,8 @@
 #include "../DumpException.h"
 
 const std::string FileHeader::MagicNumber = "MWID";
+const std::uint8_t FileHeader::FileFormatVersion = 1;
+const std::uint8_t FileHeader::FileDataVersion = 1;
 
 FileHeader::FileHeader(
     DumpKind kind,
