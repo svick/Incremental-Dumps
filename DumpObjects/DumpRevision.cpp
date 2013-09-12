@@ -70,7 +70,7 @@ void DumpRevision::Write()
     if (wasLoaded && originalRevision == revision)
     {
         if (forceDiff && diffWriter != nullptr)
-            diffWriter->ChangeRevision(originalRevision, revision, modelFormatId);
+            diffWriter->ChangeRevision(originalRevision, revision, modelFormatId, textId);
 
         return;
     }
@@ -94,7 +94,7 @@ void DumpRevision::WriteInternal()
 
     if (withText && !HasFlag(revision.Flags, RevisionFlags::TextDeleted))
     {
-        if (textGroupId == 0 || originalRevision.Sha1 != revision.Sha1)
+        if (textGroupId == 0 || (!textSaved && originalRevision.Sha1 != revision.Sha1))
         {
             if (textGroupId != 0)
                 DeleteText();
@@ -111,9 +111,9 @@ void DumpRevision::WriteInternal()
     if (diffWriter != nullptr)
     {
         if (wasLoaded)
-            diffWriter->ChangeRevision(originalRevision, revision, modelFormatId);
+            diffWriter->ChangeRevision(originalRevision, revision, modelFormatId, textId);
         else
-            diffWriter->NewRevision(revision, modelFormatId);
+            diffWriter->NewRevision(revision, modelFormatId, textId);
     }
 }
 
@@ -126,7 +126,7 @@ void DumpRevision::UpdateIndex(Offset offset, bool overwrite)
     else
         dumpRef->revisionIdIndex->Add(revision.RevisionId, offset);
 
-    dumpRef->textGroupsManager->WriteTextGroupIfFull();
+    dumpRef->textGroupsManager->WriteTextGroupIfFull(diffWriter);
 }
 
 std::uint32_t DumpRevision::NewLength()
@@ -143,7 +143,7 @@ std::uint32_t DumpRevision::NewLength()
 }
 
 DumpRevision::DumpRevision(std::weak_ptr<WritableDump> dump, std::uint32_t revisionId)
-    : DumpObject(dump), revision(), modelFormatId(), textGroupId(0), textId(0),
+    : DumpObject(dump), revision(), modelFormatId(), textGroupId(0), textId(0), textSaved(false),
         isModelFormatIdNew(false), wasLoaded(true), textUnloaded(false), diffWriter(), forceDiff(false)
 {
     withText = IsPages(dump.lock()->fileHeader.Kind);
@@ -366,6 +366,13 @@ std::uint32_t DumpRevision::LengthCore(const Revision &revision, std::uint8_t mo
     }
 
     return result;
+}
+
+void DumpRevision::SetTextGroup(std::uint32_t textGroupId, std::uint8_t textId)
+{
+    this->textGroupId = textGroupId;
+    this->textId = textId;
+    this->textSaved = true;
 }
 
 void DumpRevision::DeleteText()

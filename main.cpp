@@ -163,7 +163,7 @@ void createDump(std::queue<std::string> &parameters)
 
     XmlMediawikiProcessor::Process(&writer, inputFileName);
 
-    writer.EndDump();
+    writer.Complete();
 }
 
 void updateDump(std::queue<std::string> &parameters)
@@ -210,7 +210,7 @@ void updateDump(std::queue<std::string> &parameters)
 
     XmlMediawikiProcessor::Process(&writer, dumpBackupStream);
 
-    writer.EndDump();
+    writer.Complete();
 }
 
 void readDump(std::string dumpFileName, std::string outputFileName)

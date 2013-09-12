@@ -1,5 +1,6 @@
 #include "ChangeProcessor.h"
 #include "../Dump.h"
+#include "../TextGroupsManager.h"
 #include "../DumpObjects/DumpRevision.h"
 #include "../Indexes/Index.h"
 
@@ -14,7 +15,7 @@ void ChangeProcessor::WritePage()
 }
 
 ChangeProcessor::ChangeProcessor(std::shared_ptr<WritableDump> dump)
-    : dump(dump)
+    : dump(dump), currentTextGroupId(0)
 {}
 
 void ChangeProcessor::Process(SiteInfoChange change)
@@ -67,6 +68,7 @@ void ChangeProcessor::Process(NewRevisionChange change)
     DumpRevision dumpRevision(dump, change.revision.RevisionId);
     dumpRevision.revision = change.revision;
     dumpRevision.SetModelFormatId(change.modelFormatId);
+    dumpRevision.SetTextGroup(currentTextGroupId, change.textId);
     dumpRevision.Write();
 
     currentPage->page.RevisionIds.insert(change.revision.RevisionId);
@@ -99,7 +101,7 @@ void ChangeProcessor::Process(RevisionChange change)
         revision.Sha1 = revisionChanges.Sha1;
 
         if (IsPages(dump->fileHeader.Kind))
-            revision.SetText(revisionChanges.GetText());
+            dumpRevision.SetTextGroup(currentTextGroupId, change.textId);
         else
             revision.TextLength = revisionChanges.TextLength;
     }
@@ -132,9 +134,14 @@ void ChangeProcessor::Process(PartialDeletePageChange change)
     dump->DeletePagePartial(change.pageId);
 }
 
-void ChangeProcessor::End()
+void ChangeProcessor::Process(DiffTextGroup change)
+{
+    currentTextGroupId = dump->textGroupsManager->ImportTextGroup(change.compressedTexts);
+}
+
+void ChangeProcessor::Complete()
 {
     WritePage();
 
-    dump->Complete();
+    dump->Complete(nullptr);
 }

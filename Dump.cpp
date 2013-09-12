@@ -90,9 +90,9 @@ shared_ptr<WritableDump> WritableDump::Create(string fileName)
     return dump;
 }
 
-void WritableDump::Complete()
+void WritableDump::Complete(DiffWriter* diffWriter)
 {
-    textGroupsManager->Complete();
+    textGroupsManager->Complete(diffWriter);
 
     spaceIndex->Write();
     pageIdIndex->Write();

@@ -11,6 +11,7 @@ set(SOURCES_files_ClCompile
   Diff/Changes/FullDeletePageChange.cpp
   Diff/Changes/PartialDeletePageChange.cpp
   Diff/Changes/DeleteRevisionChange.cpp
+  Diff/Changes/DiffTextGroup.cpp
   Diff/Changes/NewModelFormatChange.cpp
   Diff/Changes/NewPageChange.cpp
   Diff/Changes/NewRevisionChange.cpp
@@ -75,6 +76,7 @@ set(SOURCES_files_ClInclude
   Diff/Changes/FullDeletePageChange.h
   Diff/Changes/PartialDeletePageChange.h
   Diff/Changes/DeleteRevisionChange.h
+  Diff/Changes/DiffTextGroup.h
   Diff/Changes/NewModelFormatChange.h
   Diff/Changes/NewPageChange.h
   Diff/Changes/NewRevisionChange.h

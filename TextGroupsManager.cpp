@@ -6,6 +6,12 @@ TextGroupsManager::TextGroupsManager(std::weak_ptr<WritableDump> dump)
     : dump(dump), textGroupModified(false)
 { }
 
+std::unique_ptr<TextGroup> TextGroupsManager::CreateNewGroup()
+{
+    std::uint32_t newId = getNewId(*dump.lock()->textGroupIdIndex);
+    return std::unique_ptr<TextGroup>(new TextGroup(dump, newId));
+}
+
 std::pair<std::uint32_t, std::uint8_t> TextGroupsManager::AddTextToGroup(const std::string& text)
 {
     auto dumpRef = dump.lock();
@@ -14,8 +20,7 @@ std::pair<std::uint32_t, std::uint8_t> TextGroupsManager::AddTextToGroup(const s
     {
         auto streamPos = dumpRef->stream->tellg();
 
-        std::uint32_t newId = getNewId(*dumpRef->textGroupIdIndex);
-        currentGroup = std::unique_ptr<TextGroup>(new TextGroup(dump, newId));
+        currentGroup = CreateNewGroup();
         textGroupModified = false;
 
         // this method can be written in the middle of writing an object,
@@ -30,19 +35,22 @@ std::pair<std::uint32_t, std::uint8_t> TextGroupsManager::AddTextToGroup(const s
     return std::make_pair(textGroupId, textId);
 }
 
-void TextGroupsManager::EndGroup()
+void TextGroupsManager::EndGroup(DiffWriter* diffWriter)
 {
     if (textGroupModified)
         currentGroup->Write();
+
+    if (diffWriter != nullptr)
+        diffWriter->SetTextGroup(currentGroup->compressedTexts);
 
     currentGroup = nullptr;
     textGroupModified = false;
 }
 
-void TextGroupsManager::WriteTextGroupIfFull()
+void TextGroupsManager::WriteTextGroupIfFull(DiffWriter* diffWriter)
 {
     if (currentGroup != nullptr && currentGroup->IsFull())
-        EndGroup();
+        EndGroup(diffWriter);
 }
 
 void TextGroupsManager::DeleteTextFromGroup(std::uint32_t textGroupId, std::uint8_t textId)
@@ -73,7 +81,7 @@ std::string TextGroupsManager::GetTextFromGroup(std::uint32_t textGroupId, std::
 {
     if (currentGroup == nullptr || currentGroup->GetTextGroupId() != textGroupId)
     {
-        EndGroup();
+        EndGroup(nullptr);
 
         currentGroup = std::unique_ptr<TextGroup>(new TextGroup(dump, textGroupId));
         textGroupModified = false;
@@ -82,8 +90,17 @@ std::string TextGroupsManager::GetTextFromGroup(std::uint32_t textGroupId, std::
     return currentGroup->GetText(textId);
 }
 
-void TextGroupsManager::Complete()
+std::uint32_t TextGroupsManager::ImportTextGroup(const std::string& compressedTexts)
 {
-    EndGroup();
+    auto group = CreateNewGroup();
+    group->SetCompressedTexts(compressedTexts);
+    group->Write();
+
+    return group->GetTextGroupId();
+}
+
+void TextGroupsManager::Complete(DiffWriter* diffWriter)
+{
+    EndGroup(diffWriter);
     EndDeletedGroup();
 }

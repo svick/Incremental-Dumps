@@ -19,6 +19,7 @@ private:
     std::shared_ptr<WritableDump> dump;
 
     std::unique_ptr<DumpPage> currentPage;
+    std::uint32_t currentTextGroupId;
 
     void WritePage();
 public:
@@ -33,7 +34,8 @@ public:
     void Process(DeleteRevisionChange change);
     void Process(FullDeletePageChange change);
     void Process(PartialDeletePageChange change);
+    void Process(DiffTextGroup change);
 
     // has to be called after processing is complete
-    void End();
+    void Complete();
 };

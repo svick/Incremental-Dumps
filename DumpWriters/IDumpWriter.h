@@ -14,7 +14,7 @@ public:
     virtual void EndPage() = 0;
     virtual void SetSiteInfo(const std::shared_ptr<const SiteInfo> siteInfo) = 0;
     virtual void SetDumpKind(DumpKind dumpKind) = 0;
-    virtual void EndDump() = 0;
+    virtual void Complete() = 0;
 
     virtual ~IDumpWriter() {}
 };

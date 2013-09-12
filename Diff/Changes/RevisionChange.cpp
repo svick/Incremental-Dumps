@@ -1,6 +1,5 @@
 #include "RevisionChange.h"
 #include "../../DumpObjects/DumpUser.h"
-#include "../../SevenZip.h"
 
 RevisionChangeFlags operator &(RevisionChangeFlags first, RevisionChangeFlags second)
 {
@@ -30,23 +29,14 @@ bool flagChangedToUnset(const Revision &oldRevision, const Revision &newRevision
 }
 
 
-void RevisionChange::EnsureCompressed()
-{
-    if (compressedTextSet)
-        return;
-
-    compressedText = SevenZip::Compress(revisionChanges.GetText());
-    compressedTextSet = true;
-}
-
 RevisionChange::RevisionChange(bool withText)
     : withText(withText)
 {}
 
 RevisionChange::RevisionChange(
     const Revision &oldRevision, Revision &newRevision,
-    std::uint8_t newRevisionModelFormatId, bool withText)
-    : withText(withText)
+    std::uint8_t newRevisionModelFormatId, bool withText, std::uint8_t textId)
+    : withText(withText), textId(textId)
 {
     revisionChanges = newRevision;
     this->newRevisionModelFormatId = newRevisionModelFormatId;
@@ -116,10 +106,7 @@ RevisionChange RevisionChange::Read(std::istream &stream, bool withText)
         ReadValue(stream, result.revisionChanges.Sha1);
 
         if (withText)
-        {
-            auto compressedText = DumpTraits<std::string>::ReadLong(stream);
-            result.revisionChanges.SetText(SevenZip::Decompress(compressedText));
-        }
+            ReadValue(stream, result.textId);
         else
             ReadValue(stream, result.revisionChanges.TextLength);
     }
@@ -156,10 +143,7 @@ void RevisionChange::WriteInternal()
         WriteValue(revisionChanges.Sha1);
 
         if (withText)
-        {
-            EnsureCompressed();
-            DumpTraits<std::string>::WriteLong(*stream, compressedText);
-        }
+            WriteValue(textId);
         else
             WriteValue(revisionChanges.TextLength);
     }
@@ -196,10 +180,7 @@ std::uint32_t RevisionChange::NewLength()
         result += ValueSize(revisionChanges.Sha1);
 
         if (withText)
-        {
-            EnsureCompressed();
-            result += DumpTraits<std::string>::DumpSizeLong(compressedText);
-        }
+            result += ValueSize(textId);
         else
             result += ValueSize(revisionChanges.TextLength);
     }

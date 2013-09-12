@@ -34,8 +34,8 @@ void CompositeWriter::SetDumpKind(DumpKind dumpKind)
         writer->SetDumpKind(dumpKind);
 }
 
-void CompositeWriter::EndDump()
+void CompositeWriter::Complete()
 {
     for (auto &writer : writers)
-        writer->EndDump();
+        writer->Complete();
 }

@@ -18,9 +18,27 @@ void DiffWriter::EnsurePageWritten()
 
     if (!pageWritten)
     {
-        unwrittenPage->Write(stream.get());
+        Process(*unwrittenPage);
         unwrittenPage = nullptr;
         pageWritten = true;
+    }
+}
+
+template <typename TChange>
+void DiffWriter::Process(TChange &change)
+{
+    if (IsPages(dumpKind))
+        changeQueue.push(std::unique_ptr<Change>(new TChange(change)));
+    else
+        change.Write(stream.get());
+}
+
+void DiffWriter::HandleQueue()
+{
+    while (!changeQueue.empty())
+    {
+        changeQueue.front()->Write(stream.get());
+        changeQueue.pop();
     }
 }
 
@@ -56,7 +74,7 @@ void DiffWriter::StartNewPage(const Page &page)
         throw DumpException();
 
     NewPageChange change(page);
-    change.Write(stream.get());
+    Process(change);
 
     pageWritten = true;
     pageStarted = true;
@@ -73,7 +91,7 @@ void DiffWriter::StartExistingPage(const Page &oldPage, const Page &newPage)
 
     if (change.HasChanges())
     {
-        change.Write(stream.get());
+        Process(change);
         pageWritten = true;
     }
     else
@@ -106,10 +124,10 @@ void DiffWriter::NewModelFormat(std::uint8_t id, const std::string &model, const
         throw DumpException();
 
     NewModelFormatChange change(id, model, format);
-    change.Write(stream.get());
+    Process(change);
 }
 
-void DiffWriter::NewRevision(const Revision &revision, std::uint8_t modelFormatId)
+void DiffWriter::NewRevision(const Revision &revision, std::uint8_t modelFormatId, std::uint8_t textId)
 {
     if (!dumpStarted)
         throw DumpException();
@@ -118,12 +136,12 @@ void DiffWriter::NewRevision(const Revision &revision, std::uint8_t modelFormatI
 
     EnsurePageWritten();
 
-    NewRevisionChange change(revision, modelFormatId, IsPages(dumpKind));
-    change.Write(stream.get());
+    NewRevisionChange change(revision, modelFormatId, IsPages(dumpKind), textId);
+    Process(change);
 }
 
 void DiffWriter::ChangeRevision(
-    const Revision &oldRevision, Revision &newRevision, std::uint8_t newModelFormatId)
+    const Revision &oldRevision, Revision &newRevision, std::uint8_t newModelFormatId , std::uint8_t textId)
 {
     if (!dumpStarted)
         throw DumpException();
@@ -132,8 +150,8 @@ void DiffWriter::ChangeRevision(
 
     EnsurePageWritten();
 
-    RevisionChange change(oldRevision, newRevision, newModelFormatId, IsPages(dumpKind));
-    change.Write(stream.get());
+    RevisionChange change(oldRevision, newRevision, newModelFormatId, IsPages(dumpKind), textId);
+    Process(change);
 }
 
 void DiffWriter::DeleteRevision(std::uint32_t revisionId)
@@ -145,7 +163,7 @@ void DiffWriter::DeleteRevision(std::uint32_t revisionId)
         EnsurePageWritten();
 
     DeleteRevisionChange change(revisionId);
-    change.Write(stream.get());
+    Process(change);
 }
 
 void DiffWriter::EndPage()
@@ -169,7 +187,7 @@ void DiffWriter::DeletePageFull(std::uint32_t pageId)
         throw DumpException();
 
     FullDeletePageChange change(pageId);
-    change.Write(stream.get());
+    Process(change);
 }
 
 void DiffWriter::DeletePagePartial(std::uint32_t pageId)
@@ -180,5 +198,21 @@ void DiffWriter::DeletePagePartial(std::uint32_t pageId)
         throw DumpException();
 
     PartialDeletePageChange change(pageId);
-    change.Write(stream.get());
+    Process(change);
+}
+
+void DiffWriter::SetTextGroup(const std::string& compressedTexts)
+{
+    if (!dumpStarted)
+        throw DumpException();
+
+    DiffTextGroup diffTextGroup(compressedTexts);
+    diffTextGroup.Write(stream.get());
+
+    HandleQueue();
+}
+
+void DiffWriter::Complete()
+{
+    HandleQueue();
 }

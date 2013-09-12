@@ -8,9 +8,6 @@ const std::string deletedTextMark = "\xEF\xBF\xBF";
 
 void TextGroup::EnsureCompressed()
 {
-    if (texts.empty())
-        throw DumpException();
-
     if (!compressedTexts.empty())
         return;
 
@@ -149,6 +146,14 @@ std::string TextGroup::GetText(std::uint8_t textId) const
         throw DumpException();
 
     return result;
+}
+
+void TextGroup::SetCompressedTexts(const std::string& newCompressedTexts)
+{
+    if (!compressedTexts.empty() || !texts.empty())
+        throw DumpException();
+
+    compressedTexts = newCompressedTexts;
 }
 
 bool TextGroup::IsEmpty() const

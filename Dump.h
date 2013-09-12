@@ -8,6 +8,7 @@
 #include "DumpObjects/FileHeader.h"
 #include "DumpObjects/DumpSiteInfo.h"
 #include "DumpObjects/TextGroup.h"
+#include "Diff/DiffWriter.h"
 
 using std::int32_t;
 using std::int64_t;
@@ -70,7 +71,7 @@ public:
     std::unique_ptr<TextGroupsManager> textGroupsManager;
 
     // it's necessary to call this after writing is finished
-    void Complete();
+    void Complete(DiffWriter* diffWriter);
 
     void DeletePagePartial(std::uint32_t pageId);
     // also deletes revisions of the given page

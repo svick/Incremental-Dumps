@@ -15,7 +15,9 @@ enum class ChangeKind : std::uint8_t
     ChangeRevision    = 0x21,
     DeleteRevision    = 0x22,
 
-    NewModelFormat    = 0x30
+    NewModelFormat    = 0x30,
+
+    TextGroup         = 0x40
 };
 
 class Change : public DumpObjectBase

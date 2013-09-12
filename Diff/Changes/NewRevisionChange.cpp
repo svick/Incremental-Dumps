@@ -1,28 +1,18 @@
 #include "NewRevisionChange.h"
 #include "../../DumpObjects/DumpRevision.h"
-#include "../../SevenZip.h"
-
-void NewRevisionChange::EnsureCompressed()
-{
-    if (compressedTextSet)
-        return;
-
-    compressedText = SevenZip::Compress(revision.GetText());
-    compressedTextSet = true;
-}
 
 NewRevisionChange NewRevisionChange::Read(std::istream &stream, bool withText)
 {
     std::uint8_t modelFormatId;
     auto revision = DumpRevision::ReadCore(stream, modelFormatId, withText);
+    std::uint8_t textId = 0;
 
     if (withText && !HasFlag(revision.Flags, RevisionFlags::TextDeleted))
     {
-        std::string compressedText = DumpTraits<string>::ReadLong(stream);
-        revision.SetText(SevenZip::Decompress(compressedText));
+        ReadValue(stream, textId);
     }
 
-    return NewRevisionChange(revision, modelFormatId, withText);
+    return NewRevisionChange(revision, modelFormatId, withText, textId);
 }
 
 void NewRevisionChange::WriteInternal()
@@ -33,15 +23,12 @@ void NewRevisionChange::WriteInternal()
 
     if (withText && !HasFlag(revision.Flags, RevisionFlags::TextDeleted))
     {
-        EnsureCompressed();
-        DumpTraits<std::string>::WriteLong(*stream, compressedText);
+        WriteValue(textId);
     }
 }
 
 std::uint32_t NewRevisionChange::NewLength()
 {
-    EnsureCompressed();
-
     std::uint32_t result = 0;
 
     result += ValueSize(ChangeKind::NewRevision);
@@ -49,8 +36,7 @@ std::uint32_t NewRevisionChange::NewLength()
 
     if (withText && !HasFlag(revision.Flags, RevisionFlags::TextDeleted))
     {
-        EnsureCompressed();
-        result += DumpTraits<std::string>::DumpSizeLong(compressedText);
+        result += ValueSize(textId);
     }
 
     return result;

@@ -17,6 +17,8 @@ private:
 
     std::uint32_t textGroupId;
     std::uint8_t textId;
+    // is set when text group is set from outside
+    bool textSaved;
 
     std::uint32_t textLength;
     std::uint64_t textOffset;
@@ -47,6 +49,8 @@ public:
     static Revision ReadCore(std::istream &stream, std::uint8_t &modelFormatId, bool withText);
     static void WriteCore(std::ostream &stream, Revision &revision, std::uint8_t modelFormatId, bool withText);
     static std::uint32_t LengthCore(const Revision &revision, std::uint8_t modelFormatId, bool withText);
+
+    void SetTextGroup(std::uint32_t textGroupId, std::uint8_t textId);
 
     // deletes text of the current revision from the dump, if there is any
     void DeleteText();

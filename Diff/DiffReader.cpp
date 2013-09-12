@@ -69,10 +69,13 @@ void DiffReader::Read()
         case ChangeKind::DeletePagePartial:
             changeProcessor.Process(PartialDeletePageChange::Read(*stream));
             break;
+        case ChangeKind::TextGroup:
+            changeProcessor.Process(DiffTextGroup::Read(*stream));
+            break;
         default:
             throw DumpException();
         }
     }
 
-    changeProcessor.End();
+    changeProcessor.Complete();
 }

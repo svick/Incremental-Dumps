@@ -16,5 +16,5 @@ public:
     virtual void EndPage() override;
     virtual void SetSiteInfo(const std::shared_ptr<const SiteInfo> siteInfo) override;
     virtual void SetDumpKind(DumpKind dumpKind) override = 0;
-    virtual void EndDump() override;
+    virtual void Complete() override;
 };

@@ -26,21 +26,18 @@ class RevisionChange : public Change
 private:
     bool withText;
 
-    std::string compressedText;
-    bool compressedTextSet;
-
     RevisionChange(bool withText);
-
-    void EnsureCompressed();
 public:
     RevisionChangeFlags flags;
 
     Revision revisionChanges;
     std::uint8_t newRevisionModelFormatId;
 
+    std::uint8_t textId;
+
     RevisionChange(
         const Revision &oldRevision, Revision &newRevision,
-        std::uint8_t newRevisionModelFormatId, bool withText);
+        std::uint8_t newRevisionModelFormatId, bool withText, std::uint8_t textId);
 
     static RevisionChange Read(std::istream &stream, bool withText);
     virtual void WriteInternal() override;

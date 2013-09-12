@@ -1,13 +1,13 @@
 short term:
 - don't write empty unsaved indexes
 - compression of metadata and indexes
-- better (group) compression of diff dumps
- - one group for id and dd (no compressing twice)
+- better error messages (including bad filename)
 - idumps r to stdout
 - std::
 - encapsulate public fields? (e.g. in WritableDump)
 - deal with Readable/WritableDump
 - extract base36 code from DumpRevision
+- save dumpkind
 - do something with build process
 
 long term:

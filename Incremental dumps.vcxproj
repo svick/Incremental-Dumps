@@ -84,6 +84,7 @@
     <ClCompile Include="Diff\ChangeProcessor.cpp" />
     <ClCompile Include="Diff\Changes\Change.cpp" />
     <ClCompile Include="Diff\Changes\DeleteRevisionChange.cpp" />
+    <ClCompile Include="Diff\Changes\DiffTextGroup.cpp" />
     <ClCompile Include="Diff\Changes\FullDeletePageChange.cpp" />
     <ClCompile Include="Diff\Changes\PartialDeletePageChange.cpp" />
     <ClCompile Include="Diff\DiffReader.cpp" />
@@ -107,6 +108,7 @@
     <ClInclude Include="Diff\ChangeProcessor.h" />
     <ClInclude Include="Diff\Changes\Change.h" />
     <ClInclude Include="Diff\Changes\DeleteRevisionChange.h" />
+    <ClInclude Include="Diff\Changes\DiffTextGroup.h" />
     <ClInclude Include="Diff\Changes\FullDeletePageChange.h" />
     <ClInclude Include="Diff\Changes\PartialDeletePageChange.h" />
     <ClInclude Include="Diff\DiffReader.h" />

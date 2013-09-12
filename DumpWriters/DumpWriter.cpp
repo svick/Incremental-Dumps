@@ -137,7 +137,7 @@ void DumpWriter::SetDumpKind(DumpKind dumpKind)
     }
 }
 
-void DumpWriter::EndDump()
+void DumpWriter::Complete()
 {
     for (std::uint32_t i = 0; i < unvisitedPageIds.size(); i++)
     {
@@ -162,5 +162,8 @@ void DumpWriter::EndDump()
         }
     }
 
-    dump->Complete();
+    dump->Complete(diffWriter.get());
+
+    if (diffWriter != nullptr)
+        diffWriter->Complete();
 }

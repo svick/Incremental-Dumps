@@ -20,7 +20,7 @@ void WriterWrapper::SetSiteInfo(const std::shared_ptr<const SiteInfo> siteInfo)
     wrapped->SetSiteInfo(siteInfo);
 }
 
-void WriterWrapper::EndDump()
+void WriterWrapper::Complete()
 {
-    wrapped->EndDump();
+    wrapped->Complete();
 }
