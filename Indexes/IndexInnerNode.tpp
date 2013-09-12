@@ -219,13 +219,31 @@ typename IndexNode<TKey, TValue>::SplitResult IndexInnerNode<TKey, TValue>::Spli
 }
 
 template<typename TKey, typename TValue>
-void IndexInnerNode<TKey, TValue>::ClearCached()
+std::uint32_t IndexInnerNode<TKey, TValue>::NodesCount()
 {
-    Write();
+    std::uint32_t result = 1;
 
-    for (unsigned i = 0; i < cachedChildren.size(); i++)
+    for (const auto& child : cachedChildren)
     {
-        cachedChildren.at(i) = nullptr;
+        if (child != nullptr)
+            result += child->NodesCount();
+    }
+
+    return result;
+}
+
+template<typename TKey, typename TValue>
+void IndexInnerNode<TKey, TValue>::ClearCachedInternal()
+{
+    for (auto &child : cachedChildren)
+    {
+        if (child != nullptr)
+        {
+            if (child->CanBeCleared())
+                child = nullptr;
+            else
+                child->ClearCachedInternal();
+        }
     }
 }
 

@@ -21,6 +21,7 @@ private:
     std::uint16_t GetKeyIndex(TKey key);
 
     void AfterAdd(std::uint16_t updatedChildIndex);
+
 protected:
     virtual void WriteInternal() override;
 public:
@@ -41,7 +42,8 @@ public:
     virtual std::uint32_t RealLength() override;
     virtual SplitResult Split() override;
 
-    virtual void ClearCached() override;
+    virtual std::uint32_t NodesCount() override;
+    virtual void ClearCachedInternal() override;
 
     virtual std::unique_ptr<IndexNodeIterator<TKey, TValue>> begin() override;
     virtual std::unique_ptr<IndexNodeIterator<TKey, TValue>> end() override;

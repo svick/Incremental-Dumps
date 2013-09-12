@@ -17,9 +17,10 @@ private:
     std::weak_ptr<WritableDump> dump;
     std::weak_ptr<Offset> fileHeaderOffset;
 
-    int recentChanges;
+    int recentAccesses;
 
     void AfterAdd();
+    void AfterAccess();
 public:
     // fileHeaderOffset is assumed to be part of dump
     Index(std::weak_ptr<WritableDump> dump, Offset* fileHeaderOffset, bool delaySave = false);

@@ -7,7 +7,7 @@
 
 template<typename TKey, typename TValue>
 IndexNode<TKey, TValue>::IndexNode(std::weak_ptr<WritableDump> dump)
-    : DumpObject(dump)
+    : DumpObject(dump), iterators(0)
 {}
 
 template<typename TKey, typename TValue>
@@ -63,4 +63,18 @@ template<typename TKey, typename TValue>
 bool IndexNode<TKey, TValue>::IsOversized()
 {
     return RealLength() > NewLength();
+}
+
+template<typename TKey, typename TValue>
+bool IndexNode<TKey, TValue>::CanBeCleared()
+{
+    return iterators == 0;
+}
+
+template<typename TKey, typename TValue>
+void IndexNode<TKey, TValue>::ClearCached()
+{
+    Write();
+
+    ClearCachedInternal();
 }

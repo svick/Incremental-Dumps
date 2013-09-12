@@ -4,7 +4,7 @@ using std::move;
 
 template<typename TKey, typename TValue>
 IndexIterator<TKey, TValue>::IndexIterator(unique_ptr<IndexNodeIterator<TKey, TValue>> nodeIterator)
-    : nodeIterator(std::move(nodeIterator))
+    : nodeIterator(std::move(nodeIterator)), recentIncrements(0)
 {}
 
 template<typename TKey, typename TValue>
@@ -37,6 +37,15 @@ template<typename TKey, typename TValue>
 IndexIterator<TKey, TValue>& IndexIterator<TKey, TValue>::operator ++()
 {
     ++(*nodeIterator);
+
+    recentIncrements++;
+
+    if (recentIncrements >= 10000)
+    {
+        nodeIterator->ClearNodeCacheIfTooBig();
+        recentIncrements = 0;
+    }
+
     return *this;
 }
 

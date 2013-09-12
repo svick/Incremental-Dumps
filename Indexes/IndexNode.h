@@ -16,6 +16,8 @@ class IndexNode : public DumpObject
 protected:
     static const int Size = 4096;
 
+    unsigned iterators;
+
     virtual void WriteInternal() = 0;
 public:
     struct SplitResult
@@ -54,7 +56,10 @@ public:
     virtual std::uint32_t RealLength() = 0;
     virtual SplitResult Split() = 0;
 
-    virtual void ClearCached() = 0;
+    bool CanBeCleared();
+    virtual std::uint32_t NodesCount() = 0;
+    void ClearCached();
+    virtual void ClearCachedInternal() = 0;
 
     virtual unique_ptr<IndexNodeIterator<TKey, TValue>> begin() = 0;
     virtual unique_ptr<IndexNodeIterator<TKey, TValue>> end() = 0;

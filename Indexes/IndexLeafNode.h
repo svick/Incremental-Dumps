@@ -3,18 +3,19 @@
 #include <map>
 #include "IndexNode.h"
 
-using std::map;
-
 template<typename TKey, typename TValue>
 class IndexLeafNode : public IndexNode<TKey, TValue>
 {
+    template<typename TIndexKey, typename TIndexValue>
+    friend class IndexLeafIterator;
+
     using typename IndexNode<TKey, TValue>::SplitResult;
 private:
-    map<TKey, TValue> indexMap;
+    std::map<TKey, TValue> indexMap;
 protected:
     virtual void WriteInternal() override;
 public:
-    static unique_ptr<IndexNode<TKey, TValue>> Read(std::weak_ptr<WritableDump> dump, std::istream &stream);
+    static std::unique_ptr<IndexNode<TKey, TValue>> Read(std::weak_ptr<WritableDump> dump, std::istream &stream);
 
     IndexLeafNode(std::weak_ptr<WritableDump> dump);
 
@@ -32,10 +33,11 @@ public:
     virtual std::uint32_t RealLength() override;
     virtual SplitResult Split() override;
 
-    virtual void ClearCached() override;
+    virtual std::uint32_t NodesCount() override;
+    virtual void ClearCachedInternal() override;
 
-    virtual unique_ptr<IndexNodeIterator<TKey, TValue>> begin() override;
-    virtual unique_ptr<IndexNodeIterator<TKey, TValue>> end() override;
+    virtual std::unique_ptr<IndexNodeIterator<TKey, TValue>> begin() override;
+    virtual std::unique_ptr<IndexNodeIterator<TKey, TValue>> end() override;
 };
 
 #include "IndexLeafNode.tpp"

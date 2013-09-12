@@ -1,20 +1,21 @@
 #include <vector>
 #include "IndexInnerIterator.h"
 
-using std::vector;
-
-template<typename TKey, typename TValue>
-IndexInnerIterator<TKey, TValue>::IndexInnerIterator(
-    IndexInnerNode<TKey, TValue> *node, uint16_t i, std::unique_ptr<IndexNodeIterator<TKey, TValue>> childIterator)
-    : node(node), i(i), childIterator(std::move(childIterator))
-{}
-
 template<typename TKey, typename TValue>
 IndexInnerIterator<TKey, TValue>::IndexInnerIterator(IndexInnerNode<TKey, TValue> *node, bool isBegin)
     : node(node),
       i(isBegin ? 0 : node->childOffsets.size()),
       childIterator(isBegin ? node->GetChildByIndex(0)->begin() : nullptr)
-{}
+{
+    node->iterators++;
+}
+
+template<typename TKey, typename TValue>
+IndexInnerIterator<TKey, TValue>::IndexInnerIterator(const IndexInnerIterator<TKey, TValue>& other)
+    : node(other.node), i(other.i), childIterator(other.childIterator == nullptr ? nullptr : other.childIterator->Clone())
+{
+    node->iterators++;
+}
 
 template<typename TKey, typename TValue>
 const pair<TKey, TValue> IndexInnerIterator<TKey, TValue>::operator *() const
@@ -63,6 +64,18 @@ template<typename TKey, typename TValue>
 std::unique_ptr<IndexNodeIterator<TKey, TValue>> IndexInnerIterator<TKey, TValue>::Clone() const
 {
     return std::unique_ptr<IndexNodeIterator<TKey, TValue>>(
-        new IndexInnerIterator<TKey, TValue>(
-            node, i, childIterator == nullptr ? nullptr : childIterator->Clone()));
+        new IndexInnerIterator<TKey, TValue>(*this));
+}
+
+template<typename TKey, typename TValue>
+void IndexInnerIterator<TKey, TValue>::ClearNodeCacheIfTooBig()
+{
+    if (node->NodesCount() >= 5000)
+        node->ClearCached();
+}
+
+template<typename TKey, typename TValue>
+IndexInnerIterator<TKey, TValue>::~IndexInnerIterator()
+{
+    node->iterators--;
 }

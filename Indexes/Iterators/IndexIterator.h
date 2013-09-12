@@ -16,6 +16,9 @@ class IndexIterator : public iterator<input_iterator_tag, const pair<TKey, TValu
     friend class Index;
 private:
     std::unique_ptr<IndexNodeIterator<TKey, TValue>> nodeIterator;
+
+    std::uint32_t recentIncrements;
+
     IndexIterator(std::unique_ptr<IndexNodeIterator<TKey, TValue>> nodeIterator);
 public:
     IndexIterator(const IndexIterator &other);

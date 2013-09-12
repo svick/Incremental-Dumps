@@ -7,7 +7,7 @@ using std::move;
 
 template<typename TKey, typename TValue>
 Index<TKey, TValue>::Index(std::weak_ptr<WritableDump> dump, Offset *fileHeaderOffset, bool delaySave)
-    : dump(dump), fileHeaderOffset(std::shared_ptr<Offset>(dump.lock(), fileHeaderOffset)), recentChanges(0)
+    : dump(dump), fileHeaderOffset(std::shared_ptr<Offset>(dump.lock(), fileHeaderOffset)), recentAccesses(0)
 {
     rootNodeUnsaved = false;
 
@@ -34,7 +34,11 @@ Index<TKey, TValue>::Index(std::weak_ptr<WritableDump> dump, Offset *fileHeaderO
 template<typename TKey, typename TValue>
 TValue Index<TKey, TValue>::Get(TKey key)
 {
-    return rootNode->Get(key);
+    auto result = rootNode->Get(key);
+
+    AfterAccess();
+
+    return result;
 }
 
 template<typename TKey, typename TValue>
@@ -63,12 +67,20 @@ void Index<TKey, TValue>::AfterAdd()
         rootNodeUnsaved = false;
     }
 
-    recentChanges++;
+    AfterAccess();
+}
 
-    if (recentChanges >= 100000)
+template<typename TKey, typename TValue>
+void Index<TKey, TValue>::AfterAccess()
+{
+    recentAccesses++;
+
+    if (recentAccesses >= 10000)
     {
-        rootNode->ClearCached();
-        recentChanges = 0;
+        if (rootNode->NodesCount() >= 5000)
+            rootNode->ClearCached();
+
+        recentAccesses = 0;
     }
 }
 

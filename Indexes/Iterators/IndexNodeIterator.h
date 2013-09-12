@@ -13,5 +13,7 @@ public:
     virtual bool Equals(const IndexNodeIterator *other) const = 0;
     virtual std::unique_ptr<IndexNodeIterator> Clone() const = 0;
 
+    virtual void ClearNodeCacheIfTooBig() = 0;
+
     virtual ~IndexNodeIterator() {};
 };
