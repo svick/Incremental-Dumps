@@ -16,6 +16,8 @@ class IndexNode : public DumpObject
 protected:
     static const int Size = 4096;
 
+    bool modified;
+
     unsigned iterators;
 
     virtual void WriteInternal() = 0;
@@ -43,9 +45,8 @@ public:
 
     IndexNode(std::weak_ptr<WritableDump> dump);
 
-    using DumpObject::Write;
-    // write to a pre-allocated offset
-    void Write(Offset offset);
+    virtual void Write() override;
+    void Write(bool force);
 
     virtual TValue Get(TKey key) = 0;
     virtual void Add(TKey key, TValue value) = 0;

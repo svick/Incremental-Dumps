@@ -22,7 +22,7 @@ Index<TKey, TValue>::Index(std::weak_ptr<WritableDump> dump, Offset *fileHeaderO
         }
         else
         {
-            rootNode->Write();
+            rootNode->Write(true);
             fileHeaderOffset->value = rootNode->SavedOffset();
             dump.lock()->fileHeader.Write();
         }
@@ -59,7 +59,7 @@ void Index<TKey, TValue>::AfterAdd()
 
     if (rootNodeUnsaved)
     {
-        rootNode->Write();
+        rootNode->Write(true);
 
         fileHeaderOffset.lock()->value = rootNode->SavedOffset();
         dump.lock()->fileHeader.Write();

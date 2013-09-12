@@ -1,5 +1,4 @@
 short term:
-- don't write empty unsaved indexes
 - compression of metadata and indexes
 - better error messages (including bad filename)
 - idumps r to stdout

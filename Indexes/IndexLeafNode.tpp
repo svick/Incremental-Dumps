@@ -26,27 +26,30 @@ void IndexLeafNode<TKey, TValue>::Add(TKey key, TValue value)
         throw new DumpException();
     }
 
-    indexMap.insert(pair<TKey, TValue>(key, value));
+    indexMap.insert(std::pair<TKey, TValue>(key, value));
+
+    this->modified = true;
 }
 
 template<typename TKey, typename TValue>
 void IndexLeafNode<TKey, TValue>::AddOrUpdate(TKey key, TValue value)
 {
     auto pos = indexMap.find(key);
+
     if (pos == indexMap.end())
-    {
         Add(key, value);
-    }
     else
-    {
-        pos->second = value; // will this work?
-    }
+        pos->second = value;
+
+    this->modified = true;
 }
 
 template<typename TKey, typename TValue>
 void IndexLeafNode<TKey, TValue>::Remove(const TKey key)
 {
     indexMap.erase(key);
+
+    this->modified = true;
 }
 
 template<typename TKey, typename TValue>

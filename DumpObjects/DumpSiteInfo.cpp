@@ -15,7 +15,10 @@ void DumpSiteInfo::WriteInternal()
 
 void DumpSiteInfo::UpdateIndex(Offset offset, bool overwrite)
 {
-    dump.lock()->fileHeader.SiteInfo = offset;
+    auto dumpRef = dump.lock();
+
+    dumpRef->fileHeader.SiteInfo = offset;
+    dumpRef->fileHeader.Write();
 }
 
 DumpSiteInfo::DumpSiteInfo(std::weak_ptr<WritableDump> dump)

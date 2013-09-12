@@ -1,6 +1,7 @@
 #pragma once
 
 #include <utility>
+#include "IndexNodeIterator.h"
 
 template<typename TKey, typename TValue>
 class IndexInnerIterator : public IndexNodeIterator<TKey, TValue>
@@ -15,7 +16,7 @@ private:
     IndexInnerIterator(IndexInnerNode<TKey, TValue> *node, bool isBegin);
     IndexInnerIterator(const IndexInnerIterator<TKey, TValue>& other);
 public:
-    virtual const pair<TKey, TValue> operator *() const override;
+    virtual const std::pair<TKey, TValue> operator *() const override;
     virtual IndexInnerIterator& operator ++() override;
     virtual bool Equals(const IndexNodeIterator<TKey, TValue> *other) const override;
     virtual std::unique_ptr<IndexNodeIterator<TKey, TValue>> Clone() const override;

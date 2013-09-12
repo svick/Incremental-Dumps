@@ -18,7 +18,7 @@ IndexInnerIterator<TKey, TValue>::IndexInnerIterator(const IndexInnerIterator<TK
 }
 
 template<typename TKey, typename TValue>
-const pair<TKey, TValue> IndexInnerIterator<TKey, TValue>::operator *() const
+const std::pair<TKey, TValue> IndexInnerIterator<TKey, TValue>::operator *() const
 {
     return **childIterator;
 }

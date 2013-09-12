@@ -7,7 +7,7 @@
 
 template<typename TKey, typename TValue>
 IndexNode<TKey, TValue>::IndexNode(std::weak_ptr<WritableDump> dump)
-    : DumpObject(dump), iterators(0)
+    : DumpObject(dump), modified(false), iterators(0)
 {}
 
 template<typename TKey, typename TValue>
@@ -44,19 +44,20 @@ unique_ptr<IndexNode<TKey, TValue>> IndexNode<TKey, TValue>::CreateNew(std::weak
 }
 
 template<typename TKey, typename TValue>
-void IndexNode<TKey, TValue>::Write(Offset offset)
+void IndexNode<TKey, TValue>::Write()
 {
-    auto dumpRef = dump.lock();
+    Write(false);
+}
 
-    if (savedOffset != 0)
-        throw DumpException();
+template<typename TKey, typename TValue>
+void IndexNode<TKey, TValue>::Write(bool force)
+{
+    if (!modified && !force)
+        return;
 
-    stream = dumpRef->stream.get();
-    stream->seekp(offset.value);
+    DumpObject::Write();
 
-    WriteInternal();
-
-    stream = nullptr;
+    modified = false;
 }
 
 template<typename TKey, typename TValue>

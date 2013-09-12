@@ -53,6 +53,8 @@ void IndexInnerNode<TKey, TValue>::AfterAdd(std::uint16_t updatedChildIndex)
 
         insert_at(childOffsets, updatedChildIndex + 1, splitted.RightNode->SavedOffset());
         insert_at(cachedChildren, updatedChildIndex + 1, std::move(splitted.RightNode));
+
+        this->modified = true;
     }
 }
 
@@ -82,7 +84,7 @@ template<typename TKey, typename TValue>
 void IndexInnerNode<TKey, TValue>::Remove(const TKey key)
 {
     auto index = GetKeyIndex(key);
-    return GetChildByIndex(index)->Remove(key);
+    GetChildByIndex(index)->Remove(key);
 }
 
 template<typename TKey, typename TValue>
@@ -107,6 +109,8 @@ IndexInnerNode<TKey, TValue>::IndexInnerNode(std::weak_ptr<WritableDump> dump, S
         throw DumpException();
     childOffsets.push_back(rightOffset);
     cachedChildren.push_back(std::move(splitResult.RightNode));
+
+    this->modified = true;
 }
 
 template<typename TKey, typename TValue>
@@ -152,8 +156,6 @@ void IndexInnerNode<TKey, TValue>::WriteInternal()
 template<typename TKey, typename TValue>
 void IndexInnerNode<TKey, TValue>::Write()
 {
-    // TODO: don't do anything when there are no changes
-
     IndexNode<TKey, TValue>::Write();
 
     for (auto &cachedChild : cachedChildren)
