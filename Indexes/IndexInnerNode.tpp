@@ -200,6 +200,8 @@ typename IndexNode<TKey, TValue>::SplitResult IndexInnerNode<TKey, TValue>::Spli
     left->childOffsets.push_back(childOffsets.at(i));
     left->cachedChildren.push_back(std::move(cachedChildren.at(i)));
 
+    left->modified = true;
+
     TKey middleKey = keys.at(i);
 
     i++;
@@ -213,6 +215,8 @@ typename IndexNode<TKey, TValue>::SplitResult IndexInnerNode<TKey, TValue>::Spli
 
     right->childOffsets.push_back(childOffsets.at(i));
     right->cachedChildren.push_back(std::move(cachedChildren.at(i)));
+
+    right->modified = true;
 
     return SplitResult(
         std::unique_ptr<IndexNode<TKey, TValue>>(left),
