@@ -1,7 +1,13 @@
 cmake_minimum_required(VERSION 2.8)
 
-if(CMAKE_COMPILER_IS_GNUCXX)
+include(CheckCXXCompilerFlag)
+
+check_cxx_compiler_flag(-std=c++0x  LIBCXX_HAS_STDCXX0X_FLAG)
+check_cxx_compiler_flag(-std=c++11  LIBCXX_HAS_STDCXX11_FLAG)
+if(LIBCXX_HAS_STDCXX11_FLAG)
   add_definitions(-std=c++11)
+elseif(LIBCXX_HAS_STDCXX0X_FLAG)
+  add_definitions(-std=c++0x)
 endif()
 
 # File list: C/C++ Compiler
