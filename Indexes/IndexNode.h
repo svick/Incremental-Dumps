@@ -45,7 +45,7 @@ public:
 
     IndexNode(std::weak_ptr<WritableDump> dump);
 
-    virtual void Write() override;
+    virtual void Write() OVERRIDE;
     void Write(bool force);
 
     virtual TValue Get(TKey key) = 0;

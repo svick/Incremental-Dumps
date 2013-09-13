@@ -16,12 +16,12 @@ private:
     IndexInnerIterator(IndexInnerNode<TKey, TValue> *node, bool isBegin);
     IndexInnerIterator(const IndexInnerIterator<TKey, TValue>& other);
 public:
-    virtual const std::pair<TKey, TValue> operator *() const override;
-    virtual IndexInnerIterator& operator ++() override;
-    virtual bool Equals(const IndexNodeIterator<TKey, TValue> *other) const override;
-    virtual std::unique_ptr<IndexNodeIterator<TKey, TValue>> Clone() const override;
+    virtual const std::pair<TKey, TValue> operator *() const OVERRIDE;
+    virtual IndexInnerIterator& operator ++() OVERRIDE;
+    virtual bool Equals(const IndexNodeIterator<TKey, TValue> *other) const OVERRIDE;
+    virtual std::unique_ptr<IndexNodeIterator<TKey, TValue>> Clone() const OVERRIDE;
 
-    virtual void ClearNodeCacheIfTooBig() override;
+    virtual void ClearNodeCacheIfTooBig() OVERRIDE;
 
     virtual ~IndexInnerIterator();
 };

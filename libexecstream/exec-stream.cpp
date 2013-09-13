@@ -27,6 +27,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
 #include "exec-stream.h"
+#include "../common.h"
 
 #include <list>
 #include <vector>
@@ -236,10 +237,10 @@ public:
     void clear();
 
 protected:
-    virtual int_type underflow() override;
-    virtual int_type overflow( int_type c ) override;
-    virtual int sync() override;
-    virtual std::streamsize showmanyc() override;
+    virtual int_type underflow() OVERRIDE;
+    virtual int_type overflow( int_type c ) OVERRIDE;
+    virtual int sync() OVERRIDE;
+    virtual std::streamsize showmanyc() OVERRIDE;
 
 private:
     bool send_buffer();

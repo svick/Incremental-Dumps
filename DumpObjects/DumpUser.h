@@ -13,12 +13,12 @@ protected:
     using DumpObjectBase::WriteValue;
     using DumpObjectBase::ValueSize;
 
-    virtual void WriteInternal() override = 0;
+    virtual void WriteInternal() OVERRIDE = 0;
 public:
     static unique_ptr<DumpUser> Create(shared_ptr<User> user);
     static unique_ptr<DumpUser> Read(RevisionFlags flags, istream &stream);
 
     void Write(ostream *stream);
     virtual shared_ptr<User> GetUser() const = 0;
-    virtual uint32_t NewLength() override = 0;
+    virtual uint32_t NewLength() OVERRIDE = 0;
 };

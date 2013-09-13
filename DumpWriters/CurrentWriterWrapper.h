@@ -11,7 +11,7 @@ public:
         : WriterWrapper(std::move(wrapped))
     {}
 
-    virtual void AddRevision(const std::shared_ptr<const Revision> revision) override;
-    virtual void EndPage() override;
-    virtual void SetDumpKind(DumpKind dumpKind) override;
+    virtual void AddRevision(const std::shared_ptr<const Revision> revision) OVERRIDE;
+    virtual void EndPage() OVERRIDE;
+    virtual void SetDumpKind(DumpKind dumpKind) OVERRIDE;
 };

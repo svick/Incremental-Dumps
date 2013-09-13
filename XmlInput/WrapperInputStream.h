@@ -12,7 +12,7 @@ public:
         : wrapped(wrapped), sideAction(sideAction)
     {}
 
-    virtual int read(XML_Char *buf, size_t bufLen) override
+    virtual int read(XML_Char *buf, size_t bufLen) OVERRIDE
     {
         if (sideAction != nullptr)
             sideAction();

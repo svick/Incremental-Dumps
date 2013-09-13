@@ -14,6 +14,6 @@ public:
 
     DumpNamedUser(shared_ptr<NamedUser> user);
 
-    virtual shared_ptr<User> GetUser() const override;
-    virtual uint32_t NewLength() override;
+    virtual shared_ptr<User> GetUser() const OVERRIDE;
+    virtual uint32_t NewLength() OVERRIDE;
 };

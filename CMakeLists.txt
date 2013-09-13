@@ -92,6 +92,7 @@ set(SOURCES_files_ClInclude
   Diff/DiffReader.h
   Diff/DiffWriter.h
   CollectionHelpers.h
+  common.h
   DumpException.h
   DumpKind.h
   DumpObjects/DumpIpV4User.h

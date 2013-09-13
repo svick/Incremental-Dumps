@@ -14,6 +14,6 @@ public:
     {}
 
     static NewModelFormatChange Read(std::istream &stream);
-    virtual void WriteInternal() override;
-    virtual std::uint32_t NewLength() override;
+    virtual void WriteInternal() OVERRIDE;
+    virtual std::uint32_t NewLength() OVERRIDE;
 };

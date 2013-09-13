@@ -4,6 +4,7 @@
 #include <vector>
 #include <functional>
 #include "IDumpWriter.h"
+#include "../common.h"
 
 class CompositeWriter : public IDumpWriter
 {
@@ -15,10 +16,10 @@ public:
         : writers(std::move(writers)), getTextFunction(getTextFunction)
     {}
 
-    virtual void StartPage(const std::shared_ptr<const Page> page, bool titleWithNamespace) override;
-    virtual void AddRevision(const std::shared_ptr<const Revision> revision) override;
-    virtual void EndPage() override;
-    virtual void SetSiteInfo(const std::shared_ptr<const SiteInfo> siteInfo) override;
-    virtual void SetDumpKind(DumpKind dumpKind) override;
-    virtual void Complete() override;
+    virtual void StartPage(const std::shared_ptr<const Page> page, bool titleWithNamespace) OVERRIDE;
+    virtual void AddRevision(const std::shared_ptr<const Revision> revision) OVERRIDE;
+    virtual void EndPage() OVERRIDE;
+    virtual void SetSiteInfo(const std::shared_ptr<const SiteInfo> siteInfo) OVERRIDE;
+    virtual void SetDumpKind(DumpKind dumpKind) OVERRIDE;
+    virtual void Complete() OVERRIDE;
 };

@@ -20,12 +20,12 @@ private:
     IndexLeafIterator(IndexLeafNode<TKey, TValue> *node, MapIterator mapIterator);
     IndexLeafIterator(const IndexLeafIterator<TKey, TValue>& other);
 public:
-    virtual const pair<TKey, TValue> operator *() const override;
-    virtual IndexLeafIterator& operator ++() override;
-    virtual bool Equals(const IndexNodeIterator<TKey, TValue> *other) const override;
-    virtual std::unique_ptr<IndexNodeIterator<TKey, TValue>> Clone() const override;
+    virtual const pair<TKey, TValue> operator *() const OVERRIDE;
+    virtual IndexLeafIterator& operator ++() OVERRIDE;
+    virtual bool Equals(const IndexNodeIterator<TKey, TValue> *other) const OVERRIDE;
+    virtual std::unique_ptr<IndexNodeIterator<TKey, TValue>> Clone() const OVERRIDE;
 
-    virtual void ClearNodeCacheIfTooBig() override;
+    virtual void ClearNodeCacheIfTooBig() OVERRIDE;
 
     virtual ~IndexLeafIterator();
 };

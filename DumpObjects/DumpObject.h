@@ -40,11 +40,11 @@ protected:
     std::uint32_t savedLength;
 
     DumpObject(std::weak_ptr<WritableDump> dump);
-    virtual void WriteInternal() override = 0;
+    virtual void WriteInternal() OVERRIDE = 0;
     virtual void UpdateIndex(Offset offset, bool overwrite);
 public:
     virtual void Write();
-    virtual std::uint32_t NewLength() override = 0;
+    virtual std::uint32_t NewLength() OVERRIDE = 0;
     std::uint64_t SavedOffset() const;
 };
 

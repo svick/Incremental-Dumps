@@ -1,6 +1,7 @@
 #pragma once
 
 #include "User.h"
+#include "../common.h"
 
 class IpV4User : public User
 {
@@ -15,7 +16,7 @@ public:
 
     uint32_t Address;
 
-    virtual bool Equals(const User &second) const override;
+    virtual bool Equals(const User &second) const OVERRIDE;
 
-    virtual RevisionFlags UserKind() const override;
+    virtual RevisionFlags UserKind() const OVERRIDE;
 };

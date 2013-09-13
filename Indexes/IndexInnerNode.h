@@ -23,30 +23,30 @@ private:
     void AfterAdd(std::uint16_t updatedChildIndex);
 
 protected:
-    virtual void WriteInternal() override;
+    virtual void WriteInternal() OVERRIDE;
 public:
     static std::unique_ptr<IndexNode<TKey, TValue>> Read(std::weak_ptr<WritableDump> dump, std::istream &stream);
 
     IndexInnerNode(std::weak_ptr<WritableDump> dump);
     IndexInnerNode(std::weak_ptr<WritableDump> dump, SplitResult splitResult);
 
-    virtual void Write() override;
+    virtual void Write() OVERRIDE;
 
-    virtual uint32_t NewLength() override;
+    virtual uint32_t NewLength() OVERRIDE;
 
-    virtual TValue Get(TKey key) override;
-    virtual void Add(TKey key, TValue value) override;
-    virtual void AddOrUpdate(TKey key, TValue value) override;
-    virtual void Remove(TKey key) override;
+    virtual TValue Get(TKey key) OVERRIDE;
+    virtual void Add(TKey key, TValue value) OVERRIDE;
+    virtual void AddOrUpdate(TKey key, TValue value) OVERRIDE;
+    virtual void Remove(TKey key) OVERRIDE;
 
-    virtual std::uint32_t RealLength() override;
-    virtual SplitResult Split() override;
+    virtual std::uint32_t RealLength() OVERRIDE;
+    virtual SplitResult Split() OVERRIDE;
 
-    virtual std::uint32_t NodesCount() override;
-    virtual void ClearCachedInternal() override;
+    virtual std::uint32_t NodesCount() OVERRIDE;
+    virtual void ClearCachedInternal() OVERRIDE;
 
-    virtual std::unique_ptr<IndexNodeIterator<TKey, TValue>> begin() override;
-    virtual std::unique_ptr<IndexNodeIterator<TKey, TValue>> end() override;
+    virtual std::unique_ptr<IndexNodeIterator<TKey, TValue>> begin() OVERRIDE;
+    virtual std::unique_ptr<IndexNodeIterator<TKey, TValue>> end() OVERRIDE;
 };
 
 #include "IndexInnerNode.tpp"

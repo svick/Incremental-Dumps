@@ -16,8 +16,8 @@ public:
         : siteInfo(siteInfo), name(name), oldTimestamp(oldTimestamp), newTimestamp(newTimestamp)
     {}
 
-    virtual void WriteInternal() override;
-    virtual std::uint32_t NewLength() override;
+    virtual void WriteInternal() OVERRIDE;
+    virtual std::uint32_t NewLength() OVERRIDE;
 
     static SiteInfoChange Read(std::istream &stream);
 };

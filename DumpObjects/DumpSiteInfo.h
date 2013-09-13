@@ -8,8 +8,8 @@ class DumpSiteInfo : public DumpObject
 private:
     void Read(std::shared_ptr<WritableDump> dump, Offset offset);
 protected:
-    virtual void WriteInternal() override;
-    virtual void UpdateIndex(Offset offset, bool overwrite) override;
+    virtual void WriteInternal() OVERRIDE;
+    virtual void UpdateIndex(Offset offset, bool overwrite) OVERRIDE;
 public:
     DumpSiteInfo(std::weak_ptr<WritableDump> dump);
 
@@ -18,7 +18,7 @@ public:
 
     SiteInfo siteInfo;
 
-    virtual uint32_t NewLength() override;
+    virtual uint32_t NewLength() OVERRIDE;
 
     void CheckName(const std::string &name, bool canBeEmpty = false) const;
     // if shouldBeDifferent is false, makes sure that the timestamps are the same

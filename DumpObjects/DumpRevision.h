@@ -30,8 +30,8 @@ private:
     void Load(std::uint32_t revisionId);
     Revision Read(std::shared_ptr<WritableDump> dump, Offset offset);
 protected:
-    virtual void WriteInternal() override;
-    virtual void UpdateIndex(Offset offset, bool overwrite) override;
+    virtual void WriteInternal() OVERRIDE;
+    virtual void UpdateIndex(Offset offset, bool overwrite) OVERRIDE;
 public:
     Revision revision;
 
@@ -40,11 +40,11 @@ public:
     std::uint8_t GetModelFormatId(bool &isNew);
     void SetModelFormatId(std::uint8_t modelFormatId);
 
-    virtual void Write() override;
+    virtual void Write() OVERRIDE;
     // forceDiff set to true forces writing into diff, even if the revision didn't change
     // this is necessary when revision moves between pages because of undeletion
     void Write(DiffWriter *diffWriter, bool forceDiff);
-    virtual std::uint32_t NewLength() override;
+    virtual std::uint32_t NewLength() OVERRIDE;
 
     static Revision ReadCore(std::istream &stream, std::uint8_t &modelFormatId, bool withText);
     static void WriteCore(std::ostream &stream, Revision &revision, std::uint8_t modelFormatId, bool withText);

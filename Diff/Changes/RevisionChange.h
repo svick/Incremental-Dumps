@@ -40,6 +40,6 @@ public:
         std::uint8_t newRevisionModelFormatId, bool withText, std::uint8_t textId);
 
     static RevisionChange Read(std::istream &stream, bool withText);
-    virtual void WriteInternal() override;
-    virtual std::uint32_t NewLength() override;
+    virtual void WriteInternal() OVERRIDE;
+    virtual std::uint32_t NewLength() OVERRIDE;
 };

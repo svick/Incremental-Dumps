@@ -11,8 +11,8 @@ public:
         : WriterWrapper(std::move(wrapped)), pageInlcuded(false)
     {}
 
-    virtual void StartPage(const std::shared_ptr<const Page> page, bool titleWithNamespace) override;
-    virtual void AddRevision(const std::shared_ptr<const Revision> revision) override;
-    virtual void EndPage() override;
-    virtual void SetDumpKind(DumpKind dumpKind) override;
+    virtual void StartPage(const std::shared_ptr<const Page> page, bool titleWithNamespace) OVERRIDE;
+    virtual void AddRevision(const std::shared_ptr<const Revision> revision) OVERRIDE;
+    virtual void EndPage() OVERRIDE;
+    virtual void SetDumpKind(DumpKind dumpKind) OVERRIDE;
 };

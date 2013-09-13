@@ -26,8 +26,8 @@ public:
 
     static FileHeader Read(ReadableDump const &dump);
 
-    virtual void Write() override;
-    virtual std::uint32_t NewLength() override;
+    virtual void Write() OVERRIDE;
+    virtual std::uint32_t NewLength() OVERRIDE;
 
     DumpKind Kind;
 

@@ -16,14 +16,14 @@ private:
 
     bool IsEmpty() const;
 protected:
-    virtual void WriteInternal() override;
-    virtual void UpdateIndex(Offset offset, bool overwrite) override;
+    virtual void WriteInternal() OVERRIDE;
+    virtual void UpdateIndex(Offset offset, bool overwrite) OVERRIDE;
 public:
     std::string compressedTexts;
 
     TextGroup(std::weak_ptr<WritableDump> dump, std::uint32_t textGroupId);
 
-    virtual uint32_t NewLength() override;
+    virtual uint32_t NewLength() OVERRIDE;
 
     std::uint32_t GetTextGroupId() const;
 

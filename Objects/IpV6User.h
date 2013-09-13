@@ -2,6 +2,7 @@
 
 #include <array>
 #include "User.h"
+#include "../common.h"
 
 class IpV6User : public User
 {
@@ -16,7 +17,7 @@ public:
 
     std::array<uint16_t, 8> Address;
 
-    virtual bool Equals(const User &second) const override;
+    virtual bool Equals(const User &second) const OVERRIDE;
 
-    virtual RevisionFlags UserKind() const override;
+    virtual RevisionFlags UserKind() const OVERRIDE;
 };
