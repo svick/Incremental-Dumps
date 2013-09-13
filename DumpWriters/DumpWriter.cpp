@@ -28,13 +28,17 @@ void DumpWriter::NormalizeComment(Revision& revision)
         // invalid UTF-8 at the end of a string is represented as U+FFFD
         // this can get string over 255 bytes, so that character needs to be removed
 
+        size_t charsToErase;
+
         std::string replacementChar = "\xEF\xBF\xBD"; // UTF-8 encoded U+FFFD REPLACEMENT CHARACTER
         if (comment.substr(comment.length() - 3) == replacementChar)
-            comment.erase(comment.length() - 3, 3);
+            charsToErase = 3;
         else if (comment.substr(comment.length() - 6) == replacementChar + "...")
-            comment.pop_back();
+            charsToErase = 1;
         else
             throw DumpException();
+
+        comment.erase(comment.length() - charsToErase, charsToErase);
     }
 }
 

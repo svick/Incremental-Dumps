@@ -9,7 +9,7 @@ class IndexInnerNode : public IndexNode<TKey, TValue>
     template<typename TIndexKey, typename TIndexValue>
     friend class IndexInnerIterator;
 
-    using typename IndexNode<TKey, TValue>::SplitResult;
+    typedef typename IndexNode<TKey, TValue>::SplitResult SplitResult;
 
     using DumpObjectBase::WriteValue;
 private:

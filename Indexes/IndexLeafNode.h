@@ -9,7 +9,8 @@ class IndexLeafNode : public IndexNode<TKey, TValue>
     template<typename TIndexKey, typename TIndexValue>
     friend class IndexLeafIterator;
 
-    using typename IndexNode<TKey, TValue>::SplitResult;
+    typedef typename IndexNode<TKey, TValue>::SplitResult SplitResult;
+
 private:
     std::map<TKey, TValue> indexMap;
 protected:

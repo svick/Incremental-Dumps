@@ -17,6 +17,10 @@ public:
     UserException(const std::string &message);
 
     virtual const char* what() const NOEXCEPT OVERRIDE;
+
+    // GCC 4.6 seems to require this
+    virtual ~UserException() NOEXCEPT
+    {}
 };
 
 // user exception that was caused by invalid parameters,

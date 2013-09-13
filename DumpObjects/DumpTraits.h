@@ -163,7 +163,14 @@ class DumpTraits<Offset> : public DumpTraitsConverted<Offset, DumpTraitsNumeric<
 template<typename T>
 class DumpTraits<T, typename std::enable_if<std::is_enum<T>::value>::type>
 {
-    typedef DumpTraits<typename std::underlying_type<T>::type> TargetTraits;
+#ifdef GCC_4_6
+    typedef std::uint64_t UnderlyingType;
+    typedef DumpTraitsNumeric<UnderlyingType, sizeof(T)> TargetTraits;
+#else
+    typedef typename std::underlying_type<T>::type UnderlyingType;
+    typedef DumpTraits<UnderlyingType> TargetTraits;
+#endif
+
 public:
     static T Read(istream &stream)
     {
@@ -173,13 +180,13 @@ public:
 
     static void Write(ostream &stream, const T value)
     {
-        auto target = static_cast<typename std::underlying_type<T>::type>(value);
+        auto target = static_cast<UnderlyingType>(value);
         TargetTraits::Write(stream, target);
     }
 
     static uint32_t DumpSize(const T value = T())
     {
-        auto target = static_cast<typename std::underlying_type<T>::type>(value);
+        auto target = static_cast<UnderlyingType>(value);
         return TargetTraits::DumpSize(target);
     }
 };
