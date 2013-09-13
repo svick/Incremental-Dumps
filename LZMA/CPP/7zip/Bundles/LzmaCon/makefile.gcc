@@ -1,5 +1,5 @@
 PROG = liblzma.a
-CXX = g++ -O2 -Wall -std=c++11
+CXX = g++ -O2 -Wall
 CXX_C = gcc -O2 -Wall
 LIB = -lm
 RM = rm -f

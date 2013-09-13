@@ -10,7 +10,7 @@ CInWrapperStream::CInWrapperStream(std::istream *wrappedStream)
 
 STDMETHODIMP CInWrapperStream::Read(void *data, UInt32 size, UInt32 *processedSize)
 {
-    auto read = wrappedStream->readsome((char*)data, size);
+    std::streamsize read = wrappedStream->readsome((char*)data, size);
 
     if (wrappedStream->fail())
         return E_FAIL;
