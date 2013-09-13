@@ -106,10 +106,14 @@ typename IndexNode<TKey, TValue>::SplitResult IndexLeafNode<TKey, TValue>::Split
     left->indexMap.insert(*it);
     it++;
 
+    left->modified = true;
+
     for (; it != indexMap.end(); it++)
     {
         right->indexMap.insert(*it);
     }
+
+    right->modified = true;
 
     return SplitResult(
         std::unique_ptr<IndexNode<TKey, TValue>>(left),
