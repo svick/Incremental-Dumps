@@ -161,7 +161,15 @@ void createDump(std::queue<std::string> &parameters)
 
     writer.SetDumpKind(DumpKind::None);
 
-    XmlMediawikiProcessor::Process(&writer, inputFileName);
+    if (inputFileName == "-")
+    {
+        auto stream = WrapperInputStream(std::cin);
+        XmlMediawikiProcessor::Process(&writer, stream);
+    }
+    else
+    {
+        XmlMediawikiProcessor::Process(&writer, inputFileName);
+    }
 
     writer.Complete();
 }

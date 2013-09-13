@@ -104,7 +104,7 @@ The parameters are similar as in the `update` action:
 
 * Name of the wiki.
 * Timestamp of the created dump.
-* Path to the source XML dump.
+* Path to the source XML dump. If the path is `-`, the source XML is read from the standard input. This can be useful for reading a compressed XML file without an intermediary file.
 
 The remaining parameters specify what dumps to creates, just as in `update`.
 
