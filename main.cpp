@@ -1,9 +1,11 @@
 #include <iostream>
+#include <fstream>
 #include <queue>
 #include "DumpWriters/CompositeWriter.h"
 #include "DumpWriters/DumpWriter.h"
 #include "DumpWriters/CurrentWriterWrapper.h"
 #include "DumpWriters/ArticlesWriterWrapper.h"
+#include "DumpWriters/ProgressWriterWrapper.h"
 #include "Diff/DiffReader.h"
 #include "XmlInput/XmlMediawikiProcessor.h"
 #include "XmlInput/WrapperInputStream.h"
@@ -144,6 +146,26 @@ void readNameAndTimestamp(std::queue<std::string> &parameters, std::string &name
         throw ParametersException("The timestamp can't be empty.");
 }
 
+void createDumpCore(ProgressWriterWrapper& writer, std::istream& inputStream)
+{
+    std::uint64_t i = 0;
+    std::function<void ()> offsetReportingFunction = [&]()
+    {
+        if (i % 100 == 0)
+            writer.ReportOffset(inputStream.tellg());
+
+        i++;
+    };
+
+    writer.SetDumpKind(DumpKind::None);
+
+    WrapperInputStream wrapperStream(inputStream, offsetReportingFunction);
+
+    XmlMediawikiProcessor::Process(&writer, wrapperStream);
+
+    writer.Complete();
+}
+
 void createDump(std::queue<std::string> &parameters)
 {
     if (parameters.size() < 3 + 2)
@@ -157,21 +179,19 @@ void createDump(std::queue<std::string> &parameters)
 
     auto writers = createWriters(parameters, name, timestamp);
 
-    CompositeWriter writer(writers);
+    std::unique_ptr<CompositeWriter> writer(new CompositeWriter(writers));
 
-    writer.SetDumpKind(DumpKind::None);
+    ProgressWriterWrapper progressWriter(std::move(writer), 10000);
 
     if (inputFileName == "-")
     {
-        auto stream = WrapperInputStream(std::cin);
-        XmlMediawikiProcessor::Process(&writer, stream);
+        createDumpCore(progressWriter, std::cin);
     }
     else
     {
-        XmlMediawikiProcessor::Process(&writer, inputFileName);
+        std::ifstream stream(inputFileName, std::ios::binary);
+        createDumpCore(progressWriter, stream);
     }
-
-    writer.Complete();
 }
 
 void updateDump(std::queue<std::string> &parameters)

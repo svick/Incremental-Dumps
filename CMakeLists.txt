@@ -54,6 +54,7 @@ set(SOURCES_files_ClCompile
   DumpWriters/CompositeWriter.cpp
   DumpWriters/CurrentWriterWrapper.cpp
   DumpWriters/DumpWriter.cpp
+  DumpWriters/ProgressWriterWrapper.cpp
   DumpWriters/WriterWrapper.cpp
   FetchText.cpp
   format.cc
@@ -138,6 +139,7 @@ set(SOURCES_files_ClInclude
   DumpWriters/CompositeWriter.h
   DumpWriters/CurrentWriterWrapper.h
   DumpWriters/DumpWriter.h
+  DumpWriters/ProgressWriterWrapper.h
   DumpWriters/IDumpWriter.h
   DumpWriters/WriterWrapper.h
   FetchText.h

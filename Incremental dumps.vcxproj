@@ -134,6 +134,7 @@
     <ClInclude Include="DumpWriters\ArticlesWriterWrapper.h" />
     <ClInclude Include="DumpWriters\CompositeWriter.h" />
     <ClInclude Include="DumpWriters\DumpWriter.h" />
+    <ClInclude Include="DumpWriters\ProgressWriterWrapper.h" />
     <ClInclude Include="DumpWriters\WriterWrapper.h" />
     <ClInclude Include="FetchText.h" />
     <ClInclude Include="format.h" />
@@ -154,6 +155,7 @@
     <ClCompile Include="DumpWriters\ArticlesWriterWrapper.cpp" />
     <ClCompile Include="DumpWriters\CompositeWriter.cpp" />
     <ClCompile Include="DumpWriters\DumpWriter.cpp" />
+    <ClCompile Include="DumpWriters\ProgressWriterWrapper.cpp" />
     <ClCompile Include="DumpWriters\WriterWrapper.cpp" />
     <ClCompile Include="FetchText.cpp" />
     <ClCompile Include="format.cc" />
