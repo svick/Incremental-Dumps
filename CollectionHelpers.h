@@ -51,7 +51,7 @@ std::set<T> except(const std::set<T> &container1, const std::set<T> &container2)
 }
 
 template <typename TContainer, typename TValue>
-auto find(const TContainer& container, const TValue& value) -> decltype(container.begin())
+auto find(TContainer& container, const TValue& value) -> decltype(container.begin())
 {
     return std::find(container.begin(), container.end(), value);
 }
