@@ -4,8 +4,6 @@
 #include <memory>
 #include <string>
 
-using std::uint32_t;
-using std::unique_ptr;
 using std::string;
 
 enum class RevisionFlags : uint8_t;
@@ -13,14 +11,14 @@ enum class RevisionFlags : uint8_t;
 class User
 {
 protected:
-    User(uint32_t userId, string userName);
+    User(std::uint32_t userId, const std::string& userName);
 public:
-    static unique_ptr<User> Create(uint32_t userId, string userName);
+    static std::unique_ptr<User> Create(std::uint32_t userId, const std::string& userName);
     // creates IPv4 or IPv6 anonymous users
-    static unique_ptr<User> CreateFromIp(string ipAddress);
+    static std::unique_ptr<User> CreateFromIp(const std::string& ipAddress);
 
-    uint32_t UserId;
-    string UserName;
+    std::uint32_t UserId;
+    std::string UserName;
 
     virtual bool Equals(const User &second) const = 0;
 

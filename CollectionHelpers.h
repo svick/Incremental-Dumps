@@ -50,6 +50,12 @@ std::set<T> except(const std::set<T> &container1, const std::set<T> &container2)
     return result;
 }
 
+template <typename TContainer, typename TValue>
+auto find(const TContainer& container, const TValue& value) -> decltype(container.begin())
+{
+    return std::find(container.begin(), container.end(), value);
+}
+
 void set(std::vector<bool> &vector, std::size_t index);
 
 void unset(std::vector<bool> &vector, std::size_t index);

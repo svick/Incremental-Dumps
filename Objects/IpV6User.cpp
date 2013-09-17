@@ -1,37 +1,68 @@
 #include "IpV6User.h"
 #include <sstream>
 #include "../StringHelpers.h"
+#include "../CollectionHelpers.h"
 #include "../DumpException.h"
 #include "Revision.h"
 
-using std::stoi;
-using std::ostringstream;
-
-std::array<uint16_t, 8> IpV6User::TryParseAddress(string address, bool &success)
+bool expandEmptyGroup(std::vector<std::string>& groups)
 {
-    success = false;
+    if (groups.size() < 3)
+        return false;
 
-    std::vector<std::string> stringParts = split(address, ':');
-    if (stringParts.size() != 8)
-        return std::array<uint16_t, 8>();
+    if (groups.at(0).empty())
+    {
+        if (groups.at(1).empty())
+            groups.erase(groups.begin());
+        else
+            return false;
+    }
 
-    std::array<uint16_t, 8> result;
+    if (groups.rbegin()->empty())
+    {
+        if ((groups.rbegin() + 1)->empty())
+            groups.pop_back();
+        else
+            return false;
+    }
+
+    auto emptyGroupIter = find(groups, std::string());
+
+    if (emptyGroupIter != groups.end())
+    {
+        auto insertIter = groups.erase(emptyGroupIter);
+
+        groups.insert(insertIter, 8 - groups.size(), "0");
+    }
+
+    return true;
+}
+
+std::array<std::uint16_t, 8> IpV6User::TryParseAddress(const std::string& address, bool &success)
+{
+    std::vector<std::string> groups = split(address, ':');
+
+    success = expandEmptyGroup(groups);
+    if (!success || groups.size() != 8)
+        return std::array<std::uint16_t, 8>();
+
+    std::array<std::uint16_t, 8> result;
 
     for (int i = 0; i < 8; i++)
     {
         bool success;
-        long intPart = tryParseLong(stringParts.at(i), success, 16);
-        if (!success || intPart > 0xFFFF || intPart < 0)
-            return std::array<uint16_t, 8>();
+        long intGroup = tryParseLong(groups.at(i), success, 16);
+        if (!success || intGroup > 0xFFFF || intGroup < 0)
+            return std::array<std::uint16_t, 8>();
         
-        result.at(i) = intPart;
+        result.at(i) = intGroup;
     }
 
     success = true;
     return result;
 }
 
-std::array<uint16_t, 8> IpV6User::ParseAddress(string address)
+std::array<std::uint16_t, 8> IpV6User::ParseAddress(const std::string& address)
 {
     bool success;
     auto result = TryParseAddress(address, success);
@@ -42,9 +73,9 @@ std::array<uint16_t, 8> IpV6User::ParseAddress(string address)
     return result;
 }
 
-string IpV6User::AddressToString(std::array<uint16_t, 8> address)
+std::string IpV6User::AddressToString(std::array<std::uint16_t, 8> address)
 {
-    ostringstream s;
+    std::ostringstream s;
 
     s << std::hex << std::uppercase;
 
@@ -59,12 +90,12 @@ string IpV6User::AddressToString(std::array<uint16_t, 8> address)
     return s.str();
 }
 
-IpV6User::IpV6User(string stringAddress)
+IpV6User::IpV6User(const std::string& stringAddress)
     : User(0, stringAddress), Address(ParseAddress(stringAddress))
 {
 }
 
-IpV6User::IpV6User(string stringAddress, std::array<uint16_t, 8> parsedAddress)
+IpV6User::IpV6User(const std::string& stringAddress, std::array<uint16_t, 8> parsedAddress)
     :  User(0, stringAddress), Address(parsedAddress)
 {}
 

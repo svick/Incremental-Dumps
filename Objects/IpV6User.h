@@ -7,15 +7,15 @@
 class IpV6User : public User
 {
 public:
-    static std::array<uint16_t, 8> TryParseAddress(string address, bool &success);
-    static std::array<uint16_t, 8> ParseAddress(string address);
-    static string AddressToString(std::array<uint16_t, 8> address);
+    static std::array<std::uint16_t, 8> TryParseAddress(const std::string& address, bool &success);
+    static std::array<std::uint16_t, 8> ParseAddress(const std::string& address);
+    static std::string AddressToString(std::array<std::uint16_t, 8> address);
 
-    IpV6User(string stringAddress);
-    IpV6User(string stringAddress, std::array<uint16_t, 8> parsedAddress);
-    IpV6User(std::array<uint16_t, 8> parsedAddress);
+    IpV6User(const std::string& stringAddress);
+    IpV6User(const std::string& stringAddress, std::array<std::uint16_t, 8> parsedAddress);
+    IpV6User(std::array<std::uint16_t, 8> parsedAddress);
 
-    std::array<uint16_t, 8> Address;
+    std::array<std::uint16_t, 8> Address;
 
     virtual bool Equals(const User &second) const OVERRIDE;
 
