@@ -108,6 +108,9 @@ The parameters are similar as in the `update` action:
 
 The remaining parameters specify what dumps to creates, just as in `update`.
 
+There is also an optional parameter `--report` which has to be followed by a number *n* specifying that progress should be reported every *n* revisions.
+If *n* is 0, progress reporting is turned off. If this parameter is specified, it has to come right before the “name of the wiki” parameter.
+
 Example:
 
     idumps c enwiki 20130823 enwiki-20130823-pages-meta-history.xml sc sc.id

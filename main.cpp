@@ -12,6 +12,7 @@
 #include "XmlWriter.h"
 #include "Dump.h"
 #include "FetchText.h"
+#include "StringHelpers.h"
 #include "format.h"
 
 void printUsage()
@@ -174,6 +175,28 @@ void createDump(std::queue<std::string> &parameters)
     if (parameters.size() < 3 + 2)
         throw ParametersException("Not enough parameters.");
 
+    std::uint32_t reportPeriod = 10000;
+
+    if (parameters.front() == "--report")
+    {
+        parameters.pop();
+
+        bool success;
+        long parsed = tryParseLong(parameters.front(), success);
+
+        if (!success || parsed < 0 || parsed > 0xFFFFFFFF)
+        {
+            throw UserException(
+                str(fmt::Format("The value {0} is not valid report period.") << parameters.front()));
+        }
+
+        reportPeriod = parsed;
+        parameters.pop();
+    }
+
+    if (parameters.size() < 3 + 2)
+        throw ParametersException("Not enough parameters.");
+
     std::string name, timestamp;
     readNameAndTimestamp(parameters, name, timestamp);
 
@@ -184,7 +207,7 @@ void createDump(std::queue<std::string> &parameters)
 
     std::unique_ptr<CompositeWriter> writer(new CompositeWriter(writers));
 
-    ProgressWriterWrapper progressWriter(std::move(writer), 10000);
+    ProgressWriterWrapper progressWriter(std::move(writer), reportPeriod);
 
     if (inputFileName == "-")
     {
