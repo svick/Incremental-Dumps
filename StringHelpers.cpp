@@ -1,4 +1,6 @@
 #include "StringHelpers.h"
+#include "DumpException.h"
+#include "format.h"
 #include <sstream>
 
 // http://stackoverflow.com/a/236803/41071
@@ -20,6 +22,12 @@ std::vector<std::string> split(std::string s, char delim)
 
 long tryParseLong(const std::string &s, bool &success, int radix)
 {
+    if (errno != 0)
+    {
+        throw DumpException(
+            str(fmt::Format("errno was already set ({0}: {1})") << errno << strerror(errno)));
+    }
+
     char* end;
     const char* start = s.c_str();
     long result = strtol(start, &end, radix);
@@ -31,6 +39,7 @@ long tryParseLong(const std::string &s, bool &success, int radix)
     }
     else
     {
+        errno = 0;
         success = false;
         return 0;
     }

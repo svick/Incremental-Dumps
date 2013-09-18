@@ -149,10 +149,13 @@ void readNameAndTimestamp(std::queue<std::string> &parameters, std::string &name
 void createDumpCore(ProgressWriterWrapper& writer, std::istream& inputStream)
 {
     std::uint64_t i = 0;
-    std::function<void ()> offsetReportingFunction = [&]()
+    std::uint64_t totalRead = 0;
+    std::function<void(int)> offsetReportingFunction = [&](int read)
     {
+        totalRead += read;
+
         if (i % 100 == 0)
-            writer.ReportOffset(inputStream.tellg());
+            writer.ReportOffset(totalRead);
 
         i++;
     };
@@ -185,11 +188,13 @@ void createDump(std::queue<std::string> &parameters)
 
     if (inputFileName == "-")
     {
+        std::cin.exceptions(std::ios::failbit | std::ios::badbit);
         createDumpCore(progressWriter, std::cin);
     }
     else
     {
         std::ifstream stream(inputFileName, std::ios::binary);
+        stream.exceptions(std::ios::failbit | std::ios::badbit);
         createDumpCore(progressWriter, stream);
     }
 }
@@ -223,8 +228,7 @@ void updateDump(std::queue<std::string> &parameters)
     dumpBackupProcess.set_buffer_limit(exec_stream_t::s_out, 8192);
     dumpBackupProcess.start(phpPath, dumpBackupParameters + " --full --stub");
 
-    WrapperInputStream dumpBackupStream(dumpBackupProcess.out(),
-        [&]()
+    std::function<void()> progressForwardingFunction = [&]()
         {
             auto &stream = dumpBackupProcess.err();
             char buffer[1024];
@@ -234,7 +238,8 @@ void updateDump(std::queue<std::string> &parameters)
                 count = stream.readsome(buffer, 1024);
                 std::cerr.write(buffer, count);
             } while (count != 0);
-        });
+        };
+    WrapperInputStream dumpBackupStream(dumpBackupProcess.out(), progressForwardingFunction);
 
     XmlMediawikiProcessor::Process(&writer, dumpBackupStream);
 

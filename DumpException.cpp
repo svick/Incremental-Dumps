@@ -1,14 +1,22 @@
 #include "DumpException.h"
 
-UserException::UserException(const std::string &message)
+CustomException::CustomException(const std::string& message)
     : message(message)
 {}
 
-const char* UserException::what() const NOEXCEPT
+const char* CustomException::what() const NOEXCEPT
 {
     return message.c_str();
 }
 
-ParametersException::ParametersException(const std::string &message)
+DumpException::DumpException(const std::string& message)
+    : CustomException(message)
+{}
+
+UserException::UserException(const std::string& message)
+    : CustomException(message)
+{}
+
+ParametersException::ParametersException(const std::string& message)
     : UserException(message)
 {}

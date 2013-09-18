@@ -34,6 +34,7 @@ unique_ptr<iostream> WritableDump::openStream(string fileName)
 
     if (!stream->is_open())
     {
+        errno = 0;
         // this feels dangerous, isn't there a better way?
         stream = new fstream(fileName, ios::in | ios::out | ios::binary | ios::trunc);
     }

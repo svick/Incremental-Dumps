@@ -6,18 +6,24 @@ class WrapperInputStream : public XML::InputStream
 {
 private:
     std::istream &wrapped;
-    std::function<void()> sideAction;
+    std::function<void(int)> sideAction;
 public:
-    WrapperInputStream(std::istream &wrapped, std::function<void()> sideAction = nullptr)
+    WrapperInputStream(std::istream &wrapped, std::function<void()> sideAction)
+        : wrapped(wrapped), sideAction([=](int){ sideAction(); })
+    {}
+
+    WrapperInputStream(std::istream &wrapped, std::function<void(int)> sideAction = nullptr)
         : wrapped(wrapped), sideAction(sideAction)
     {}
 
     virtual int read(XML_Char *buf, size_t bufLen) OVERRIDE
     {
-        if (sideAction != nullptr)
-            sideAction();
-
         wrapped.read(buf, bufLen);
-        return wrapped.gcount();
+        auto count = wrapped.gcount();
+
+        if (sideAction != nullptr)
+            sideAction(count);
+
+        return count;
     }
 };
