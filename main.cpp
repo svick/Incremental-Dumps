@@ -211,13 +211,13 @@ void createDump(std::queue<std::string> &parameters)
 
     if (inputFileName == "-")
     {
-        std::cin.exceptions(std::ios::failbit | std::ios::badbit);
+        std::cin.exceptions(std::ios::badbit);
         createDumpCore(progressWriter, std::cin);
     }
     else
     {
         std::ifstream stream(inputFileName, std::ios::binary);
-        stream.exceptions(std::ios::failbit | std::ios::badbit);
+        stream.exceptions(std::ios::badbit);
         createDumpCore(progressWriter, stream);
     }
 }

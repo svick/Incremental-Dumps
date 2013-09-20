@@ -21,6 +21,13 @@ public:
         wrapped.read(buf, bufLen);
         auto count = wrapped.gcount();
 
+        if (!wrapped.good())
+        {
+            // failure that's not end of stream
+            if (!wrapped.eof() && wrapped.fail())
+                throw DumpException("Reading from stream failed.");
+        }
+
         if (sideAction != nullptr)
             sideAction(count);
 
