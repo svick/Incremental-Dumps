@@ -285,8 +285,33 @@ void applyDiff(std::string dumpFileName, std::string diffFileName)
     diffReader.Read();
 }
 
+#ifdef __GNUC__
+#include <execinfo.h>
+
+void terminate_handler()
+{
+    void** buffer = new void*[50];
+    int count = backtrace(buffer, 50);
+    backtrace_symbols_fd(buffer, count, STDERR_FILENO);
+
+    auto ptr = std::current_exception();
+    try
+    {
+        std::rethrow_exception(ptr);
+    }
+    catch (std::exception& p)
+    {
+        std::cerr << p.what() << "\n";
+    }
+}
+#endif
+
 int main(int argc, const char* argv[])
 {
+#ifdef __GNUC__
+    std::set_terminate(terminate_handler);
+#endif
+
     if (argc == 1)
     {
         printUsage();
