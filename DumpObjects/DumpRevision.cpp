@@ -117,14 +117,14 @@ void DumpRevision::WriteInternal()
     }
 }
 
-void DumpRevision::UpdateIndex(Offset offset, bool overwrite)
+void DumpRevision::UpdateIndex(bool overwrite)
 {
     auto dumpRef = dump.lock();
 
     if (overwrite)
-        dumpRef->revisionIdIndex->AddOrUpdate(revision.RevisionId, offset);
+        dumpRef->revisionIdIndex->AddOrUpdate(revision.RevisionId, savedOffset);
     else
-        dumpRef->revisionIdIndex->Add(revision.RevisionId, offset);
+        dumpRef->revisionIdIndex->Add(revision.RevisionId, savedOffset);
 
     dumpRef->textGroupsManager->WriteTextGroupIfFull(diffWriter);
 }
@@ -144,7 +144,7 @@ std::uint32_t DumpRevision::NewLength()
 
 DumpRevision::DumpRevision(std::weak_ptr<WritableDump> dump, std::uint32_t revisionId)
     : DumpObject(dump), revision(), modelFormatId(), textGroupId(0), textId(0), textSaved(false),
-        isModelFormatIdNew(false), wasLoaded(true), textUnloaded(false), diffWriter(), forceDiff(false)
+        isModelFormatIdNew(false), wasLoaded(true), diffWriter(), forceDiff(false)
 {
     withText = IsPages(dump.lock()->fileHeader.Kind);
     Load(revisionId);

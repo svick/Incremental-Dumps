@@ -3,9 +3,15 @@
 #include "IDumpWriter.h"
 #include "../common.h"
 
+/**
+ * Base class for writer wrappers: writers that wrap another wrapper and usually limit which pages and revisions it receives.
+ */
 class WriterWrapper : public IDumpWriter
 {
 protected:
+    /**
+     * The wrapped writer
+     */
     std::unique_ptr<IDumpWriter> wrapped;
 public:
     WriterWrapper(std::unique_ptr<IDumpWriter> wrapped)

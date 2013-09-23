@@ -15,6 +15,8 @@
 #include "StringHelpers.h"
 #include "format.h"
 
+/** @file */
+
 void printUsage()
 {
     std::cout << "Usage:\n";
@@ -33,6 +35,13 @@ void printUsage()
     std::cout << "creating dump: idumps c[reate] name timestamp source.xml spec dump.id ...\n";
 }
 
+/**
+ * Creates an IDumpWriter from command line parameters.
+ *
+ * @param parameters Collection of remaining command line parameters. This method consumes the parameters it needs from it.
+ * @param name Name of the dump
+ * @param timestamp Timestamp of the dump
+ */
 std::unique_ptr<IDumpWriter> createWriter(std::queue<std::string> &parameters, const std::string &name, const std::string &timestamp)
 {
     if (parameters.size() < 2)
@@ -118,6 +127,13 @@ std::unique_ptr<IDumpWriter> createWriter(std::queue<std::string> &parameters, c
     return writer;
 }
 
+/**
+ * Creates a collection of IDumpWriter from command line parameters.
+ *
+ * @param parameters Collection of remaining command line parameters. This method tries to consume all the parameters in it.
+ * @param name Name of the dump
+ * @param timestamp Timestamp of the dump
+ */
 std::vector<std::unique_ptr<IDumpWriter>> createWriters(std::queue<std::string> &parameters, const std::string &name, const std::string &timestamp)
 {
     std::vector<std::unique_ptr<IDumpWriter>> writers;
@@ -132,6 +148,11 @@ std::vector<std::unique_ptr<IDumpWriter>> createWriters(std::queue<std::string> 
     return writers;
 }
 
+/**
+ *  Reads and verifies dump name and timestamp parameters from the parameters collection.
+ *
+ * @param parameters Collection of remaining command line parameters. This method consumes two parameters from it.
+ */
 void readNameAndTimestamp(std::queue<std::string> &parameters, std::string &name, std::string &timestamp)
 {
     name = parameters.front();
@@ -147,6 +168,11 @@ void readNameAndTimestamp(std::queue<std::string> &parameters, std::string &name
         throw ParametersException("The timestamp can't be empty.");
 }
 
+/**
+ * Helper function for createDump().
+ *
+ * Reads XML from @a inputStream and writes it to @a writer.
+ */
 void createDumpCore(ProgressWriterWrapper& writer, std::istream& inputStream)
 {
     std::uint64_t i = 0;
@@ -170,6 +196,11 @@ void createDumpCore(ProgressWriterWrapper& writer, std::istream& inputStream)
     writer.Complete();
 }
 
+/**
+ * Creates or updates incremental dump (or dumps) from XML dump.
+ *
+ * @param parameters Collection of command line parameters
+ */
 void createDump(std::queue<std::string> &parameters)
 {
     if (parameters.size() < 3 + 2)
@@ -205,7 +236,7 @@ void createDump(std::queue<std::string> &parameters)
 
     auto writers = createWriters(parameters, name, timestamp);
 
-    std::unique_ptr<CompositeWriter> writer(new CompositeWriter(writers));
+    std::unique_ptr<CompositeWriter> writer(new CompositeWriter(std::move(writers)));
 
     ProgressWriterWrapper progressWriter(std::move(writer), reportPeriod);
 
@@ -222,6 +253,11 @@ void createDump(std::queue<std::string> &parameters)
     }
 }
 
+/**
+ * Creates or updates incremental dumps from MediaWiki.
+ *
+ * @param parameters Collection of command line parameters
+ */
 void updateDump(std::queue<std::string> &parameters)
 {
     if (parameters.size() < 5 + 2)
@@ -243,7 +279,7 @@ void updateDump(std::queue<std::string> &parameters)
 
     FetchText fetchText(std::unique_ptr<exec_stream_t>(new exec_stream_t(phpPath, fetchTextParameters)));
 
-    CompositeWriter writer(writers, [&](int textId) { return fetchText.GetText(textId); });
+    CompositeWriter writer(std::move(writers), [&](int textId) { return fetchText.GetText(textId); });
 
     writer.SetDumpKind(DumpKind::None);
 
@@ -269,6 +305,12 @@ void updateDump(std::queue<std::string> &parameters)
     writer.Complete();
 }
 
+/**
+ * Reads incremental dump and writes its contents as a XML dump file.
+ *
+ * @param dumpFileName Path to the incremental dump file to be read
+ * @param outputFileName Path to the XML dump file to be written
+ */
 void readDump(std::string dumpFileName, std::string outputFileName)
 {
     auto dump = WritableDump::Create(dumpFileName);
@@ -276,6 +318,12 @@ void readDump(std::string dumpFileName, std::string outputFileName)
     XmlWriter::WriteDump(dump, outputFileName);
 }
 
+/**
+ * Applies diff dump to incremental dump.
+ *
+ * @param dumpFileName Path to the incremental dump file to be updated
+ * @param diffFileName Path to the diff dump file
+ */
 void applyDiff(std::string dumpFileName, std::string diffFileName)
 {
     auto dump = WritableDump::Create(dumpFileName);
@@ -288,6 +336,11 @@ void applyDiff(std::string dumpFileName, std::string diffFileName)
 #ifdef __GNUC__
 #include <execinfo.h>
 
+/**
+ * Function for better reporting of unhandled exceptions in GCC.
+ *
+ * Code from http://stackoverflow.com/a/18878080/41071.
+ */
 void terminate_handler()
 {
     void** buffer = new void*[50];

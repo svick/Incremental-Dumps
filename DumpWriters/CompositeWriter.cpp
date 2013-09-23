@@ -1,6 +1,10 @@
 #include "CompositeWriter.h"
 #include "../DumpException.h"
 
+CompositeWriter::CompositeWriter(std::vector<std::unique_ptr<IDumpWriter>> writers, std::function<std::string(std::uint32_t)> getTextFunction)
+    : writers(std::move(writers)), getTextFunction(getTextFunction)
+{}
+
 void CompositeWriter::StartPage(const std::shared_ptr<const Page> page, bool titleWithNamespace)
 {
     for (auto &writer : writers)

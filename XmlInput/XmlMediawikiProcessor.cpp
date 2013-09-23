@@ -3,14 +3,13 @@
 #include "XmlSiteInfoProcessor.h"
 #include "../XML/xmlfile.h"
 
-void mediawikiHandler(XML::Element &elem, void *userData)
+void XmlMediawikiProcessor::Handler(XML::Element &elem, void *userData)
 {
     auto writer = (IDumpWriter*)userData;
 
     std::string lang = elem.GetAttribute("xml:lang");
 
-    XmlSiteInfoProcessor siteInfoProcessor(writer);
-    siteInfoProcessor.siteInfo->Lang = lang;
+    XmlSiteInfoProcessor siteInfoProcessor(writer, lang);
 
     XML::Handler handlers[] = {
         XML::Handler("page", XmlPageProcessor::Handler),
@@ -26,7 +25,7 @@ void XmlMediawikiProcessor::Process(IDumpWriter *writer, XML::InputStream &input
     XML::Input input(inputStream);
 
     XML::Handler handlers[] = {
-        XML::Handler(mediawikiHandler),
+        XML::Handler(Handler),
         XML::Handler::END
     };
 

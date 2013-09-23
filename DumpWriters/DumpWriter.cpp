@@ -120,6 +120,7 @@ void DumpWriter::EndPage()
 
     if (diffWriter != nullptr)
         diffWriter->EndPage();
+
     page = nullptr;
 }
 

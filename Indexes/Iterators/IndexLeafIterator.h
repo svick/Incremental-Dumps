@@ -6,6 +6,11 @@
 using std::pair;
 using std::map;
 
+/**
+ * Iterator for IndexLeafNode.
+ *
+ * Acts as a wrapper for iterator of @c std::map.
+ */
 template<typename TKey, typename TValue>
 class IndexLeafIterator : public IndexNodeIterator<TKey, TValue>
 {

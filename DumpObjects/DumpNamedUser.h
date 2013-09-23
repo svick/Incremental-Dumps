@@ -3,14 +3,17 @@
 #include "DumpUser.h"
 #include "../Objects/NamedUser.h"
 
+/**
+ * Represents NamedUser on the disk.
+ */
 class DumpNamedUser : public DumpUser
 {
+private:
+    shared_ptr<NamedUser> user;
 protected:
     virtual void WriteInternal();
 public:
     static unique_ptr<DumpUser> Read(istream &stream);
-
-    shared_ptr<NamedUser> user;
 
     DumpNamedUser(shared_ptr<NamedUser> user);
 

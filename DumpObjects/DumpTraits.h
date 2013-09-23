@@ -19,31 +19,53 @@ using std::istream;
 using std::ostream;
 using std::vector;
 
+/**
+ * Template used for reading and writing of various data types to the dump.
+ *
+ * This template has specializations for all types that can be read and written to the dump.
+ * The second template parameter is for conditions (e.g. using @c std::enable_if).
+ *
+ * @tparam T The type that is read and written by this template.
+ */
 template<typename T, typename = void>
 class DumpTraits
 {
 public:
+    /**
+     * Reads the given type from the stream and returns it.
+     */
     static T Read(istream &stream)
     {
         return T::Read(stream);
     }
 
-    static void Write(ostream &stream, const T value)
+    /**
+     * Writes the given value to the stream.
+     */
+    static void Write(ostream &stream, const T& value)
     {
         value.Write(stream);
     }
 
-    static uint32_t DumpSize()
-    {
-        return T::DumpSize();
-    }
-
-    static uint32_t DumpSize(const T value)
+    /**
+     * Returns the size the given value will have when written.
+     */
+    static uint32_t DumpSize(const T& value)
     {
         return DumpSize();
     }
 };
 
+/**
+ * Helper template for reading and writing of numeric types to the dump.
+ *
+ * This is not simply a specialization of DumpTraits, because of the @a Size template parameter.
+ * This parameter is used for example in DumpTraits<Offset>.
+ *
+ * A specialization fo DumpTraits is created by inheriting from this template.
+ *
+ * @tparam Size How many bytes will this type occupy on disk.
+ */
 template<
     typename T,
     uint32_t Size = sizeof(T),
@@ -89,10 +111,28 @@ class DumpTraits<T, typename std::enable_if<std::is_integral<T>::value>::type>
     : public DumpTraitsNumeric<T>
 {};
 
+/**
+ * Specializations of this template are used for converting from one type another before writing to the dump
+ * (and vice versa after reading).
+ *
+ * Each specialization has three members:
+ * - Member type @c Target, which specifies to what type is this type converted before saving
+ * - Function <tt>static Target Convert(const Source)</tt>
+ * - Function <tt>static Source ConvertBack(const Target)</tt>
+ *
+ * @tparam Source The type that is converted by this template.
+ */
 template<typename Source>
 class DumpConverter
 {};
 
+/**
+ * Helper template for reading and writing of types that have to be converted.
+ *
+ * A specialization fo DumpTraits is created by inheriting from this template.
+ *
+ * @tparam TargetTraits The DumpTraits type that will be used to read and write the converted value.
+ */
 template<
     typename T,
     typename TargetTraits = DumpTraits<typename DumpConverter<T>::Target>>
@@ -105,13 +145,13 @@ public:
         return DumpConverter<T>::ConvertBack(target);
     }
 
-    static void Write(ostream &stream, const T value)
+    static void Write(ostream &stream, const T& value)
     {
         auto target = DumpConverter<T>::Convert(value);
         TargetTraits::Write(stream, target);
     }
 
-    static uint32_t DumpSize(const T value = T())
+    static uint32_t DumpSize(const T& value = T())
     {
         auto target = DumpConverter<T>::Convert(value);
         return TargetTraits::DumpSize(target);
@@ -191,6 +231,12 @@ public:
     }
 };
 
+/**
+ * The methods for this specialization come in two variants: normal (short) and long.
+ *
+ * The short variants are for strings of up to 255 bytes.
+ * The long variants are for strings of up to 4 GB.
+ */
 template<>
 class DumpTraits<std::string>
 {
@@ -220,7 +266,7 @@ public:
         return ReadCore(stream, count);
     }
 
-    static void Write(ostream &stream, const string value)
+    static void Write(ostream &stream, const string& value)
     {
         auto length = value.length();
 
@@ -236,7 +282,7 @@ public:
         }
     }
 
-    static void WriteLong(ostream &stream, const string value)
+    static void WriteLong(ostream &stream, const string& value)
     {
         auto length = value.length();
 
@@ -250,12 +296,12 @@ public:
         stream.write(value.data(), length);
     }
 
-    static uint32_t DumpSize(const string value)
+    static uint32_t DumpSize(const string& value)
     {
         return DumpTraits<uint8_t>::DumpSize(value.length()) + value.length();
     }
 
-    static uint32_t DumpSizeLong(const string value)
+    static uint32_t DumpSizeLong(const string& value)
     {
         return DumpTraits<uint32_t>::DumpSize(value.length()) + value.length();
     }

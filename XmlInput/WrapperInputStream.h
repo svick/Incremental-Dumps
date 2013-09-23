@@ -2,16 +2,26 @@
 #include <functional>
 #include "../XML/xmlfile.h"
 
+/**
+ * An InputStream wrapper for a @c std::istream.
+ */
 class WrapperInputStream : public XML::InputStream
 {
 private:
     std::istream &wrapped;
     std::function<void(int)> sideAction;
 public:
+    /**
+     * @param sideAction A function that is executed after each read.
+     */
     WrapperInputStream(std::istream &wrapped, std::function<void()> sideAction)
         : wrapped(wrapped), sideAction([=](int){ sideAction(); })
     {}
 
+    /**
+     * @param sideAction A function that is executed after each read.
+     *                   Its paramer is the number of bytes read.
+     */
     WrapperInputStream(std::istream &wrapped, std::function<void(int)> sideAction = nullptr)
         : wrapped(wrapped), sideAction(sideAction)
     {}

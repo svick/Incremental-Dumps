@@ -4,6 +4,9 @@
 #include <string>
 #include "common.h"
 
+/**
+ * Abstract base class for exceptions thrown by this application.
+ */
 class CustomException : public std::exception
 {
 private:
@@ -18,22 +21,29 @@ public:
     {}
 };
 
+/**
+ * Exception that most likely indicates a bug in the application.
+ */
 class DumpException : public CustomException
 {
 public:
     DumpException(const std::string& message = std::string());
 };
 
-// exception that was most likely caused by user error
-// and should be shown directly to the user
+/**
+* Exception that was most likely caused by user error
+* and should be shown directly to the user.
+*/
 class UserException : public CustomException
 {
 public:
     UserException(const std::string& message);
 };
 
-// user exception that was caused by invalid parameters,
-// should be shown to the user along with parameter usage
+/**
+* UserException that was caused by invalid parameters,
+* should be shown to the user along with parameter usage.
+*/
 class ParametersException : public UserException
 {
 public:

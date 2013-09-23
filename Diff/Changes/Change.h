@@ -2,6 +2,11 @@
 
 #include "../../DumpObjects/DumpObject.h"
 
+/** @file */
+
+/**
+ * The type of change in diff dump.
+ */
 enum class ChangeKind : std::uint8_t
 {
     SiteInfo          = 0x01,
@@ -20,9 +25,16 @@ enum class ChangeKind : std::uint8_t
     TextGroup         = 0x40
 };
 
+/**
+ * Represents a change that can be applied to dump.
+ * This is the basic unit of diff dumps.
+ */
 class Change : public DumpObjectBase
 {
 public:
+    /**
+     * Writes this change to the @a stream.
+     */
     void Write(std::ostream *stream);
 
     virtual ~Change() {}

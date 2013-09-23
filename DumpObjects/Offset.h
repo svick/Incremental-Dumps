@@ -1,12 +1,14 @@
 #pragma once
 
 #include <cstdint>
-#include <iostream>
 
 using std::uint64_t;
-using std::istream;
-using std::ostream;
 
+/**
+ * Represents an offset into the dump file.
+ *
+ * Is saved as 6-byte integer on disk,
+ */
 class Offset
 {
 public:

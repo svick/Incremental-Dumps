@@ -45,10 +45,10 @@ void DumpObject::Write()
     savedOffset = newOffset;
     savedLength = newLength;
 
-    UpdateIndex(newOffset, overwriteIndex);
+    UpdateIndex(overwriteIndex);
 }
 
-void DumpObject::UpdateIndex(Offset offset, bool overwrite)
+void DumpObject::UpdateIndex(bool overwrite)
 {}
 
 uint64_t DumpObject::SavedOffset() const

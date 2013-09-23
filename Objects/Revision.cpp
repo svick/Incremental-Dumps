@@ -22,7 +22,7 @@ Revision::Revision()
     : Flags(), RevisionId(), TextId(), ParentId(), DateTime(), Contributor(), Comment(), textSet(false)
 {}
 
-std::string Revision::GetText(bool canUseCompressed)
+std::string Revision::GetText()
 {
     if (textSet)
         return text;
@@ -45,11 +45,6 @@ void Revision::SetText(const std::string &text)
 void Revision::SetGetText(std::function<std::string()> getTextFunction)
 {
     this->getTextFunction = getTextFunction;
-}
-
-bool Revision::HasTextSet() const
-{
-    return textSet || getTextFunction != nullptr;
 }
 
 bool operator ==(const Revision &first, const Revision &second)

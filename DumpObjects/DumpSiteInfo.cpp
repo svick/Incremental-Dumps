@@ -13,11 +13,11 @@ void DumpSiteInfo::WriteInternal()
     WriteCore(*stream, siteInfo);
 }
 
-void DumpSiteInfo::UpdateIndex(Offset offset, bool overwrite)
+void DumpSiteInfo::UpdateIndex(bool overwrite)
 {
     auto dumpRef = dump.lock();
 
-    dumpRef->fileHeader.SiteInfo = offset;
+    dumpRef->fileHeader.SiteInfo = savedOffset;
     dumpRef->fileHeader.Write();
 }
 
@@ -62,7 +62,7 @@ std::uint32_t DumpSiteInfo::NewLength()
 {
     uint32_t length = ValueSize(DumpObjectKind::SiteInfo) + ValueSize(name) + ValueSize(timestamp) + LengthCore(siteInfo);
 
-    // allocate more than necessary, so that reallocation isn't necessary when site info changes slightly
+    // allocate more than necessary, so that reallocation isn't required when site info changes slightly
     const uint32_t rounding = 100;
 
     return (length + rounding - 1) / rounding * rounding;

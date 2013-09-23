@@ -41,7 +41,7 @@ void TextGroupsManager::EndGroup(DiffWriter* diffWriter)
         currentGroup->Write();
 
     if (diffWriter != nullptr)
-        diffWriter->SetTextGroup(currentGroup->compressedTexts);
+        diffWriter->SetTextGroup(currentGroup->GetCompressedTexts());
 
     currentGroup = nullptr;
     textGroupModified = false;

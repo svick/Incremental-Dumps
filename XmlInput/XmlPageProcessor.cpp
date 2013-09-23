@@ -44,6 +44,8 @@ void XmlPageProcessor::Handler(XML::Element &elem, void *userData)
 
 void XmlPageProcessor::ProcessRevision(const shared_ptr<const Revision> revision)
 {
+    // this is the first chance when it's known for sure that all page data are read
+    // which means that the page can be written
     writePage();
     dumpWriter->AddRevision(revision);
 }

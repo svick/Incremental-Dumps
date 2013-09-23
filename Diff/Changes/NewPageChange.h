@@ -3,9 +3,17 @@
 #include "Change.h"
 #include "../../Objects/Page.h"
 
+/**
+ * A change that represents adding a new page to the dump.
+ *
+ * Following revision changes belong to this page.
+ */
 class NewPageChange : public Change
 {
 public:
+    /**
+     * The added page.
+     */
     Page page;
 
     NewPageChange(const Page &page)

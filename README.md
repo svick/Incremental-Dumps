@@ -4,7 +4,7 @@
 
 ### Linux
 
-You will need cmake 2.8 and gcc 4.8 (gcc 4.7 could work too, I haven't tested that).
+You will need cmake 2.8 and GCC 4.6 or newer.
 To compile this project, run:
 
     cmake .

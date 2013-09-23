@@ -3,6 +3,15 @@
 #include <map>
 #include "IndexNode.h"
 
+/**
+ * Inner node in the B-tree of an Index.
+ *
+ * Contains *n* #keys and *n*+1 #childOffsets.
+ *
+ * For all keys *x* in child node at position *i*, the following holds:
+ *
+ *     keys[i-1] <= x < keys[i]
+ */
 template<typename TKey, typename TValue>
 class IndexInnerNode : public IndexNode<TKey, TValue>
 {
@@ -13,21 +22,53 @@ class IndexInnerNode : public IndexNode<TKey, TValue>
 
     using DumpObjectBase::WriteValue;
 private:
+    /**
+     * Contains keys for this node.
+     */
     std::vector<TKey> keys;
+    /**
+     * Contains offsets where child nodes of this node are located.
+     */
     std::vector<Offset> childOffsets;
+    /**
+     * Cache of child nodes that were recently accessed,
+     * so that they don't have to be read and written to the disk over and over.
+     */
     std::vector<std::unique_ptr<IndexNode<TKey, TValue>>> cachedChildren;
 
+    /**
+     * Creates a new empty inner node.
+     */
+    IndexInnerNode(std::weak_ptr<WritableDump> dump);
+
+    /**
+     * Returns pointer to child node at given @a index.
+     * If the child node is not in #cachedChildren, it's loaded from disk.
+     */
     IndexNode<TKey, TValue>* GetChildByIndex(std::uint16_t index);
+    /**
+     * Returns the index of the child node that could contain the value for the given @a key.
+     * (The returned index has no relation with the Index type.)
+     */
     std::uint16_t GetKeyIndex(TKey key);
 
+    /**
+     * Maintains invariants of B-tree after an update.
+     *
+     * This is done by splitting the updated node if it's too big.
+     *
+     * @param updatedChildIndex The index of the child node that was updated.
+     */
     void AfterAdd(std::uint16_t updatedChildIndex);
-
 protected:
     virtual void WriteInternal() OVERRIDE;
 public:
     static std::unique_ptr<IndexNode<TKey, TValue>> Read(std::weak_ptr<WritableDump> dump, std::istream &stream);
 
-    IndexInnerNode(std::weak_ptr<WritableDump> dump);
+    /**
+     * Creates a new root node for an index,
+     * its children are the results of splitting the former root node.
+     */
     IndexInnerNode(std::weak_ptr<WritableDump> dump, SplitResult splitResult);
 
     virtual void Write() OVERRIDE;

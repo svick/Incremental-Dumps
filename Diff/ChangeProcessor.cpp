@@ -21,7 +21,7 @@ ChangeProcessor::ChangeProcessor(std::shared_ptr<WritableDump> dump)
 void ChangeProcessor::Process(SiteInfoChange change)
 {
     dump->siteInfo->CheckName(change.name);
-    dump->siteInfo->CheckTimestamp(change.oldTimestamp);
+    dump->siteInfo->CheckTimestamp(change.oldTimestamp, false);
 
     dump->siteInfo->timestamp = change.newTimestamp;
 

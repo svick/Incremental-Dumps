@@ -2,9 +2,15 @@
 
 #include "Change.h"
 
+/**
+ * A change that represents deleting a page, but without deleting its revisions.
+ */
 class PartialDeletePageChange : public Change
 {
 public:
+    /**
+     * The ID of the deleted page.
+     */
     std::uint32_t pageId;
 
     PartialDeletePageChange(std::uint32_t pageId)

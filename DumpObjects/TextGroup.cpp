@@ -69,14 +69,14 @@ void TextGroup::WriteInternal()
     DumpTraits<std::string>::WriteLong(*stream, compressedTexts);
 }
 
-void TextGroup::UpdateIndex(Offset offset, bool overwrite)
+void TextGroup::UpdateIndex(bool overwrite)
 {
     auto dumpRef = dump.lock();
 
     if (overwrite)
-        dumpRef->textGroupIdIndex->AddOrUpdate(textGroupId, offset);
+        dumpRef->textGroupIdIndex->AddOrUpdate(textGroupId, savedOffset);
     else
-        dumpRef->textGroupIdIndex->Add(textGroupId, offset);
+        dumpRef->textGroupIdIndex->Add(textGroupId, savedOffset);
 }
 
 TextGroup::TextGroup(std::weak_ptr<WritableDump> dump, std::uint32_t textGroupId)
@@ -154,6 +154,11 @@ void TextGroup::SetCompressedTexts(const std::string& newCompressedTexts)
         throw DumpException();
 
     compressedTexts = newCompressedTexts;
+}
+
+const std::string& TextGroup::GetCompressedTexts() const
+{
+    return compressedTexts;
 }
 
 bool TextGroup::IsEmpty() const

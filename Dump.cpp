@@ -19,7 +19,7 @@ ReadableDump::ReadableDump(unique_ptr<iostream> stream)
     : stream(move(stream))
 {}
 
-ReadableDump::ReadableDump(string fileName)
+ReadableDump::ReadableDump(const std::string& fileName)
     : stream(unique_ptr<fstream>(new fstream(fileName, ios::in | ios::binary)))
 {}
 
@@ -44,7 +44,7 @@ unique_ptr<iostream> WritableDump::openStream(string fileName)
     return unique_ptr<iostream>(stream);
 }
 
-WritableDump::WritableDump(string fileName)
+WritableDump::WritableDump(const std::string& fileName)
     : ReadableDump(openStream(fileName))
 {}
 

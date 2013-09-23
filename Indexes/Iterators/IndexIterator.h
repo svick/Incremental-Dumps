@@ -9,6 +9,15 @@ using std::pair;
 using std::iterator;
 using std::input_iterator_tag;
 
+/**
+ * Forward input iterator of items in an Index.
+ *
+ * Dereferencing the iterator returns a pair containing key and the corresponding value.
+ * The pairs are sorted by their key, ascending.
+ *
+ * This class exists to wrap pointer to IndexNodeIterator.
+ * Pointer has to be used because of inheritance.
+ */
 template<typename TKey, typename TValue>
 class IndexIterator : public iterator<input_iterator_tag, const pair<TKey, TValue>, int32_t>
 {
@@ -17,6 +26,11 @@ class IndexIterator : public iterator<input_iterator_tag, const pair<TKey, TValu
 private:
     std::unique_ptr<IndexNodeIterator<TKey, TValue>> nodeIterator;
 
+    /**
+     * How many increments were made recently.
+     *
+     * This counter is used to call IndexNodeIterator::ClearNodeCacheIfTooBig() from time to time.
+     */
     std::uint32_t recentIncrements;
 
     IndexIterator(std::unique_ptr<IndexNodeIterator<TKey, TValue>> nodeIterator);

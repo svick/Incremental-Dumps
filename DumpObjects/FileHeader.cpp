@@ -12,7 +12,7 @@ FileHeader::FileHeader(
     Offset fileEnd, Offset pageIdIndexRoot, Offset revisionIdIndexRoot,
     Offset textGroupIdIndexRoot, Offset modelFormatIndexRoot,
     Offset freeSpaceIndexRoot, Offset siteInfo, std::weak_ptr<WritableDump> dump)
-    : Kind(kind), DumpObject(dump), FileEnd(fileEnd), PageIdIndexRoot(pageIdIndexRoot), RevisionIdIndexRoot(revisionIdIndexRoot),
+    : DumpObject(dump), Kind(kind), FileEnd(fileEnd), PageIdIndexRoot(pageIdIndexRoot), RevisionIdIndexRoot(revisionIdIndexRoot),
         TextGroupIdIndexRoot(textGroupIdIndexRoot), ModelFormatIndexRoot(modelFormatIndexRoot),
         FreeSpaceIndexRoot(freeSpaceIndexRoot), SiteInfo(siteInfo)
 {}

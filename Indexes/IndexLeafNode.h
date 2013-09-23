@@ -3,6 +3,11 @@
 #include <map>
 #include "IndexNode.h"
 
+/**
+ * Leaf node in the B-tree of an Index.
+ *
+ * Contains a simple map between keys and values.
+ */
 template<typename TKey, typename TValue>
 class IndexLeafNode : public IndexNode<TKey, TValue>
 {

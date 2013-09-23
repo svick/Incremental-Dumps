@@ -3,14 +3,17 @@
 #include "DumpUser.h"
 #include "../Objects/IpV6User.h"
 
+/**
+ * Represents IpV6User on the disk.
+ */
 class DumpIpV6User : public DumpUser
 {
+private:
+    shared_ptr<IpV6User> user;
 protected:
     virtual void WriteInternal();
 public:
     static unique_ptr<DumpUser> Read(istream &stream);
-
-    shared_ptr<IpV6User> user;
 
     DumpIpV6User(shared_ptr<IpV6User> user);
 

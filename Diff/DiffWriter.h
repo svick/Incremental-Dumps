@@ -8,6 +8,9 @@
 #include "../Objects/SiteInfo.h"
 #include "../DumpKind.h"
 
+/**
+ * Writes changes generated from updating a dump to diff dump.
+ */
 class DiffWriter
 {
 private:
@@ -23,14 +26,28 @@ private:
     const std::string oldTimestamp;
     const std::string newTimestamp;
 
+    /**
+     * Queue of changes to be written.
+     *
+     * Changes have to be queued,
+     * so that each DiffTextGroup could be placed before the changes that reference it.
+     */
     std::queue<std::unique_ptr<Change>> changeQueue;
 
+    /**
+     * Writes the current page to the diff dump, if it wasn't written there yet.
+     */
     void EnsurePageWritten();
 
-    // either saves the change directly, or adds it to queue
+    /**
+     * Either saves the change directly, or adds it to queue
+     */
     template <typename TChange>
     void Process(TChange &change);
 
+    /**
+     * Reads all changes from #changeQueue and writes them to the diff dump.
+     */
     void HandleQueue();
 public:
     DiffWriter(const std::string &fileName, const std::string &name, const std::string &oldTimestamp, const std::string &newTimestamp);
@@ -39,7 +56,6 @@ public:
 
     void StartNewPage(const Page &page);
     void StartExistingPage(const Page &oldPage, const Page &newPage);
-    // if it's known that the page itself didn't change
     void StartExistingPage(std::uint32_t pageId);
     
     void NewModelFormat(std::uint8_t id, const std::string &model, const std::string &format);
@@ -55,5 +71,8 @@ public:
 
     void SetTextGroup(const std::string& compressedTexts);
 
+    /**
+     * Completes writing to the diff dump.
+     */
     void Complete();
 };

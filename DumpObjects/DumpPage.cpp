@@ -34,7 +34,10 @@ Page DumpPage::Read(shared_ptr<WritableDump> dump, Offset offset)
     if (kind != (uint8_t)DumpObjectKind::Page)
         throw new DumpException();
 
-    return ReadCore(stream, true);
+    auto page = ReadCore(stream);
+    page.RevisionIds = DumpTraits<std::set<std::uint32_t>>::Read(stream);
+
+    return page;
 }
 
 void DumpPage::Write()
@@ -61,22 +64,25 @@ void DumpPage::WriteDiff(DiffWriter &diffWriter)
 void DumpPage::WriteInternal()
 {
     WriteValue((uint8_t)DumpObjectKind::Page);
-    WriteCore(*stream, page, true);
+    WriteCore(*stream, page);
+    WriteValue(page.RevisionIds);
 }
 
-void DumpPage::UpdateIndex(Offset offset, bool overwrite)
+void DumpPage::UpdateIndex(bool overwrite)
 {
     auto dumpRef = dump.lock();
 
     if (overwrite)
-        dumpRef->pageIdIndex->AddOrUpdate(page.PageId, offset);
+        dumpRef->pageIdIndex->AddOrUpdate(page.PageId, savedOffset);
     else
-        dumpRef->pageIdIndex->Add(page.PageId, offset);
+        dumpRef->pageIdIndex->Add(page.PageId, savedOffset);
 }
 
 uint32_t DumpPage::NewLength()
 {
-    return ValueSize((uint8_t)DumpObjectKind::Page) + LengthCore(page, true);
+    return ValueSize((uint8_t)DumpObjectKind::Page)
+        + LengthCore(page)
+        + ValueSize(page.RevisionIds);
 }
 
 DumpPage::DumpPage(weak_ptr<WritableDump> dump, uint32_t pageId)
@@ -95,7 +101,7 @@ DumpPage::DumpPage(weak_ptr<WritableDump> dump, Offset offset)
     savedLength = NewLength();
 }
 
-Page DumpPage::ReadCore(std::istream &stream, bool includeRevisionIds)
+Page DumpPage::ReadCore(std::istream &stream)
 {
     Page page;
 
@@ -103,26 +109,20 @@ Page DumpPage::ReadCore(std::istream &stream, bool includeRevisionIds)
     page.Namespace = DumpTraits<std::int16_t>::Read(stream);
     page.Title = DumpTraits<std::string>::Read(stream);
     page.RedirectTarget = DumpTraits<std::string>::Read(stream);
-    if (includeRevisionIds)
-        page.RevisionIds = DumpTraits<std::set<std::uint32_t>>::Read(stream);
 
     return page;
 }
 
-void DumpPage::WriteCore(std::ostream &stream, const Page &page, bool includeRevisionIds)
+void DumpPage::WriteCore(std::ostream &stream, const Page &page)
 {
     WriteValue(stream, page.PageId);
     WriteValue(stream, page.Namespace);
-    // TODO: remove namespace from title for saving
     WriteValue(stream, page.Title);
     WriteValue(stream, page.RedirectTarget);
-    if (includeRevisionIds)
-        WriteValue(stream, page.RevisionIds);
 }
 
-std::uint32_t DumpPage::LengthCore(const Page &page, bool includeRevisionIds)
+std::uint32_t DumpPage::LengthCore(const Page &page)
 {
     return ValueSize(page.PageId)
-        + ValueSize(page.Namespace) + ValueSize(page.Title) + ValueSize(page.RedirectTarget)
-        + (includeRevisionIds ? ValueSize(page.RevisionIds) : 0);
+        + ValueSize(page.Namespace) + ValueSize(page.Title) + ValueSize(page.RedirectTarget);
 }

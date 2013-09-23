@@ -2,9 +2,12 @@
 
 #include <cstdint>
 
-using std::uint8_t;
+/** @file */
 
-enum class DumpObjectKind : uint8_t
+/**
+ * The type of object in dump.
+ */
+enum class DumpObjectKind : std::uint8_t
 {
     IndexLeafNode  = 0x01,
     IndexInnerNode = 0x02,
