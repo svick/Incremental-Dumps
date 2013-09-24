@@ -25,7 +25,7 @@ private:
 
     void EnsureCompressed();
     void Load();
-    std::vector<std::string> Read(Offset offset);
+    std::vector<std::string> Read(Offset offset, std::uint32_t& length);
 
     bool IsEmpty() const;
 

@@ -34,15 +34,13 @@ void TextGroup::Load()
     }
     else
     {
-        texts = Read(revisionOffset);
-
+        texts = Read(revisionOffset, savedLength);
         savedOffset = revisionOffset.value;
-        savedLength = NewLength();
         isEditable = false;
     }
 }
 
-std::vector<std::string> TextGroup::Read(Offset offset)
+std::vector<std::string> TextGroup::Read(Offset offset, std::uint32_t& length)
 {
     auto &stream = *(dump.lock()->stream);
     stream.seekp(offset.value);
@@ -57,6 +55,9 @@ std::vector<std::string> TextGroup::Read(Offset offset)
 
     auto compressed = DumpTraits<std::string>::ReadLong(stream);
     auto textsString = SevenZip::Decompress(compressed);
+
+    length = (std::uint64_t)stream.tellp() - offset.value;
+
     return split(textsString, '\0');
 }
 

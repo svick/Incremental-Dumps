@@ -5,7 +5,7 @@
 /**
  * A change that represents deleting a revision.
  *
- * In the (probably impossible) case when a revision is deleted but its page isn't,
+ * In the case when a revision is deleted but its page isn't,
  * this change has to follow the corresponding page change.
  */
 class DeleteRevisionChange : public Change

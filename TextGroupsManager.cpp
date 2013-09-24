@@ -37,11 +37,16 @@ std::pair<std::uint32_t, std::uint8_t> TextGroupsManager::AddTextToGroup(const s
 
 void TextGroupsManager::EndGroup(DiffWriter* diffWriter)
 {
+    if (currentGroup == nullptr)
+        return;
+
     if (textGroupModified)
+    {
         currentGroup->Write();
 
-    if (diffWriter != nullptr)
-        diffWriter->SetTextGroup(currentGroup->GetCompressedTexts());
+        if (diffWriter != nullptr)
+            diffWriter->SetTextGroup(currentGroup->GetCompressedTexts());
+    }
 
     currentGroup = nullptr;
     textGroupModified = false;
