@@ -7,24 +7,24 @@ void DumpNamedUser::WriteInternal()
     WriteValue(user->UserName);
 }
 
-unique_ptr<DumpUser> DumpNamedUser::Read(istream &stream)
+std::unique_ptr<DumpUser> DumpNamedUser::Read(std::istream &stream)
 {
-    uint32_t userId = DumpTraits<uint32_t>::Read(stream);
-    string userName = DumpTraits<string>::Read(stream);
+    std::uint32_t userId = DumpTraits<std::uint32_t>::Read(stream);
+    std::string userName = DumpTraits<std::string>::Read(stream);
 
-    return unique_ptr<DumpUser>(new DumpNamedUser(std::make_shared<NamedUser>(userId, userName)));
+    return std::unique_ptr<DumpUser>(new DumpNamedUser(std::make_shared<NamedUser>(userId, userName)));
 }
 
-DumpNamedUser::DumpNamedUser(shared_ptr<NamedUser> user)
+DumpNamedUser::DumpNamedUser(std::shared_ptr<NamedUser> user)
     : user(user)
 {}
 
-shared_ptr<User> DumpNamedUser::GetUser() const
+std::shared_ptr<User> DumpNamedUser::GetUser() const
 {
     return user;
 }
 
-uint32_t DumpNamedUser::NewLength()
+std::uint32_t DumpNamedUser::NewLength()
 {
     return ValueSize(user->UserId) + ValueSize(user->UserName);
 }

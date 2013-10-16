@@ -4,9 +4,6 @@
 #include "../Objects/User.h"
 #include "../Objects/Revision.h"
 
-using std::shared_ptr;
-using std::istream;
-
 /**
  * Abstract base class that represets a types derived from User on the disk.
  */
@@ -21,21 +18,21 @@ public:
     /**
      * Creates the right kind of DumpUser from the given @a user.
      */
-    static unique_ptr<DumpUser> Create(shared_ptr<User> user);
+    static std::unique_ptr<DumpUser> Create(std::shared_ptr<User> user);
     /**
      * Reads DumpUser from the @a stream, considering given @a flags.
      *
      * The @a flags contain information about what kind of user to read.
      */
-    static unique_ptr<DumpUser> Read(RevisionFlags flags, istream &stream);
+    static std::unique_ptr<DumpUser> Read(RevisionFlags flags, std::istream &stream);
 
     /**
      * Writes this user to the given @a stream.
      */
-    void Write(ostream *stream);
+    void Write(std::ostream *stream);
     /**
      * Gets the user this object represents.
      */
-    virtual shared_ptr<User> GetUser() const = 0;
-    virtual uint32_t NewLength() OVERRIDE = 0;
+    virtual std::shared_ptr<User> GetUser() const = 0;
+    virtual std::uint32_t NewLength() OVERRIDE = 0;
 };

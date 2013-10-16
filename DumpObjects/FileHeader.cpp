@@ -47,7 +47,7 @@ void FileHeader::Write()
 
 FileHeader FileHeader::Read(ReadableDump const &dump)
 {
-    istream &stream = *(dump.stream);
+    std::istream &stream = *(dump.stream);
 
     std::string magicNumber(MagicNumber.length(), '\0');
     stream.read(&magicNumber.at(0), MagicNumber.length());

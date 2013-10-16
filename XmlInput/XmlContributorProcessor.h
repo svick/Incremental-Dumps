@@ -4,18 +4,15 @@
 #include <string>
 #include "../XML/xmlinput.h"
 
-using std::uint32_t;
-using std::string;
-
 /**
  * Processes the @c @<contributor@> element inside @c @<revision@>.
  */
 class XmlContributorProcessor
 {
 private:
-    string ip;
-    string userName;
-    uint32_t id;
+    std::string ip;
+    std::string userName;
+    std::uint32_t id;
 
     XmlContributorProcessor()
     {}

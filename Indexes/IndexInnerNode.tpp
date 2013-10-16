@@ -114,7 +114,7 @@ IndexInnerNode<TKey, TValue>::IndexInnerNode(std::weak_ptr<WritableDump> dump, S
 }
 
 template<typename TKey, typename TValue>
-unique_ptr<IndexNode<TKey, TValue>> IndexInnerNode<TKey, TValue>::Read(std::weak_ptr<WritableDump> dump, std::istream &stream)
+std::unique_ptr<IndexNode<TKey, TValue>> IndexInnerNode<TKey, TValue>::Read(std::weak_ptr<WritableDump> dump, std::istream &stream)
 {
     auto node = new IndexInnerNode<TKey, TValue>(dump);
 
@@ -133,7 +133,7 @@ unique_ptr<IndexNode<TKey, TValue>> IndexInnerNode<TKey, TValue>::Read(std::weak
         node->cachedChildren.push_back(std::unique_ptr<IndexNode<TKey, TValue>>());
     }
 
-    return unique_ptr<IndexNode<TKey, TValue>>(node);
+    return std::unique_ptr<IndexNode<TKey, TValue>>(node);
 }
 
 template<typename TKey, typename TValue>

@@ -2,7 +2,6 @@ short term:
 - compression of metadata and indexes
 - better error messages (including bad filename)
 - idumps r to stdout
-- std::
 - encapsulate public fields? (e.g. in WritableDump)
 - deal with Readable/WritableDump
 - extract base36 code from DumpRevision

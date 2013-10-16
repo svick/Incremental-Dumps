@@ -16,7 +16,7 @@ private:
 
     std::shared_ptr<Page> page;
 
-    XmlPageProcessor(const shared_ptr<Page> page, IDumpWriter* dumpWriter);
+    XmlPageProcessor(const std::shared_ptr<Page> page, IDumpWriter* dumpWriter);
 
     void writePage();
     void completePage();
@@ -33,5 +33,5 @@ public:
      *
      * Called from XmlRevisionProcessor.
      */
-    void ProcessRevision(const shared_ptr<const Revision> revision);
+    void ProcessRevision(const std::shared_ptr<const Revision> revision);
 };

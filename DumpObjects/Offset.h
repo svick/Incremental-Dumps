@@ -2,8 +2,6 @@
 
 #include <cstdint>
 
-using std::uint64_t;
-
 /**
  * Represents an offset into the dump file.
  *

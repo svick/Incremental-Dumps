@@ -12,7 +12,7 @@
 class NamedUser : public User
 {
 public:
-    NamedUser(std::uint32_t userId, string userName);
+    NamedUser(std::uint32_t userId, std::string userName);
 
     virtual bool Equals(const User &second) const OVERRIDE;
 

@@ -1,9 +1,7 @@
 #include "IndexIterator.h"
 
-using std::move;
-
 template<typename TKey, typename TValue>
-IndexIterator<TKey, TValue>::IndexIterator(unique_ptr<IndexNodeIterator<TKey, TValue>> nodeIterator)
+IndexIterator<TKey, TValue>::IndexIterator(std::unique_ptr<IndexNodeIterator<TKey, TValue>> nodeIterator)
     : nodeIterator(std::move(nodeIterator)), recentIncrements(0)
 {}
 
@@ -21,16 +19,16 @@ IndexIterator<TKey, TValue>& IndexIterator<TKey, TValue>::operator =(const Index
 }
 
 template<typename TKey, typename TValue>
-const pair<TKey, TValue> IndexIterator<TKey, TValue>::operator *() const
+const std::pair<TKey, TValue> IndexIterator<TKey, TValue>::operator *() const
 {
     return **nodeIterator;
 }
 
 template<typename TKey, typename TValue>
-const std::unique_ptr<pair<TKey, TValue>> IndexIterator<TKey, TValue>::operator ->() const
+const std::unique_ptr<std::pair<TKey, TValue>> IndexIterator<TKey, TValue>::operator ->() const
 {
     auto result = **nodeIterator;
-    return std::unique_ptr<pair<TKey, TValue>>(new pair<TKey, TValue>(result));
+    return std::unique_ptr<std::pair<TKey, TValue>>(new std::pair<TKey, TValue>(result));
 }
 
 template<typename TKey, typename TValue>

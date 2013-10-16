@@ -29,7 +29,7 @@ void XmlContributorProcessor::Handler(XML::Element &elem, void *userData)
 
     std::shared_ptr<User> user;
 
-    if (processor.ip != string())
+    if (processor.ip != std::string())
         user = User::CreateFromIp(processor.ip);
     else
         user = std::make_shared<NamedUser>(processor.id, processor.userName);

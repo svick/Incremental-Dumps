@@ -10,13 +10,6 @@
 #include "DumpObjects/TextGroup.h"
 #include "Diff/DiffWriter.h"
 
-using std::int32_t;
-using std::int64_t;
-using std::unique_ptr;
-using std::shared_ptr;
-using std::string;
-using std::iostream;
-
 class WritableDump;
 
 template<typename TKey, typename TValue>
@@ -101,7 +94,7 @@ public:
      * Creates a new WritableDump object for a given file.
      * If the file doesn't exist, it will be created.
      */
-    static shared_ptr<WritableDump> Create(string fileName);
+    static std::shared_ptr<WritableDump> Create(std::string fileName);
 
     /**
      * File header for this dump.

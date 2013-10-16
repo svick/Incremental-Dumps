@@ -16,7 +16,7 @@ IndexLeafIterator<TKey, TValue>::IndexLeafIterator(const IndexLeafIterator<TKey,
 }
 
 template<typename TKey, typename TValue>
-const pair<TKey, TValue> IndexLeafIterator<TKey, TValue>::operator *() const
+const std::pair<TKey, TValue> IndexLeafIterator<TKey, TValue>::operator *() const
 {
     return *mapIterator;
 }

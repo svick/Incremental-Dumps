@@ -108,7 +108,7 @@ std::uint8_t TextGroup::AddText(const std::string& text)
 
 #if _DEBUG
     // text can't contain 0 bytes
-    if (text.find('\0') != string::npos)
+    if (text.find('\0') != std::string::npos)
         throw DumpException();
 
     // text can't be just U+FFFF

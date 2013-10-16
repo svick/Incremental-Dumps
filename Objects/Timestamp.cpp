@@ -4,8 +4,6 @@
 #include <cstdio>
 #include <array>
 
-using std::istringstream;
-
 Timestamp::Timestamp()
     : Year(2000), Month(1), Day(1), Hour(0), Minute(0), Second(0)
 {}
@@ -29,9 +27,9 @@ Timestamp::Timestamp(uint32_t integer)
     Year = integer + 2000;
 }
 
-Timestamp::Timestamp(string s)
+Timestamp::Timestamp(std::string s)
 {
-    istringstream stream(s);
+    std::istringstream stream(s);
 
     std::array<unsigned, 6> dateParts;
 
@@ -61,12 +59,12 @@ uint32_t Timestamp::ToInteger() const
     return result;
 }
 
-string Timestamp::ToString() const
+std::string Timestamp::ToString() const
 {
     char chars[25];
     int count = sprintf(chars, "%u-%02u-%02uT%02u:%02u:%02uZ", Year, (unsigned)Month, (unsigned)Day, (unsigned)Hour, (unsigned)Minute, (unsigned)Second);
 
-    return string(chars, count);
+    return std::string(chars, count);
 }
 
 bool operator ==(const Timestamp &first, const Timestamp &second)

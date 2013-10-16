@@ -8,40 +8,33 @@
 #include "DumpObjects/DumpRevision.h"
 #include "DumpObjects/DumpPage.h"
 
-using std::move;
-using std::unique_ptr;
-using std::make_shared;
-using std::string;
-using std::fstream;
-using std::ios;
-
-ReadableDump::ReadableDump(unique_ptr<iostream> stream)
+ReadableDump::ReadableDump(std::unique_ptr<std::iostream> stream)
     : stream(move(stream))
 {}
 
 ReadableDump::ReadableDump(const std::string& fileName)
-    : stream(unique_ptr<fstream>(new fstream(fileName, ios::in | ios::binary)))
+    : stream(std::unique_ptr<std::fstream>(new std::fstream(fileName, std::ios::in | std::ios::binary)))
 {}
 
-weak_ptr<WritableDump> ReadableDump::GetSelf() const
+std::weak_ptr<WritableDump> ReadableDump::GetSelf() const
 {
     return self;
 }
 
-unique_ptr<iostream> WritableDump::openStream(string fileName)
+std::unique_ptr<std::iostream> WritableDump::openStream(std::string fileName)
 {
-    fstream *stream = new fstream(fileName, ios::in | ios::out | ios::binary);
+    std::fstream *stream = new std::fstream(fileName, std::ios::in | std::ios::out | std::ios::binary);
 
     if (!stream->is_open())
     {
         errno = 0;
         // this feels dangerous, isn't there a better way?
-        stream = new fstream(fileName, ios::in | ios::out | ios::binary | ios::trunc);
+        stream = new std::fstream(fileName, std::ios::in | std::ios::out | std::ios::binary | std::ios::trunc);
     }
 
-    stream->exceptions(ios::failbit | ios::badbit);
+    stream->exceptions(std::ios::failbit | std::ios::badbit);
 
-    return unique_ptr<iostream>(stream);
+    return std::unique_ptr<std::iostream>(stream);
 }
 
 WritableDump::WritableDump(const std::string& fileName)
@@ -84,9 +77,9 @@ void WritableDump::init(std::shared_ptr<WritableDump> self)
     siteInfo = std::unique_ptr<DumpSiteInfo>(new DumpSiteInfo(self));
 }
 
-shared_ptr<WritableDump> WritableDump::Create(string fileName)
+std::shared_ptr<WritableDump> WritableDump::Create(std::string fileName)
 {
-    shared_ptr<WritableDump> dump(new WritableDump(fileName));
+    std::shared_ptr<WritableDump> dump(new WritableDump(fileName));
     dump->init(dump);
     return dump;
 }

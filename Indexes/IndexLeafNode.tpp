@@ -4,9 +4,6 @@
 #include "../DumpObjects/DumpObjectKind.h"
 #include "Iterators/IndexLeafIterator.h"
 
-using std::pair;
-using std::vector;
-
 template<typename TKey, typename TValue>
 TValue IndexLeafNode<TKey, TValue>::Get(TKey key)
 {
@@ -58,7 +55,7 @@ IndexLeafNode<TKey, TValue>::IndexLeafNode(std::weak_ptr<WritableDump> dump)
 {}
 
 template<typename TKey, typename TValue>
-unique_ptr<IndexNode<TKey, TValue>> IndexLeafNode<TKey, TValue>::Read(std::weak_ptr<WritableDump> dump, std::istream &stream)
+std::unique_ptr<IndexNode<TKey, TValue>> IndexLeafNode<TKey, TValue>::Read(std::weak_ptr<WritableDump> dump, std::istream &stream)
 {
     auto node = new IndexLeafNode<TKey, TValue>(dump);
 
@@ -66,7 +63,7 @@ unique_ptr<IndexNode<TKey, TValue>> IndexLeafNode<TKey, TValue>::Read(std::weak_
 
     node->indexMap = DumpTraits<std::map<TKey, TValue>>::Read(stream);
 
-    return unique_ptr<IndexNode<TKey, TValue>>(node);
+    return std::unique_ptr<IndexNode<TKey, TValue>>(node);
 }
 
 template<typename TKey, typename TValue>

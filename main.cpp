@@ -373,7 +373,7 @@ int main(int argc, const char* argv[])
 
     std::vector<std::string> args(argv, argv + argc);
 
-    string action = args.at(1);
+    std::string action = args.at(1);
 
     try
     {

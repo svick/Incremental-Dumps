@@ -11,7 +11,7 @@ IndexNode<TKey, TValue>::IndexNode(std::weak_ptr<WritableDump> dump)
 {}
 
 template<typename TKey, typename TValue>
-unique_ptr<IndexNode<TKey, TValue>> IndexNode<TKey, TValue>::Read(std::weak_ptr<WritableDump> dump, std::uint64_t offset)
+std::unique_ptr<IndexNode<TKey, TValue>> IndexNode<TKey, TValue>::Read(std::weak_ptr<WritableDump> dump, std::uint64_t offset)
 {
     auto dumpRef = dump.lock();
     auto &stream = *(dumpRef->stream);
@@ -38,9 +38,9 @@ unique_ptr<IndexNode<TKey, TValue>> IndexNode<TKey, TValue>::Read(std::weak_ptr<
 }
 
 template<typename TKey, typename TValue>
-unique_ptr<IndexNode<TKey, TValue>> IndexNode<TKey, TValue>::CreateNew(std::weak_ptr<WritableDump> dump)
+std::unique_ptr<IndexNode<TKey, TValue>> IndexNode<TKey, TValue>::CreateNew(std::weak_ptr<WritableDump> dump)
 {
-    return unique_ptr<IndexNode<TKey, TValue>>(new IndexLeafNode<TKey, TValue>(dump));
+    return std::unique_ptr<IndexNode<TKey, TValue>>(new IndexLeafNode<TKey, TValue>(dump));
 }
 
 template<typename TKey, typename TValue>

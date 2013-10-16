@@ -3,9 +3,6 @@
 #include <utility>
 #include <map>
 
-using std::pair;
-using std::map;
-
 /**
  * Iterator for IndexLeafNode.
  *
@@ -14,7 +11,7 @@ using std::map;
 template<typename TKey, typename TValue>
 class IndexLeafIterator : public IndexNodeIterator<TKey, TValue>
 {
-    typedef typename map<TKey, TValue>::const_iterator MapIterator;
+    typedef typename std::map<TKey, TValue>::const_iterator MapIterator;
 
     template<typename TIndexKey, typename TIndexValue>
     friend class IndexLeafNode;
@@ -25,7 +22,7 @@ private:
     IndexLeafIterator(IndexLeafNode<TKey, TValue> *node, MapIterator mapIterator);
     IndexLeafIterator(const IndexLeafIterator<TKey, TValue>& other);
 public:
-    virtual const pair<TKey, TValue> operator *() const OVERRIDE;
+    virtual const std::pair<TKey, TValue> operator *() const OVERRIDE;
     virtual IndexLeafIterator& operator ++() OVERRIDE;
     virtual bool Equals(const IndexNodeIterator<TKey, TValue> *other) const OVERRIDE;
     virtual std::unique_ptr<IndexNodeIterator<TKey, TValue>> Clone() const OVERRIDE;

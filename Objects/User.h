@@ -4,8 +4,6 @@
 #include <memory>
 #include <string>
 
-using std::string;
-
 enum class RevisionFlags : uint8_t;
 
 /** @file */

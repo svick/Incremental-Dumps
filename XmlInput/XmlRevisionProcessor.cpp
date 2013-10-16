@@ -55,5 +55,5 @@ void XmlRevisionProcessor::Handler(XML::Element &elem, void *userData)
 
     XmlPageProcessor* pageProcessor = (XmlPageProcessor*)userData;
 
-    pageProcessor->ProcessRevision(shared_ptr<Revision>(revision));
+    pageProcessor->ProcessRevision(std::shared_ptr<Revision>(revision));
 }

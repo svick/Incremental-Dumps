@@ -9,14 +9,14 @@
 class DumpNamedUser : public DumpUser
 {
 private:
-    shared_ptr<NamedUser> user;
+    std::shared_ptr<NamedUser> user;
 protected:
     virtual void WriteInternal();
 public:
-    static unique_ptr<DumpUser> Read(istream &stream);
+    static std::unique_ptr<DumpUser> Read(std::istream &stream);
 
-    DumpNamedUser(shared_ptr<NamedUser> user);
+    DumpNamedUser(std::shared_ptr<NamedUser> user);
 
-    virtual shared_ptr<User> GetUser() const OVERRIDE;
-    virtual uint32_t NewLength() OVERRIDE;
+    virtual std::shared_ptr<User> GetUser() const OVERRIDE;
+    virtual std::uint32_t NewLength() OVERRIDE;
 };

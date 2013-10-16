@@ -1,7 +1,7 @@
 #include "NamedUser.h"
 #include "Revision.h"
 
-NamedUser::NamedUser(std::uint32_t userId, string userName)
+NamedUser::NamedUser(std::uint32_t userId, std::string userName)
     : User(userId, userName)
 {}
 

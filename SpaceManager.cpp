@@ -2,30 +2,28 @@
 #include "SpaceManager.h"
 #include "Dump.h"
 
-using std::shared_ptr;
-
-SpaceManager::SpaceManager(weak_ptr<WritableDump> dump)
+SpaceManager::SpaceManager(std::weak_ptr<WritableDump> dump)
     : dump(dump),
       spaceByLength()
 {
     for (auto value : *dump.lock()->spaceIndex)
     {
-        spaceByLength.insert(pair<int32_t, Offset>(value.second, value.first));
+        spaceByLength.insert(std::pair<std::int32_t, Offset>(value.second, value.first));
     }
 }
 
-uint64_t SpaceManager::GetSpace(uint32_t length)
+std::uint64_t SpaceManager::GetSpace(std::uint32_t length)
 {
     auto foundSpace = spaceByLength.lower_bound(length);
     if (foundSpace != spaceByLength.end())
     {
-        int32_t foundLength = foundSpace->first;
+        std::int32_t foundLength = foundSpace->first;
         Offset foundOffset = foundSpace->second;
         
         spaceByLength.erase(foundSpace);
         dump.lock()->spaceIndex->Remove(foundOffset);
 
-        int32_t remainingLength = foundLength - length;
+        std::int32_t remainingLength = foundLength - length;
 
         if (remainingLength != 0)
         {
@@ -38,7 +36,7 @@ uint64_t SpaceManager::GetSpace(uint32_t length)
     {
         auto dumpRef = dump.lock();
         auto &header = dumpRef->fileHeader;
-        int64_t offset = header.FileEnd.value;
+        std::int64_t offset = header.FileEnd.value;
         header.FileEnd.value += length;
         header.Write();
 
@@ -46,7 +44,7 @@ uint64_t SpaceManager::GetSpace(uint32_t length)
     }
 }
 
-void SpaceManager::Delete(uint64_t offset, uint32_t length)
+void SpaceManager::Delete(std::uint64_t offset, std::uint32_t length)
 {
     // TODO: free space at the end just decrements fileEnd
     // TODO: join consecutive free blocks

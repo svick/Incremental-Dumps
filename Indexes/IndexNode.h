@@ -2,8 +2,6 @@
 
 #include "../DumpObjects/DumpObject.h"
 
-using std::shared_ptr;
-
 template<typename TKey, typename TValue>
 class IndexNodeIterator;
 
@@ -71,11 +69,11 @@ public:
     /**
      * Reads node from the given @a offset.
      */
-    static unique_ptr<IndexNode> Read(std::weak_ptr<WritableDump> dump, std::uint64_t offset);
+    static std::unique_ptr<IndexNode> Read(std::weak_ptr<WritableDump> dump, std::uint64_t offset);
     /**
      * Creates and returns new IndexLeafNode that can be used as the root node for empty index.
      */
-    static unique_ptr<IndexNode> CreateNew(std::weak_ptr<WritableDump> dump);
+    static std::unique_ptr<IndexNode> CreateNew(std::weak_ptr<WritableDump> dump);
 
     IndexNode(std::weak_ptr<WritableDump> dump);
 
@@ -127,8 +125,8 @@ public:
      */
     virtual void ClearCachedInternal() = 0;
 
-    virtual unique_ptr<IndexNodeIterator<TKey, TValue>> begin() = 0;
-    virtual unique_ptr<IndexNodeIterator<TKey, TValue>> end() = 0;
+    virtual std::unique_ptr<IndexNodeIterator<TKey, TValue>> begin() = 0;
+    virtual std::unique_ptr<IndexNodeIterator<TKey, TValue>> end() = 0;
 };
 
 #include "IndexNode.tpp"

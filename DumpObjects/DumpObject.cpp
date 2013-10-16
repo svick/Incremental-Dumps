@@ -3,7 +3,7 @@
 #include "../Indexes/Index.h"
 #include "../SpaceManager.h"
 
-DumpObject::DumpObject(weak_ptr<WritableDump> dump)
+DumpObject::DumpObject(std::weak_ptr<WritableDump> dump)
     : dump(dump), savedOffset(0), savedLength(0)
 {}
 

@@ -294,7 +294,7 @@ Revision DumpRevision::ReadCore(std::istream &stream, std::uint8_t &modelFormatI
     if (!HasFlag(revision.Flags, RevisionFlags::ContributorDeleted))
         revision.Contributor = DumpUser::Read(revision.Flags, stream)->GetUser();
     if (!HasFlag(revision.Flags, RevisionFlags::CommentDeleted))
-        revision.Comment = DumpTraits<string>::Read(stream);
+        revision.Comment = DumpTraits<std::string>::Read(stream);
 
     if (HasFlag(revision.Flags, RevisionFlags::WikitextModelFormat))
         modelFormatId = 0;

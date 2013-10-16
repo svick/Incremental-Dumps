@@ -78,7 +78,7 @@ void XmlWriter::WriteDump(std::shared_ptr<WritableDump> dump, std::string fileNa
         output.WriteElement("ns", page.Namespace);
         output.WriteElement("id", page.PageId);
 
-        if (page.RedirectTarget != string())
+        if (page.RedirectTarget != std::string())
         {
             output.BeginElementAttrs("redirect");
             output.WriteAttr("title", page.RedirectTarget);
@@ -148,7 +148,7 @@ void XmlWriter::WriteDump(std::shared_ptr<WritableDump> dump, std::string fileNa
             else
                 output.WriteAttr("xml:space", "preserve");
 
-            if (IsPages(dump->fileHeader.Kind) && !HasFlag(revision.Flags, RevisionFlags::TextDeleted) && revision.GetText() != string())
+            if (IsPages(dump->fileHeader.Kind) && !HasFlag(revision.Flags, RevisionFlags::TextDeleted) && revision.GetText() != std::string())
             {
                 output.EndAttrs(XML::Output::terse);
                 output << escapeElementText(revision.GetText());

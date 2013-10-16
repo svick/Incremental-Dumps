@@ -2,26 +2,24 @@
 #include "DumpIpV6User.h"
 #include "DumpNamedUser.h"
 
-using std::dynamic_pointer_cast;
-
-unique_ptr<DumpUser> DumpUser::Create(shared_ptr<User> user)
+std::unique_ptr<DumpUser> DumpUser::Create(std::shared_ptr<User> user)
 {
-    auto ipV4User = dynamic_pointer_cast<IpV4User>(user);
+    auto ipV4User = std::dynamic_pointer_cast<IpV4User>(user);
     if (ipV4User != nullptr)
-        return unique_ptr<DumpUser>(new DumpIpV4User(ipV4User));
+        return std::unique_ptr<DumpUser>(new DumpIpV4User(ipV4User));
     
-    auto ipV6User = dynamic_pointer_cast<IpV6User>(user);
+    auto ipV6User = std::dynamic_pointer_cast<IpV6User>(user);
     if (ipV6User != nullptr)
-        return unique_ptr<DumpUser>(new DumpIpV6User(ipV6User));
+        return std::unique_ptr<DumpUser>(new DumpIpV6User(ipV6User));
 
-    auto namedUser = dynamic_pointer_cast<NamedUser>(user);
+    auto namedUser = std::dynamic_pointer_cast<NamedUser>(user);
     if (namedUser != nullptr)
-        return unique_ptr<DumpUser>(new DumpNamedUser(namedUser));
+        return std::unique_ptr<DumpUser>(new DumpNamedUser(namedUser));
 
     throw DumpException();
 }
 
-unique_ptr<DumpUser> DumpUser::Read(RevisionFlags flags, istream &stream)
+std::unique_ptr<DumpUser> DumpUser::Read(RevisionFlags flags, std::istream &stream)
 {
     if (HasFlag(flags, RevisionFlags::IpV4User))
         return DumpIpV4User::Read(stream);
@@ -32,7 +30,7 @@ unique_ptr<DumpUser> DumpUser::Read(RevisionFlags flags, istream &stream)
     throw new DumpException();
 }
 
-void DumpUser::Write(ostream *stream)
+void DumpUser::Write(std::ostream *stream)
 {
     this->stream = stream;
     WriteInternal();

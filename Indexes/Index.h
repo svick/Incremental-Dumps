@@ -5,9 +5,6 @@
 #include "Iterators/IndexIterator.h"
 #include "IndexNode.h"
 
-using std::pair;
-using std::shared_ptr;
-
 /** @file */
 
 /**
@@ -20,7 +17,7 @@ class Index
 {
 private:
     bool rootNodeUnsaved;
-    unique_ptr<IndexNode<TKey, TValue>> rootNode;
+    std::unique_ptr<IndexNode<TKey, TValue>> rootNode;
     std::weak_ptr<WritableDump> dump;
     std::weak_ptr<Offset> fileHeaderOffset;
 
