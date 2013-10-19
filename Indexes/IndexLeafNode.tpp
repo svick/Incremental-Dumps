@@ -50,12 +50,12 @@ void IndexLeafNode<TKey, TValue>::Remove(const TKey key)
 }
 
 template<typename TKey, typename TValue>
-IndexLeafNode<TKey, TValue>::IndexLeafNode(std::weak_ptr<WritableDump> dump)
+IndexLeafNode<TKey, TValue>::IndexLeafNode(std::weak_ptr<Dump> dump)
     : IndexNode<TKey, TValue>(dump)
 {}
 
 template<typename TKey, typename TValue>
-std::unique_ptr<IndexNode<TKey, TValue>> IndexLeafNode<TKey, TValue>::Read(std::weak_ptr<WritableDump> dump, std::istream &stream)
+std::unique_ptr<IndexNode<TKey, TValue>> IndexLeafNode<TKey, TValue>::Read(std::weak_ptr<Dump> dump, std::istream &stream)
 {
     auto node = new IndexLeafNode<TKey, TValue>(dump);
 

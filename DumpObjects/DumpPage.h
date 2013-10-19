@@ -15,7 +15,7 @@ private:
     bool wasLoaded;
 
     void Load(std::uint32_t pageId);
-    static Page Read(std::shared_ptr<WritableDump> dump, Offset offset);
+    static Page Read(std::shared_ptr<Dump> dump, Offset offset);
 protected:
     virtual void WriteInternal() OVERRIDE;
     virtual void UpdateIndex(bool overwrite) OVERRIDE;
@@ -28,11 +28,11 @@ public:
     /**
      * Loads page based on its ID.
      */
-    DumpPage(std::weak_ptr<WritableDump> dump, std::uint32_t pageId);
+    DumpPage(std::weak_ptr<Dump> dump, std::uint32_t pageId);
     /**
      * Loads page based on its offset in the dump file.
      */
-    DumpPage(std::weak_ptr<WritableDump> dump, Offset offset);
+    DumpPage(std::weak_ptr<Dump> dump, Offset offset);
 
     virtual void Write() OVERRIDE;
     /**

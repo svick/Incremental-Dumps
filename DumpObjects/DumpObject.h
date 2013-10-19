@@ -6,7 +6,7 @@
 #include "Offset.h"
 #include "DumpTraits.h"
 
-class WritableDump;
+class Dump;
 
 /**
  * Abstract base class for all objects that can be written to disk.
@@ -78,7 +78,7 @@ protected:
     /**
      * The dump this object belongs to.
      */
-    std::weak_ptr<WritableDump> dump;
+    std::weak_ptr<Dump> dump;
     /**
      * The offset this object is saved on from the start of the file.
      *
@@ -92,7 +92,7 @@ protected:
      */
     std::uint32_t savedLength;
 
-    DumpObject(std::weak_ptr<WritableDump> dump);
+    DumpObject(std::weak_ptr<Dump> dump);
     virtual void WriteInternal() OVERRIDE = 0;
     /**
      * Updates the right index (or something like that) with information about this object.

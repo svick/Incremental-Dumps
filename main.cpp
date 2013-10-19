@@ -95,7 +95,7 @@ std::unique_ptr<IDumpWriter> createWriter(std::queue<std::string> &parameters, c
             throw ParametersException(str(fmt::Format("The letter {0} is not valid at this point in the spec.") << spec.at(i)));
     }
 
-    auto dump = WritableDump::Create(fileName);
+    auto dump = Dump::Create(fileName);
 
     dump->siteInfo->CheckName(name, true);
     dump->siteInfo->name = name;
@@ -313,7 +313,7 @@ void updateDump(std::queue<std::string> &parameters)
  */
 void readDump(std::string dumpFileName, std::string outputFileName)
 {
-    auto dump = WritableDump::Create(dumpFileName);
+    auto dump = Dump::Create(dumpFileName);
 
     XmlWriter::WriteDump(dump, outputFileName);
 }
@@ -326,7 +326,7 @@ void readDump(std::string dumpFileName, std::string outputFileName)
  */
 void applyDiff(std::string dumpFileName, std::string diffFileName)
 {
-    auto dump = WritableDump::Create(dumpFileName);
+    auto dump = Dump::Create(dumpFileName);
 
     ChangeProcessor changeProcessor(dump);
     DiffReader diffReader(diffFileName, changeProcessor);

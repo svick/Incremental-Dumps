@@ -11,7 +11,7 @@
 class DumpWriter : public IDumpWriter
 {
 private:
-    std::shared_ptr<WritableDump> dump;
+    std::shared_ptr<Dump> dump;
     std::unique_ptr<DiffWriter> diffWriter;
 
     std::unique_ptr<DumpPage> page;
@@ -40,7 +40,7 @@ public:
      * @param withText Whether the dump contains texts of revisions.
      * @param diffWriter Records all actions done by this writer into a diff dump.
      */
-    DumpWriter(std::shared_ptr<WritableDump> dump, bool withText, std::unique_ptr<DiffWriter> diffWriter = nullptr);
+    DumpWriter(std::shared_ptr<Dump> dump, bool withText, std::unique_ptr<DiffWriter> diffWriter = nullptr);
 
     virtual void StartPage(const std::shared_ptr<const Page> page, bool titleWithNamespace) OVERRIDE;
     virtual void AddRevision(const std::shared_ptr<const Revision> revision) OVERRIDE;

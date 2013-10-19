@@ -34,7 +34,7 @@ protected:
     virtual void UpdateIndex(bool overwrite) OVERRIDE;
 public:
 
-    TextGroup(std::weak_ptr<WritableDump> dump, std::uint32_t textGroupId);
+    TextGroup(std::weak_ptr<Dump> dump, std::uint32_t textGroupId);
 
     virtual uint32_t NewLength() OVERRIDE;
 

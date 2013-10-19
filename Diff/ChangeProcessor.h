@@ -19,7 +19,7 @@
 class ChangeProcessor
 {
 private:
-    std::shared_ptr<WritableDump> dump;
+    std::shared_ptr<Dump> dump;
 
     /**
      * The page that is currently being processed.
@@ -43,7 +43,7 @@ public:
     /**
      * @param dump The dump to write to.
      */
-    ChangeProcessor(std::shared_ptr<WritableDump> dump);
+    ChangeProcessor(std::shared_ptr<Dump> dump);
 
     void Process(SiteInfoChange change);
     void Process(NewPageChange change);

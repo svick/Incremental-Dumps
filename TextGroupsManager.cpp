@@ -2,7 +2,7 @@
 #include "Dump.h"
 #include "Indexes/Index.h"
 
-TextGroupsManager::TextGroupsManager(std::weak_ptr<WritableDump> dump)
+TextGroupsManager::TextGroupsManager(std::weak_ptr<Dump> dump)
     : dump(dump), textGroupModified(false)
 { }
 

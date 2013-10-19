@@ -42,7 +42,7 @@ void DumpWriter::NormalizeComment(Revision& revision)
     }
 }
 
-DumpWriter::DumpWriter(std::shared_ptr<WritableDump> dump, bool withText, std::unique_ptr<DiffWriter> diffWriter)
+DumpWriter::DumpWriter(std::shared_ptr<Dump> dump, bool withText, std::unique_ptr<DiffWriter> diffWriter)
     : dump(dump), withText(withText), diffWriter(std::move(diffWriter))
 {
     for (auto pair : *dump->pageIdIndex)

@@ -14,7 +14,7 @@ void ChangeProcessor::WritePage()
     }
 }
 
-ChangeProcessor::ChangeProcessor(std::shared_ptr<WritableDump> dump)
+ChangeProcessor::ChangeProcessor(std::shared_ptr<Dump> dump)
     : dump(dump), currentTextGroupId(0)
 {}
 

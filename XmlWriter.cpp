@@ -20,7 +20,7 @@ std::string caseToString(const Case value)
     throw DumpException();
 }
 
-void XmlWriter::WriteDump(std::shared_ptr<WritableDump> dump, std::string fileName)
+void XmlWriter::WriteDump(std::shared_ptr<Dump> dump, std::string fileName)
 {
     XML::FileOutputStream stream(fileName.c_str());
 

@@ -9,12 +9,12 @@
 class DumpSiteInfo : public DumpObject
 {
 private:
-    void Read(std::shared_ptr<WritableDump> dump, Offset offset);
+    void Read(std::shared_ptr<Dump> dump, Offset offset);
 protected:
     virtual void WriteInternal() OVERRIDE;
     virtual void UpdateIndex(bool overwrite) OVERRIDE;
 public:
-    DumpSiteInfo(std::weak_ptr<WritableDump> dump);
+    DumpSiteInfo(std::weak_ptr<Dump> dump);
 
     /**
      * Name of the dump, used primarily to make sure diff dumps are applied correctly.

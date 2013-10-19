@@ -25,7 +25,7 @@ void DumpPage::Load(uint32_t pageId)
     }
 }
 
-Page DumpPage::Read(std::shared_ptr<WritableDump> dump, Offset offset)
+Page DumpPage::Read(std::shared_ptr<Dump> dump, Offset offset)
 {
     auto &stream = *(dump->stream);
     stream.seekp(offset.value);
@@ -85,13 +85,13 @@ uint32_t DumpPage::NewLength()
         + ValueSize(page.RevisionIds);
 }
 
-DumpPage::DumpPage(std::weak_ptr<WritableDump> dump, uint32_t pageId)
+DumpPage::DumpPage(std::weak_ptr<Dump> dump, uint32_t pageId)
     : DumpObject(dump), page()
 {
     Load(pageId);
 }
 
-DumpPage::DumpPage(std::weak_ptr<WritableDump> dump, Offset offset)
+DumpPage::DumpPage(std::weak_ptr<Dump> dump, Offset offset)
     : DumpObject(dump), page()
 {
     auto dumpRef = dump.lock();

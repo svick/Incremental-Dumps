@@ -6,7 +6,7 @@
 #include <map>
 #include "Indexes/Index.h"
 
-class WritableDump;
+class Dump;
 
 /**
  * Used for allocating and deallocating space in the dump file.
@@ -14,13 +14,13 @@ class WritableDump;
 class SpaceManager
 {
 private:
-    std::weak_ptr<WritableDump> dump;
+    std::weak_ptr<Dump> dump;
     /**
-     * Inverted view of ReadableDump::spaceIndex, so that blocks of free space could be searched by their size.
+     * Inverted view of Dump::spaceIndex, so that blocks of free space could be searched by their size.
      */
     std::multimap<uint32_t, Offset> spaceByLength;
 public:
-    SpaceManager(std::weak_ptr<WritableDump> dump);
+    SpaceManager(std::weak_ptr<Dump> dump);
 
     /**
      * Allocates @a length bytes of space in the dump and returns offset to the allocated block.

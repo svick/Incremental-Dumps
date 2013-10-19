@@ -88,12 +88,12 @@ void IndexInnerNode<TKey, TValue>::Remove(const TKey key)
 }
 
 template<typename TKey, typename TValue>
-IndexInnerNode<TKey, TValue>::IndexInnerNode(std::weak_ptr<WritableDump> dump)
+IndexInnerNode<TKey, TValue>::IndexInnerNode(std::weak_ptr<Dump> dump)
     : IndexNode<TKey, TValue>(dump)
 {}
 
 template<typename TKey, typename TValue>
-IndexInnerNode<TKey, TValue>::IndexInnerNode(std::weak_ptr<WritableDump> dump, SplitResult splitResult)
+IndexInnerNode<TKey, TValue>::IndexInnerNode(std::weak_ptr<Dump> dump, SplitResult splitResult)
     : IndexNode<TKey, TValue>(dump)
 {
     keys.push_back(splitResult.SplitKey);
@@ -114,7 +114,7 @@ IndexInnerNode<TKey, TValue>::IndexInnerNode(std::weak_ptr<WritableDump> dump, S
 }
 
 template<typename TKey, typename TValue>
-std::unique_ptr<IndexNode<TKey, TValue>> IndexInnerNode<TKey, TValue>::Read(std::weak_ptr<WritableDump> dump, std::istream &stream)
+std::unique_ptr<IndexNode<TKey, TValue>> IndexInnerNode<TKey, TValue>::Read(std::weak_ptr<Dump> dump, std::istream &stream)
 {
     auto node = new IndexInnerNode<TKey, TValue>(dump);
 

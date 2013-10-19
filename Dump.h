@@ -10,7 +10,7 @@
 #include "DumpObjects/TextGroup.h"
 #include "Diff/DiffWriter.h"
 
-class WritableDump;
+class Dump;
 
 template<typename TKey, typename TValue>
 class Index;
@@ -18,14 +18,23 @@ class Index;
 class SpaceManager;
 class TextGroupsManager;
 
-// TODO: ReadableDump is unusable; either merge it with WritableDump, or make it usable
-class ReadableDump
+class Dump
 {
-protected:
-    std::weak_ptr<WritableDump> self;
+private:
+    static std::unique_ptr<std::iostream> openStream(std::string fileName);
 
-    ReadableDump(std::unique_ptr<std::iostream> stream);
+    Dump(const std::string& fileName);
+
+    void init(std::shared_ptr<Dump> self);
+
+    std::pair<bool, std::vector<std::uint32_t>> DeletePage(
+        std::uint32_t pageId, bool fullDelete, const std::unordered_set<std::uint32_t> &doNotDeleteRevisions);
+
+    std::weak_ptr<Dump> self;
 public:
+    static const std::string WikitextModel;
+    static const std::string WikitextFormat;
+
     // TODO: others should not be able to steal these pointers
     /**
      * The streeam that is used to read and write from this dump.
@@ -64,37 +73,16 @@ public:
      */
     bool isNew;
 
-    ReadableDump(const std::string& fileName);
-
     /**
      * Returns smart pointer to this instance of dump.
      */
-    std::weak_ptr<WritableDump> GetSelf() const;
-};
-
-/**
- * This is the main class that represents a dump file on disk.
- * It can be used to read and write to the dump.
- */
-class WritableDump : public ReadableDump
-{
-private:
-    static std::unique_ptr<std::iostream> openStream(std::string fileName);
-
-    WritableDump(const std::string& fileName);
-    void init(std::shared_ptr<WritableDump> self);
-
-    std::pair<bool, std::vector<std::uint32_t>> DeletePage(
-        std::uint32_t pageId, bool fullDelete, const std::unordered_set<std::uint32_t> &doNotDeleteRevisions);
-public:
-    static const std::string WikitextModel;
-    static const std::string WikitextFormat;
+    std::weak_ptr<Dump> GetSelf() const;
 
     /**
-     * Creates a new WritableDump object for a given file.
+     * Creates a new Dump object for the given file.
      * If the file doesn't exist, it will be created.
      */
-    static std::shared_ptr<WritableDump> Create(std::string fileName);
+    static std::shared_ptr<Dump> Create(const std::string& fileName);
 
     /**
      * File header for this dump.

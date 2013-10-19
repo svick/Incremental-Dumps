@@ -5,7 +5,7 @@
 #include "Offset.h"
 #include "../DumpKind.h"
 
-class ReadableDump;
+class Dump;
 
 /**
  * Contains basic information about the file.
@@ -20,7 +20,7 @@ private:
         DumpKind kind,
         Offset fileEnd, Offset pageIdIndexRoot, Offset revisionIdIndexRoot,
         Offset textGroupIdIndexRoot, Offset modelFormatIndexRoot,
-        Offset freeSpaceIndexRoot, Offset siteInfo, std::weak_ptr<WritableDump> dump);
+        Offset freeSpaceIndexRoot, Offset siteInfo, std::weak_ptr<Dump> dump);
 protected:
     void WriteInternal();
 public:
@@ -40,7 +40,7 @@ public:
     /**
      * Reads file header from the given @a dump.
      */
-    static FileHeader Read(ReadableDump const &dump);
+    static FileHeader Read(Dump const &dump);
 
     virtual void Write() OVERRIDE;
     virtual std::uint32_t NewLength() OVERRIDE;
@@ -80,5 +80,5 @@ public:
      */
     Offset SiteInfo;
 
-    FileHeader(std::weak_ptr<WritableDump> dump = std::weak_ptr<WritableDump>());
+    FileHeader(std::weak_ptr<Dump> dump = std::weak_ptr<Dump>());
 };

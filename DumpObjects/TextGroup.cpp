@@ -80,7 +80,7 @@ void TextGroup::UpdateIndex(bool overwrite)
         dumpRef->textGroupIdIndex->Add(textGroupId, savedOffset);
 }
 
-TextGroup::TextGroup(std::weak_ptr<WritableDump> dump, std::uint32_t textGroupId)
+TextGroup::TextGroup(std::weak_ptr<Dump> dump, std::uint32_t textGroupId)
     : DumpObject(dump), textGroupId(textGroupId)
 {
     Load();

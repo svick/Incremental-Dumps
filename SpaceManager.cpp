@@ -2,7 +2,7 @@
 #include "SpaceManager.h"
 #include "Dump.h"
 
-SpaceManager::SpaceManager(std::weak_ptr<WritableDump> dump)
+SpaceManager::SpaceManager(std::weak_ptr<Dump> dump)
     : dump(dump),
       spaceByLength()
 {

@@ -21,7 +21,7 @@ void DumpSiteInfo::UpdateIndex(bool overwrite)
     dumpRef->fileHeader.Write();
 }
 
-DumpSiteInfo::DumpSiteInfo(std::weak_ptr<WritableDump> dump)
+DumpSiteInfo::DumpSiteInfo(std::weak_ptr<Dump> dump)
     : DumpObject(dump)
 {
     auto dumpRef = dump.lock();
@@ -39,7 +39,7 @@ DumpSiteInfo::DumpSiteInfo(std::weak_ptr<WritableDump> dump)
     }
 }
 
-void DumpSiteInfo::Read(std::shared_ptr<WritableDump> dump, Offset offset)
+void DumpSiteInfo::Read(std::shared_ptr<Dump> dump, Offset offset)
 {
     if (offset.value == 0)
         return;

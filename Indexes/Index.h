@@ -18,7 +18,7 @@ class Index
 private:
     bool rootNodeUnsaved;
     std::unique_ptr<IndexNode<TKey, TValue>> rootNode;
-    std::weak_ptr<WritableDump> dump;
+    std::weak_ptr<Dump> dump;
     std::weak_ptr<Offset> fileHeaderOffset;
 
     int recentAccesses;
@@ -29,10 +29,10 @@ public:
     /**
      * @param fileHeaderOffset Pointer to field that stores the offset to the root node of this index.
      * @param delaySave If @c true, the root node of this index will be saved only when necessary.
-     *                  This is required for ReadableDump::spaceIndex, because of cyclic dependency between it and SpaceManager.
+     *                  This is required for Dump::spaceIndex, because of cyclic dependency between it and SpaceManager.
      *                  @c true is not the only option, so that most indexes can have their root nodes at the start of the file.
      */
-    Index(std::weak_ptr<WritableDump> dump, Offset* fileHeaderOffset, bool delaySave = false);
+    Index(std::weak_ptr<Dump> dump, Offset* fileHeaderOffset, bool delaySave = false);
 
     /**
     * Returns the value for the given @a key.

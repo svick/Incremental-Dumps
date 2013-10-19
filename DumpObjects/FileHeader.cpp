@@ -11,7 +11,7 @@ FileHeader::FileHeader(
     DumpKind kind,
     Offset fileEnd, Offset pageIdIndexRoot, Offset revisionIdIndexRoot,
     Offset textGroupIdIndexRoot, Offset modelFormatIndexRoot,
-    Offset freeSpaceIndexRoot, Offset siteInfo, std::weak_ptr<WritableDump> dump)
+    Offset freeSpaceIndexRoot, Offset siteInfo, std::weak_ptr<Dump> dump)
     : DumpObject(dump), Kind(kind), FileEnd(fileEnd), PageIdIndexRoot(pageIdIndexRoot), RevisionIdIndexRoot(revisionIdIndexRoot),
         TextGroupIdIndexRoot(textGroupIdIndexRoot), ModelFormatIndexRoot(modelFormatIndexRoot),
         FreeSpaceIndexRoot(freeSpaceIndexRoot), SiteInfo(siteInfo)
@@ -45,7 +45,7 @@ void FileHeader::Write()
     stream = nullptr;
 }
 
-FileHeader FileHeader::Read(ReadableDump const &dump)
+FileHeader FileHeader::Read(Dump const &dump)
 {
     std::istream &stream = *(dump.stream);
 
@@ -84,6 +84,6 @@ uint32_t FileHeader::NewLength()
     return Length();
 }
 
-FileHeader::FileHeader(std::weak_ptr<WritableDump> dump)
+FileHeader::FileHeader(std::weak_ptr<Dump> dump)
     : DumpObject(dump), FileEnd(Length()), PageIdIndexRoot(0), RevisionIdIndexRoot(0), TextGroupIdIndexRoot(0), ModelFormatIndexRoot(0), FreeSpaceIndexRoot(0), SiteInfo(0)
 {}

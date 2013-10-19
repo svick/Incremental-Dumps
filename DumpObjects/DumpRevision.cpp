@@ -27,7 +27,7 @@ void DumpRevision::Load(std::uint32_t revisionId)
     }
 }
 
-Revision DumpRevision::Read(std::shared_ptr<WritableDump> dump, Offset offset)
+Revision DumpRevision::Read(std::shared_ptr<Dump> dump, Offset offset)
 {
     auto &stream = *(dump->stream);
     stream.seekp(offset.value);
@@ -41,8 +41,8 @@ Revision DumpRevision::Read(std::shared_ptr<WritableDump> dump, Offset offset)
 
     if (HasFlag(revision.Flags, RevisionFlags::WikitextModelFormat))
     {
-        revision.Model = WritableDump::WikitextModel;
-        revision.Format = WritableDump::WikitextFormat;
+        revision.Model = Dump::WikitextModel;
+        revision.Format = Dump::WikitextFormat;
     }
     else
     {
@@ -142,7 +142,7 @@ std::uint32_t DumpRevision::NewLength()
     return result;
 }
 
-DumpRevision::DumpRevision(std::weak_ptr<WritableDump> dump, std::uint32_t revisionId)
+DumpRevision::DumpRevision(std::weak_ptr<Dump> dump, std::uint32_t revisionId)
     : DumpObject(dump), revision(), modelFormatId(), textGroupId(0), textId(0), textSaved(false),
         isModelFormatIdNew(false), wasLoaded(true), diffWriter(), forceDiff(false)
 {

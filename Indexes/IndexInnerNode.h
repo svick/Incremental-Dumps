@@ -39,7 +39,7 @@ private:
     /**
      * Creates a new empty inner node.
      */
-    IndexInnerNode(std::weak_ptr<WritableDump> dump);
+    IndexInnerNode(std::weak_ptr<Dump> dump);
 
     /**
      * Returns pointer to child node at given @a index.
@@ -63,13 +63,13 @@ private:
 protected:
     virtual void WriteInternal() OVERRIDE;
 public:
-    static std::unique_ptr<IndexNode<TKey, TValue>> Read(std::weak_ptr<WritableDump> dump, std::istream &stream);
+    static std::unique_ptr<IndexNode<TKey, TValue>> Read(std::weak_ptr<Dump> dump, std::istream &stream);
 
     /**
      * Creates a new root node for an index,
      * its children are the results of splitting the former root node.
      */
-    IndexInnerNode(std::weak_ptr<WritableDump> dump, SplitResult splitResult);
+    IndexInnerNode(std::weak_ptr<Dump> dump, SplitResult splitResult);
 
     virtual void Write() OVERRIDE;
 

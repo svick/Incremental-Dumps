@@ -13,7 +13,7 @@
 class TextGroupsManager
 {
 private:
-    std::weak_ptr<WritableDump> dump;
+    std::weak_ptr<Dump> dump;
 
     /**
      * Current group used for reading or adding (but not both).
@@ -44,7 +44,7 @@ private:
      */
     void EndDeletedGroup();
 public:
-    TextGroupsManager(std::weak_ptr<WritableDump> dump);
+    TextGroupsManager(std::weak_ptr<Dump> dump);
 
     /**
      * Adds the given @a text to a text group.

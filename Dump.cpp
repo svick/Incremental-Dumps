@@ -8,20 +8,16 @@
 #include "DumpObjects/DumpRevision.h"
 #include "DumpObjects/DumpPage.h"
 
-ReadableDump::ReadableDump(std::unique_ptr<std::iostream> stream)
-    : stream(move(stream))
+Dump::Dump(const std::string& fileName)
+    : stream(openStream(fileName))
 {}
 
-ReadableDump::ReadableDump(const std::string& fileName)
-    : stream(std::unique_ptr<std::fstream>(new std::fstream(fileName, std::ios::in | std::ios::binary)))
-{}
-
-std::weak_ptr<WritableDump> ReadableDump::GetSelf() const
+std::weak_ptr<Dump> Dump::GetSelf() const
 {
     return self;
 }
 
-std::unique_ptr<std::iostream> WritableDump::openStream(std::string fileName)
+std::unique_ptr<std::iostream> Dump::openStream(std::string fileName)
 {
     std::fstream *stream = new std::fstream(fileName, std::ios::in | std::ios::out | std::ios::binary);
 
@@ -37,11 +33,7 @@ std::unique_ptr<std::iostream> WritableDump::openStream(std::string fileName)
     return std::unique_ptr<std::iostream>(stream);
 }
 
-WritableDump::WritableDump(const std::string& fileName)
-    : ReadableDump(openStream(fileName))
-{}
-
-void WritableDump::init(std::shared_ptr<WritableDump> self)
+void Dump::init(std::shared_ptr<Dump> self)
 {
     this->self = self;
 
@@ -77,14 +69,14 @@ void WritableDump::init(std::shared_ptr<WritableDump> self)
     siteInfo = std::unique_ptr<DumpSiteInfo>(new DumpSiteInfo(self));
 }
 
-std::shared_ptr<WritableDump> WritableDump::Create(std::string fileName)
+std::shared_ptr<Dump> Dump::Create(const std::string& fileName)
 {
-    std::shared_ptr<WritableDump> dump(new WritableDump(fileName));
+    std::shared_ptr<Dump> dump(new Dump(fileName));
     dump->init(dump);
     return dump;
 }
 
-void WritableDump::Complete(DiffWriter* diffWriter)
+void Dump::Complete(DiffWriter* diffWriter)
 {
     textGroupsManager->Complete(diffWriter);
 
@@ -95,7 +87,7 @@ void WritableDump::Complete(DiffWriter* diffWriter)
     modelFormatIndex->Write();
 }
 
-std::pair<bool, std::vector<std::uint32_t>> WritableDump::DeletePage(
+std::pair<bool, std::vector<std::uint32_t>> Dump::DeletePage(
     std::uint32_t pageId, bool full, const std::unordered_set<std::uint32_t> &doNotDeleteRevisions)
 {
     Offset offset = pageIdIndex->Get(pageId);
@@ -125,18 +117,18 @@ std::pair<bool, std::vector<std::uint32_t>> WritableDump::DeletePage(
     return std::make_pair(false, deletedRevisions);
 }
 
-void WritableDump::DeletePagePartial(std::uint32_t pageId)
+void Dump::DeletePagePartial(std::uint32_t pageId)
 {
     DeletePage(pageId, false, std::unordered_set<std::uint32_t>());
 }
 
-std::pair<bool, std::vector<std::uint32_t>> WritableDump::DeletePageFull(
+std::pair<bool, std::vector<std::uint32_t>> Dump::DeletePageFull(
     std::uint32_t pageId, const std::unordered_set<std::uint32_t> &doNotDeleteRevisions)
 {
     return DeletePage(pageId, true, doNotDeleteRevisions);
 }
 
-bool WritableDump::DeleteRevision(std::uint32_t revisionId, const std::unordered_set<std::uint32_t> &doNotDeleteRevisions)
+bool Dump::DeleteRevision(std::uint32_t revisionId, const std::unordered_set<std::uint32_t> &doNotDeleteRevisions)
 {
     if (doNotDeleteRevisions.count(revisionId) != 0)
         return false;
@@ -153,10 +145,10 @@ bool WritableDump::DeleteRevision(std::uint32_t revisionId, const std::unordered
     return true;
 }
 
-const std::string WritableDump::WikitextModel = "wikitext";
-const std::string WritableDump::WikitextFormat = "text/x-wiki";
+const std::string Dump::WikitextModel = "wikitext";
+const std::string Dump::WikitextFormat = "text/x-wiki";
 
-std::uint8_t WritableDump::GetIdForModelFormat(std::string model, std::string format, bool &isNew)
+std::uint8_t Dump::GetIdForModelFormat(std::string model, std::string format, bool &isNew)
 {
     isNew = false;
 
@@ -181,7 +173,7 @@ std::uint8_t WritableDump::GetIdForModelFormat(std::string model, std::string fo
     return newId;
 }
 
-std::pair<std::string, std::string> WritableDump::GetModelFormat(std::uint8_t id)
+std::pair<std::string, std::string> Dump::GetModelFormat(std::uint8_t id)
 {
     if (id == 0)
         return std::make_pair(WikitextModel, WikitextFormat);

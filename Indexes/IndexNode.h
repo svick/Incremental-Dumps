@@ -69,13 +69,13 @@ public:
     /**
      * Reads node from the given @a offset.
      */
-    static std::unique_ptr<IndexNode> Read(std::weak_ptr<WritableDump> dump, std::uint64_t offset);
+    static std::unique_ptr<IndexNode> Read(std::weak_ptr<Dump> dump, std::uint64_t offset);
     /**
      * Creates and returns new IndexLeafNode that can be used as the root node for empty index.
      */
-    static std::unique_ptr<IndexNode> CreateNew(std::weak_ptr<WritableDump> dump);
+    static std::unique_ptr<IndexNode> CreateNew(std::weak_ptr<Dump> dump);
 
-    IndexNode(std::weak_ptr<WritableDump> dump);
+    IndexNode(std::weak_ptr<Dump> dump);
 
     virtual void Write() OVERRIDE;
     /**

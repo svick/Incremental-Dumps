@@ -16,5 +16,5 @@ public:
     /**
      * Reads incremental dump and writes its contents to a XML file.
      */
-    static void WriteDump(std::shared_ptr<WritableDump> dump, std::string fileName);
+    static void WriteDump(std::shared_ptr<Dump> dump, std::string fileName);
 };

@@ -4,7 +4,7 @@
 #include <memory>
 
 template<typename TKey, typename TValue>
-Index<TKey, TValue>::Index(std::weak_ptr<WritableDump> dump, Offset *fileHeaderOffset, bool delaySave)
+Index<TKey, TValue>::Index(std::weak_ptr<Dump> dump, Offset *fileHeaderOffset, bool delaySave)
     : dump(dump), fileHeaderOffset(std::shared_ptr<Offset>(dump.lock(), fileHeaderOffset)), recentAccesses(0)
 {
     rootNodeUnsaved = false;

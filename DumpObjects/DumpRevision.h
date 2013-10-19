@@ -30,7 +30,7 @@ private:
     bool forceDiff;
 
     void Load(std::uint32_t revisionId);
-    Revision Read(std::shared_ptr<WritableDump> dump, Offset offset);
+    Revision Read(std::shared_ptr<Dump> dump, Offset offset);
 protected:
     virtual void WriteInternal() OVERRIDE;
     virtual void UpdateIndex(bool overwrite) OVERRIDE;
@@ -40,7 +40,7 @@ public:
      */
     Revision revision;
 
-    DumpRevision(std::weak_ptr<WritableDump> dump, std::uint32_t revisionId);
+    DumpRevision(std::weak_ptr<Dump> dump, std::uint32_t revisionId);
 
     /**
      * Returns id for the combination of content model and format of this revision.
