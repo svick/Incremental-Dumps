@@ -140,6 +140,9 @@ void XmlWriter::WriteDump(std::shared_ptr<Dump> dump, std::string fileName)
                     output.WriteElement("comment", escapeElementText(revision.Comment));
             }
 
+            output.WriteElement("model", revision.Model);
+            output.WriteElement("format", revision.Format);
+
             output.BeginElementAttrs("text");
 
             if (HasFlag(revision.Flags, RevisionFlags::TextDeleted))
@@ -159,8 +162,6 @@ void XmlWriter::WriteDump(std::shared_ptr<Dump> dump, std::string fileName)
                 output.EndElementAttrs();
 
             output.WriteElement("sha1", revision.Sha1);
-            output.WriteElement("model", revision.Model);
-            output.WriteElement("format", revision.Format);
 
             output.EndElement();
         }
