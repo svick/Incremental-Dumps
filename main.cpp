@@ -335,6 +335,7 @@ void applyDiff(std::string dumpFileName, std::string diffFileName)
 
 #ifdef __GNUC__
 #include <execinfo.h>
+#include <unistd.h>
 
 /**
  * Function for better reporting of unhandled exceptions in GCC.
