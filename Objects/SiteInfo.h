@@ -33,6 +33,11 @@ public:
      */
     std::string SiteName;
 
+    /*
+     * Name of the database (e.g. "enwiki")
+     */
+    std::string DbName;
+
     /**
      * URL to the main page of the site.
      */

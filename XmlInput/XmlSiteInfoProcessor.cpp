@@ -22,10 +22,11 @@ Case XmlSiteInfoProcessor::ParseCase(std::string caseString)
 void XmlSiteInfoProcessor::Handler(XML::Element &elem, void *userData)
 {
     XML::Handler handlers[] = {
-        XML::Handler("sitename", [](XML::Element &elem, void *userData){ ((XmlSiteInfoProcessor*)userData)->siteInfo->SiteName = readElementData(elem); }),
-        XML::Handler("base", [](XML::Element &elem, void *userData){ ((XmlSiteInfoProcessor*)userData)->siteInfo->Base = readElementData(elem); }),
-        XML::Handler("generator", [](XML::Element &elem, void *userData){ ((XmlSiteInfoProcessor*)userData)->siteInfo->Generator = readElementData(elem); }),
-        XML::Handler("case", [](XML::Element &elem, void *userData){ ((XmlSiteInfoProcessor*)userData)->siteInfo->SiteCase = ParseCase(readElementData(elem)); }),
+        XML::Handler("sitename", [](XML::Element &elem, void *userData) { ((XmlSiteInfoProcessor*)userData)->siteInfo->SiteName = readElementData(elem); }),
+        XML::Handler("dbname", [](XML::Element &elem, void *userData) { ((XmlSiteInfoProcessor*)userData)->siteInfo->DbName = readElementData(elem); }),
+        XML::Handler("base", [](XML::Element &elem, void *userData) { ((XmlSiteInfoProcessor*)userData)->siteInfo->Base = readElementData(elem); }),
+        XML::Handler("generator", [](XML::Element &elem, void *userData) { ((XmlSiteInfoProcessor*)userData)->siteInfo->Generator = readElementData(elem); }),
+        XML::Handler("case", [](XML::Element &elem, void *userData) { ((XmlSiteInfoProcessor*)userData)->siteInfo->SiteCase = ParseCase(readElementData(elem)); }),
         XML::Handler("namespaces", XmlNamespacesProcessor::Handler),
         XML::Handler::END
     };

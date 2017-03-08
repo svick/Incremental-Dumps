@@ -102,6 +102,7 @@ SiteInfo DumpSiteInfo::ReadCore(std::istream &stream)
 
     ReadValue(stream, siteInfo.Lang);
     ReadValue(stream, siteInfo.SiteName);
+    ReadValue(stream, siteInfo.DbName);
     ReadValue(stream, siteInfo.Base);
     ReadValue(stream, siteInfo.Generator);
     ReadValue(stream, siteInfo.SiteCase);
@@ -114,6 +115,7 @@ void DumpSiteInfo::WriteCore(std::ostream &stream, const SiteInfo &siteInfo)
 {
     WriteValue(stream, siteInfo.Lang);
     WriteValue(stream, siteInfo.SiteName);
+    WriteValue(stream, siteInfo.DbName);
     WriteValue(stream, siteInfo.Base);
     WriteValue(stream, siteInfo.Generator);
     WriteValue(stream, siteInfo.SiteCase);
@@ -125,6 +127,7 @@ std::uint32_t DumpSiteInfo::LengthCore(const SiteInfo &siteInfo)
     return
         ValueSize(siteInfo.Lang)
         + ValueSize(siteInfo.SiteName)
+        + ValueSize(siteInfo.DbName)
         + ValueSize(siteInfo.Base)
         + ValueSize(siteInfo.Generator)
         + ValueSize(siteInfo.SiteCase)

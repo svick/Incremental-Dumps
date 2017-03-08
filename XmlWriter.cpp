@@ -39,6 +39,7 @@ void XmlWriter::WriteDump(std::shared_ptr<Dump> dump, std::string fileName)
     output.BeginElement("siteinfo");
 
     output.WriteElement("sitename", siteInfo.SiteName);
+    output.WriteElement("dbname", siteInfo.DbName);
     output.WriteElement("base", siteInfo.Base);
     output.WriteElement("generator", siteInfo.Generator);
     output.WriteElement("case", caseToString(siteInfo.SiteCase));
