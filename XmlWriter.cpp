@@ -29,10 +29,10 @@ void XmlWriter::WriteDump(std::shared_ptr<Dump> dump, std::string fileName)
     auto siteInfo = dump->siteInfo->siteInfo;
 
     output.BeginElementAttrs("mediawiki");
-    output.WriteAttr("xmlns", "http://www.mediawiki.org/xml/export-0.8/");
+    output.WriteAttr("xmlns", "http://www.mediawiki.org/xml/export-0.10/");
     output.WriteAttr("xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance");
-    output.WriteAttr("xsi:schemaLocation", "http://www.mediawiki.org/xml/export-0.8/ http://www.mediawiki.org/xml/export-0.8.xsd");
-    output.WriteAttr("version", "0.8");
+    output.WriteAttr("xsi:schemaLocation", "http://www.mediawiki.org/xml/export-0.10/ http://www.mediawiki.org/xml/export-0.10.xsd");
+    output.WriteAttr("version", "0.10");
     output.WriteAttr("xml:lang", siteInfo.Lang);
     output.EndAttrs();
 
