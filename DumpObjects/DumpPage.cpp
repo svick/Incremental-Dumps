@@ -109,6 +109,7 @@ Page DumpPage::ReadCore(std::istream &stream)
     page.Namespace = DumpTraits<std::int16_t>::Read(stream);
     page.Title = DumpTraits<std::string>::Read(stream);
     page.RedirectTarget = DumpTraits<std::string>::Read(stream);
+    page.Restrictions = DumpTraits<std::string>::Read(stream);
 
     return page;
 }
@@ -119,10 +120,11 @@ void DumpPage::WriteCore(std::ostream &stream, const Page &page)
     WriteValue(stream, page.Namespace);
     WriteValue(stream, page.Title);
     WriteValue(stream, page.RedirectTarget);
+    WriteValue(stream, page.Restrictions);
 }
 
 std::uint32_t DumpPage::LengthCore(const Page &page)
 {
     return ValueSize(page.PageId)
-        + ValueSize(page.Namespace) + ValueSize(page.Title) + ValueSize(page.RedirectTarget);
+        + ValueSize(page.Namespace) + ValueSize(page.Title) + ValueSize(page.RedirectTarget) + ValueSize(page.Restrictions);
 }

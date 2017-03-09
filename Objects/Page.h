@@ -34,6 +34,11 @@ public:
      */
     std::string RedirectTarget;
 
+    /*
+     * Set of permissions inidicating who can edit or move a page.
+     */
+    std::string Restrictions;
+
     /**
      * List of IDs of revisions that belong to this page.
      *

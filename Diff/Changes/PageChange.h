@@ -14,7 +14,8 @@ enum class PageChangeFlags : std::uint8_t
 
     NamespaceChanged      = 0x01,
     TitleChanged          = 0x02,
-    RedirectTargetChanged = 0x04
+    RedirectTargetChanged = 0x04,
+    RestrictionsChanged   = 0x08
 };
 
 PageChangeFlags operator |(PageChangeFlags first, PageChangeFlags second);

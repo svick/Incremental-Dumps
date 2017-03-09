@@ -23,10 +23,11 @@ XmlPageProcessor::XmlPageProcessor(const std::shared_ptr<Page> page, IDumpWriter
 void XmlPageProcessor::Handler(XML::Element &elem, void *userData)
 {
     XML::Handler handlers[] = {
-        XML::Handler("title", [](XML::Element &elem, void *userData){ ((XmlPageProcessor*)userData)->page->Title = readElementData(elem); }),
-        XML::Handler("ns", [](XML::Element &elem, void *userData){ ((XmlPageProcessor*)userData)->page->Namespace = stoi(readElementData(elem)); }),
-        XML::Handler("id", [](XML::Element &elem, void *userData){ ((XmlPageProcessor*)userData)->page->PageId = stoi(readElementData(elem)); }),
-        XML::Handler("redirect", [](XML::Element &elem, void *userData){ ((XmlPageProcessor*)userData)->page->RedirectTarget = std::string(elem.GetAttribute("title")); }),
+        XML::Handler("title", [](XML::Element &elem, void *userData) { ((XmlPageProcessor*)userData)->page->Title = readElementData(elem); }),
+        XML::Handler("ns", [](XML::Element &elem, void *userData) { ((XmlPageProcessor*)userData)->page->Namespace = stoi(readElementData(elem)); }),
+        XML::Handler("id", [](XML::Element &elem, void *userData) { ((XmlPageProcessor*)userData)->page->PageId = stoi(readElementData(elem)); }),
+        XML::Handler("redirect", [](XML::Element &elem, void *userData) { ((XmlPageProcessor*)userData)->page->RedirectTarget = std::string(elem.GetAttribute("title")); }),
+        XML::Handler("restrictions", [](XML::Element &elem, void *userData) { ((XmlPageProcessor*)userData)->page->Restrictions = readElementData(elem); }),
         XML::Handler("revision", XmlRevisionProcessor::Handler),
         XML::Handler::END
     };

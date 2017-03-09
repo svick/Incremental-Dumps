@@ -86,6 +86,11 @@ void XmlWriter::WriteDump(std::shared_ptr<Dump> dump, std::string fileName)
             output.EndElementAttrs();
         }
 
+        if (page.Restrictions != std::string())
+        {
+            output.WriteElement("restrictions", page.Restrictions);
+        }
+
         for (auto revisionId : page.RevisionIds)
         {
             auto revision = DumpRevision(dump, revisionId).revision;

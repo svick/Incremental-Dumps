@@ -10,5 +10,6 @@ bool operator ==(const Page &first, const Page &second)
         && first.Namespace == second.Namespace
         && first.Title == second.Title
         && first.RedirectTarget == second.RedirectTarget
+        && first.Restrictions == second.Restrictions
         && first.RevisionIds == second.RevisionIds;
 }

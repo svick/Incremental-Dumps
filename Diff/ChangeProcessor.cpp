@@ -55,6 +55,9 @@ void ChangeProcessor::Process(PageChange change)
     if (HasFlag(change.flags, PageChangeFlags::RedirectTargetChanged))
         dumpPage->page.RedirectTarget =  change.pageChanges.RedirectTarget;
 
+    if (HasFlag(change.flags, PageChangeFlags::RestrictionsChanged))
+        dumpPage->page.Restrictions = change.pageChanges.Restrictions;
+
     currentPage = std::unique_ptr<DumpPage>(dumpPage);
 }
 
